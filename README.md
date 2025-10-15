@@ -105,7 +105,7 @@ The script will try to find the path of your CARLA and OpenCDA installation to b
 
 In case this is the first time using either CARLA or OpenCDA, the script will install them, prompting for confirmation in each case. It is highly recommended to install OpenCDA with conda.
 
-Once the script finishes its execution, it is recommended to build only the simulation scripts for CARLA's usage instead of the whole project (i.e., run `./ns3 build "name-of-CARLA-example` instead of `./ns3 build`).
+Once the script finishes its execution, it is recommended to build only the simulation scripts for CARLA's usage instead of the whole project (i.e., run `./ns3 build "name-of-CARLA-example"` instead of `./ns3 build`).
 This permits avoiding libraries and dependency issues coming from other parts of the simulator, so that the CARLA simulations can be properly run.
 
 **Possible issues with CARLA and OpenCDA installation**
