@@ -58,8 +58,10 @@ namespace ns3
 
     //Sequence number
     i.WriteHtonU16 (m_seqNumber);
+
     //Reserved
     i.WriteHtonU16 (0x00);
+
     //Source long position vector
     WriteTo (i,m_sourcePV.GnAddress.ConvertTo ());
     i.WriteHtonU32 (m_sourcePV.TST);

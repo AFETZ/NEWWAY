@@ -39,6 +39,20 @@ DCC::DCC ()
 DCC::~DCC()
 = default;
 
+void DCC::setNewCBRL0Hop (double cbr)
+{
+  // Set the new value for CBR_L0_Hop and save the previous one
+  m_CBR_L0_Hop[1] = m_CBR_L0_Hop[0];
+  m_CBR_L0_Hop[0] = cbr;
+}
+
+void DCC::setCBRG(double cbr_g)
+{
+  // Set the new value for CBR_G and save the previous one
+  m_CBR_G[1] = m_CBR_G[0];
+  m_CBR_G[0] = cbr_g;
+};
+
 std::unordered_map<DCC::ReactiveState, DCC::ReactiveParameters> DCC::getConfiguration(double Ton, double currentCBR)
 {
     std::unordered_map<DCC::ReactiveState, DCC::ReactiveParameters> map;
@@ -91,6 +105,18 @@ void DCC::SetupDCC(std::string item_id, Ptr<MetricSupervisor> met_sup, Ptr<Node>
   m_log_file = log_file;
 }
 
+Ptr<WifiPhy> DCC::GetPhy()
+{
+  Ptr<NetDevice> netDevice = m_node->GetDevice (0);
+  Ptr<WifiNetDevice> wifiDevice = DynamicCast<WifiNetDevice> (netDevice);
+  if (wifiDevice == nullptr)
+    {
+      NS_FATAL_ERROR("WiFi Device object not found.");
+    }
+  // Get the PHY layer
+  return wifiDevice->GetPhy ();
+}
+
 void DCC::StartDCC()
 {
   if (m_modality == "adaptive")
@@ -116,10 +142,14 @@ void DCC::StartDCC()
         file.close();
       }
   }
-  if (m_queue_length > 0)
-    {
+  Simulator::Schedule (MilliSeconds (m_T_DCC_NET_Trig), &DCC::DCCcheckCBRG, this);
+}
 
-    }
+void DCC::DCCcheckCBRG()
+{
+  // Start check CBR from sharing process through GeoNet
+  m_cbr_g_callback();
+  Simulator::Schedule (MilliSeconds (m_T_DCC_NET_Trig), &DCC::DCCcheckCBRG, this);
 }
 
 void DCC::reactiveDCC()
@@ -128,7 +158,19 @@ void DCC::reactiveDCC()
   NS_ASSERT_MSG (m_metric_supervisor != nullptr, "Metric Supervisor not set");
   NS_ASSERT_MSG (m_dcc_interval != -1, "DCC interval not set");
 
-  double currentCBR = m_metric_supervisor->getCBRPerItem(m_item_id);
+  double currentCBR;
+  m_current_cbr =  m_metric_supervisor->getCBRPerItem(m_item_id);
+  setNewCBRL0Hop (m_current_cbr);
+  // If CBR sharing is available
+  if (m_CBR_G[0] == -1 && m_CBR_G[1] == -1)
+    {
+      currentCBR = m_current_cbr;
+    }
+  else
+    {
+      currentCBR = 0.5 * (m_CBR_G[0] + m_CBR_G[1]);
+    }
+
   if (currentCBR == -1)
     {
       Simulator::Schedule(MilliSeconds(m_dcc_interval), &DCC::reactiveDCC, this);
@@ -170,8 +212,9 @@ void DCC::reactiveDCC()
 void DCC::adaptiveDCCcheckCBR()
 {
   NS_ASSERT_MSG (m_metric_supervisor != nullptr, "Metric Supervisor not set");
-  m_previous_cbr = m_metric_supervisor->getCBRPerItem(m_item_id);
-  if (m_previous_cbr == -1) m_previous_cbr = 0;
+  double previous_cbr = m_metric_supervisor->getCBRPerItem(m_item_id);
+  if (previous_cbr == -1) previous_cbr = 0;
+  setNewCBRL0Hop (previous_cbr);
   Simulator::Schedule(MilliSeconds(m_T_CBR), &DCC::adaptiveDCCcheckCBR, this);
 }
 
@@ -187,17 +230,34 @@ void DCC::adaptiveDCC()
       Simulator::Schedule(MilliSeconds(m_dcc_interval), &DCC::adaptiveDCC, this);
       return;
     }
+  m_current_cbr = currentCBR;
+  setNewCBRL0Hop (currentCBR);
   Time now = Simulator::Now ();
   double time = now.GetSeconds ();
   double delta_offset;
   // Step 1
   if (m_CBR_its != -1)
     {
-      m_CBR_its = 0.5 * m_CBR_its + 0.25 * ((currentCBR + m_previous_cbr) / 2);
+      // If CBR sharing is available
+      if (m_CBR_G[0] == -1 && m_CBR_G[1] == -1)
+        {
+          m_CBR_its = 0.5 * m_CBR_its + 0.25 * ((m_CBR_L0_Hop[0] + m_CBR_L0_Hop[1]) / 2);
+        }
+      else
+        {
+          m_CBR_its = 0.5 * m_CBR_its + 0.25 * ((m_CBR_G[0] + m_CBR_G[1]) / 2);
+        }
     }
   else
     {
-      m_CBR_its = (currentCBR + m_previous_cbr) / 2;
+      if (m_CBR_G[0] == -1 && m_CBR_G[1] == -1)
+        {
+          m_CBR_its = (m_CBR_L0_Hop[0] + m_CBR_L0_Hop[1]) / 2;
+        }
+      else
+        {
+          m_CBR_its = (m_CBR_G[0] + m_CBR_G[1]) / 2;
+        }
     }
   // Step 2
   double factor1 = m_beta * (m_CBR_target - m_CBR_its);
@@ -325,7 +385,6 @@ void DCC::updateTonpp(ssize_t pktSize)
   double total_duration_s = tx_duration_s + (68e-6); // 68 µs extra
   m_Ton_pp = total_duration_s * 1000.0;
 }
-
 
 void DCC::updateTgoAfterStateCheck(uint32_t Toff)
 {
@@ -531,6 +590,11 @@ void DCC::checkQueue ()
 void DCC::setSendCallback(std::function<void(const QueuePacket&)> cb)
 {
   m_send_callback = std::move(cb);
+}
+
+void DCC::setCBRGCallback (std::function<void()> cb)
+{
+  m_cbr_g_callback = std::move(cb);
 }
 
 }

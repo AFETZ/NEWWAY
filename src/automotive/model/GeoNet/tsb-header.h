@@ -29,7 +29,6 @@ namespace ns3
       void SetSeqNumber(uint16_t seqNumber) {m_seqNumber = seqNumber;}
       void SetLongPositionV(GNlpv_t longPositionVector) {m_sourcePV = longPositionVector;}
 
-
       //Getters
       uint16_t GetSeqNumber(void) const {return m_seqNumber;}
       GNlpv_t GetLongPositionV(void) const {return m_sourcePV;}
