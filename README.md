@@ -2,7 +2,7 @@
 
 This repository contains the operational code, scenario assets, and helper scripts used to generate **3D ray‑tracing RSSI / path‑loss traces** by coupling **SUMO** (microscopic traffic simulation) with **Sionna RT** (GPU‑accelerated ray tracing for wireless propagation). It is the reference implementation for the experiments reported in our IEEE Access paper.
 
-![alt text](output_tunnel.gif)
+![alt text](output_with_audio.gif)
 
 ## Overview and Architecture
 
