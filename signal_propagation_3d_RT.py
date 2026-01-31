@@ -160,13 +160,16 @@ def frame_handler(scene,
                             path_powers = np.abs(a[i][0][j][0])**2
                             total_power = np.sum(path_powers) 
                             total_power_log = 10*np.log10(total_power) if total_power > 0 else -200
+                            
                             frame_rssi[veh_arr[i]['vehId']][veh_arr[j]['vehId']] = total_power_log
 
                             freq = scene.frequency
-                            fspl = 20*np.log10(dist) + 20*np.log10(freq) + 20*np.log10(4 * np.pi / 3e8) # free-space path loss
-                            tx_power = 20  # dBm, typical V2X transmission power
-                            rssi = np.abs(tx_power - total_power_log - fspl.item()) #Power of Tx - free space loss - power of Rx
+                            
+                            tx_power = 20 
+                            rssi = tx_power + total_power_log
                             frame_loss[veh_arr[i]['vehId']][veh_arr[j]['vehId']] = rssi
+
+
                         else: # Out of range
                             frame_rssi[veh_arr[i]['vehId']][veh_arr[j]['vehId']] = 0
                             frame_loss[veh_arr[i]['vehId']][veh_arr[j]['vehId']] = -200
@@ -189,17 +192,14 @@ def frame_handler(scene,
             else:
 
                 cam = Camera(
-                    # position=[826.43,-485.76, 222.7], 
-                    # look_at=[334.50,86.23,13.11]
-                    position=[530.29,-201.4,287.88], 
-                    look_at=[334.50,86.23,0]
+                    position=[-621.77  ,-728.395  ,235.112 ], 
+                    look_at=[18.408,-163.949,0]
                 )
             try:
                 scene.render_to_file(
                     camera=cam,
                     filename=f'scenarios/{scenario}/render_frames/{int(step)}.png',
-                    resolution=resolution,
-                    paths=paths if len(veh_arr) > 1 else None
+                    resolution=resolution
                 )
             except Exception as e:
                 print(f"Rendering error: {e}")
@@ -253,7 +253,7 @@ def signal_propogation(scenario: str = 'scenario',
                                vertical_spacing=0.5,
                                horizontal_spacing=0.5,
                                pattern="iso",
-                               polarization="cross")
+                               polarization="V")
 
     # Create radio material for vehicles
     car_material = ITURadioMaterial("car-material",
@@ -282,8 +282,8 @@ def signal_propogation(scenario: str = 'scenario',
 
         veh_arr_pred =[]
         terrain = mi.load_file(f'scenarios/{scenario}/terrain.xml')
-        while step < stop_frame:  # Run for 1000 simulation steps
-            traci.simulationStep()  # Advance the simulation by one step
+        while step < stop_frame: 
+            traci.simulationStep()  
             step += 1
             if step<begin_frame:
                 continue
@@ -343,14 +343,14 @@ def signal_propogation(scenario: str = 'scenario',
 
 if __name__ == '__main__':
     # Example usage with custom parameters
-    scenario = 'scenario_luzhniki_2d'
+    scenario = 'scenario_tunnel'
     run_sumo_server(scenario=scenario)
     signal_propogation(
         scenario=scenario,
-        begin_frame = 510,
-        stop_frame = 530,
+        begin_frame = 80,
+        stop_frame = 120,
         distance=1000,
-        render=True,
+        render=False,
         camera_default=False,
         resolution=[650,500]
     )
