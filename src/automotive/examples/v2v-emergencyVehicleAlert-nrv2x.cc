@@ -164,6 +164,9 @@ main (int argc, char *argv[])
   cmd.AddValue ("simTime",
                 "Simulation time in seconds",
                 simTime);
+  cmd.AddValue ("sim-time",
+                "Simulation time in seconds",
+                simTime);
   cmd.AddValue ("slBearerActivationTime",
                 "Sidelik bearer activation time in seconds",
                 slBearersActivationTime);
@@ -755,5 +758,4 @@ main (int argc, char *argv[])
 
   return 0;
 }
-
 
