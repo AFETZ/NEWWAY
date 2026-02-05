@@ -1001,6 +1001,10 @@ namespace ns3
     /* Update the CAM statistics */
     if(dataConfirm == ACCEPTED) {
         if (message_id == MessageId_cam) m_cam_sent++;
+        if (message_id == MessageId_cam && m_CATxCallback)
+          {
+            m_CATxCallback (cam);
+          }
       }
 
     // Estimation of the transmission time
