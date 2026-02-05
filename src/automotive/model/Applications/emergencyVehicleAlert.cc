@@ -253,6 +253,7 @@ namespace ns3
     m_caService.setSocketRx (m_socket);
     m_caService.setStationProperties (std::stol(m_id.substr (3)), (long)stationtype);
     m_caService.addCARxCallback (std::bind(&emergencyVehicleAlert::receiveCAM,this,std::placeholders::_1,std::placeholders::_2));
+    m_caService.addCATxCallback (std::bind(&emergencyVehicleAlert::logCamTx,this,std::placeholders::_1));
     m_caService.setRealTime (m_real_time);
 
     /* Set sockets, callback, station properties and TraCI VDP in CPBasicService */
@@ -308,6 +309,8 @@ namespace ns3
     {
       m_csv_ofstream_cam.open (m_csv_name+"-"+m_id+"-CAM.csv",std::ofstream::trunc);
       m_csv_ofstream_cam << "messageId,camId,timestamp,latitude,longitude,heading,speed,acceleration" << std::endl;
+      m_csv_ofstream_msg.open (m_csv_name+"-"+m_id+"-MSG.csv",std::ofstream::trunc);
+      m_csv_ofstream_msg << "vehicle_id,msg_seq,tx_t_s,rx_t_s,rx_ok,msg_type,tx_id,rx_id,cam_gdt_ms" << std::endl;
     }
   }
 
@@ -324,6 +327,10 @@ namespace ns3
     if (!m_csv_name.empty ())
     {
       m_csv_ofstream_cam.close ();
+      if (m_csv_ofstream_msg.is_open ())
+        {
+          m_csv_ofstream_msg.close ();
+        }
     }
 
     cam_sent = m_caService.terminateDissemination ();
@@ -349,6 +356,20 @@ namespace ns3
   {
     NS_LOG_FUNCTION(this);
     StopApplication ();
+  }
+
+  void
+  emergencyVehicleAlert::logCamTx (asn1cpp::Seq<CAM> cam)
+  {
+    if (m_csv_name.empty () || !m_csv_ofstream_msg.is_open ())
+      {
+        return;
+      }
+    long cam_gdt_ms = asn1cpp::getField(cam->cam.generationDeltaTime,long);
+    long tx_id = asn1cpp::getField(cam->header.stationId,long);
+    double now_s = Simulator::Now ().GetSeconds ();
+    m_csv_ofstream_msg << m_id << "," << cam_gdt_ms << "," << now_s
+                       << ",," << 0 << ",CAM," << tx_id << ",," << cam_gdt_ms << std::endl;
   }
 
   void
@@ -407,6 +428,19 @@ namespace ns3
        m_csv_ofstream_cam << asn1cpp::getField(cam->cam.camParameters.basicContainer.referencePosition.longitude,double)/DOT_ONE_MICRO << "," ;
        m_csv_ofstream_cam << asn1cpp::getField(cam->cam.camParameters.highFrequencyContainer.choice.basicVehicleContainerHighFrequency.heading.headingValue,double)/DECI << "," << asn1cpp::getField(cam->cam.camParameters.highFrequencyContainer.choice.basicVehicleContainerHighFrequency.speed.speedValue,double)/CENTI << ",";
        m_csv_ofstream_cam << asn1cpp::getField(cam->cam.camParameters.highFrequencyContainer.choice.basicVehicleContainerHighFrequency.longitudinalAcceleration.value,double)/DECI << std::endl;
+     }
+   if (!m_csv_name.empty () && m_csv_ofstream_msg.is_open ())
+     {
+       long cam_gdt_ms = asn1cpp::getField(cam->cam.generationDeltaTime,long);
+       long tx_id = asn1cpp::getField(cam->header.stationId,long);
+       long rx_id = 0;
+       if (m_id.size () > 3)
+         {
+           rx_id = std::stol(m_id.substr (3));
+         }
+       double now_s = Simulator::Now ().GetSeconds ();
+       m_csv_ofstream_msg << m_id << "," << cam_gdt_ms << ",," << now_s
+                          << "," << 1 << ",CAM," << tx_id << "," << rx_id << "," << cam_gdt_ms << std::endl;
      }
 
   }
@@ -595,8 +629,4 @@ namespace ns3
 
 
   }
-
-
-
-
 

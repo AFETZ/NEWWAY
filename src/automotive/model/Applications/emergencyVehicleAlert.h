@@ -18,6 +18,7 @@
 #include "ns3/sumo-sensor.h"
 #include "ns3/LDM.h"
 #include "ns3/traci-client.h"
+#include <fstream>
 namespace ns3 {
 
 class emergencyVehicleAlert : public Application
@@ -106,6 +107,7 @@ class emergencyVehicleAlert : public Application
      *
      */
     void TriggerDenm(void);
+    void logCamTx (asn1cpp::Seq<CAM> cam);
 
 
     /**
@@ -136,6 +138,7 @@ class emergencyVehicleAlert : public Application
     bool m_real_time; //!< To decide wheter to use realtime scheduler
     std::string m_csv_name; //!< CSV log file name
     std::ofstream m_csv_ofstream_cam; //!< CSV log stream (CAM), created using m_csv_name
+    std::ofstream m_csv_ofstream_msg; //!< CSV log stream (TX/RX events), created using m_csv_name
 
     /* Counters */
     int m_cam_received;
@@ -158,4 +161,3 @@ class emergencyVehicleAlert : public Application
 } // namespace ns3
 
 #endif /* EMERGENCYVEHICLEALERT_H */
-

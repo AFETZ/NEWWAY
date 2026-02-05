@@ -12,6 +12,7 @@
 #include "ns3/Getter.hpp"
 #include "ns3/LDM.h"
 #include "signalInfoUtils.h"
+#include <functional>
 
 extern "C" {
   #include "ns3/CAM.h"
@@ -169,6 +170,7 @@ namespace ns3
      */
     void addCARxCallback(std::function<void(asn1cpp::Seq<CAM>, Address)> rx_callback) {m_CAReceiveCallback=rx_callback;}
     void addCARxCallbackExtended(std::function<void(asn1cpp::Seq<CAM>, Address, StationId_t, StationType_t, SignalInfo)> rx_callback) {m_CAReceiveCallbackExtended=rx_callback;}
+    void addCATxCallback(std::function<void(asn1cpp::Seq<CAM>)> tx_callback) {m_CATxCallback=tx_callback;}
     void setRealTime(bool real_time){m_real_time=real_time;}
 
     void setLowFrequencyContainer(bool enable) {m_lowFreqContainerEnabled = enable;}
@@ -237,6 +239,7 @@ namespace ns3
     std::function<void(asn1cpp::Seq<CAM>, Address)> m_CAReceiveCallback;
     std::function<void(asn1cpp::Seq<CAM>, Address, Ptr<Packet>)> m_CAReceiveCallbackPkt;
     std::function<void(asn1cpp::Seq<CAM>, Address, StationId_t, StationType_t, SignalInfo)> m_CAReceiveCallbackExtended;
+    std::function<void(asn1cpp::Seq<CAM>)> m_CATxCallback;
 
     Ptr<btp> m_btp; //! BTP object
 

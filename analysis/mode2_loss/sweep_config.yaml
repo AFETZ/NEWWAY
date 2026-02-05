@@ -1,0 +1,86 @@
+scenario: v2v-emergencyVehicleAlert-nrv2x
+sim_time_s: 30
+rng_run: 1
+sumo_gui: 0
+sumo_updates: 0.01
+penetrationRate: 0.7
+base_args: []
+
+sweep_points:
+  - id: baseline
+    txPower: 23
+    mcs: 14
+    enableSensing: false
+    slThresPsschRsrp: -128
+    enableChannelRandomness: false
+    channelUpdatePeriod: 500
+  - id: txPower_18
+    txPower: 18
+    mcs: 14
+    enableSensing: false
+    slThresPsschRsrp: -128
+    enableChannelRandomness: false
+    channelUpdatePeriod: 500
+  - id: txPower_14
+    txPower: 14
+    mcs: 14
+    enableSensing: false
+    slThresPsschRsrp: -128
+    enableChannelRandomness: false
+    channelUpdatePeriod: 500
+  - id: txPower_10
+    txPower: 10
+    mcs: 14
+    enableSensing: false
+    slThresPsschRsrp: -128
+    enableChannelRandomness: false
+    channelUpdatePeriod: 500
+  - id: txPower_0
+    txPower: 0
+    mcs: 14
+    enableSensing: false
+    slThresPsschRsrp: -128
+    enableChannelRandomness: false
+    channelUpdatePeriod: 500
+  - id: mcs_10
+    txPower: 23
+    mcs: 10
+    enableSensing: false
+    slThresPsschRsrp: -128
+    enableChannelRandomness: false
+    channelUpdatePeriod: 500
+  - id: mcs_6
+    txPower: 23
+    mcs: 6
+    enableSensing: false
+    slThresPsschRsrp: -128
+    enableChannelRandomness: false
+    channelUpdatePeriod: 500
+  - id: mcs_2
+    txPower: 23
+    mcs: 2
+    enableSensing: false
+    slThresPsschRsrp: -128
+    enableChannelRandomness: false
+    channelUpdatePeriod: 500
+  - id: slThres_-118
+    txPower: 23
+    mcs: 14
+    enableSensing: false
+    slThresPsschRsrp: -118
+    enableChannelRandomness: false
+    channelUpdatePeriod: 500
+  - id: slThres_-100
+    txPower: 23
+    mcs: 14
+    enableSensing: false
+    slThresPsschRsrp: -100
+    enableChannelRandomness: false
+    channelUpdatePeriod: 500
+  - id: chan_rand_on
+    txPower: 23
+    mcs: 14
+    enableSensing: false
+    slThresPsschRsrp: -128
+    enableChannelRandomness: true
+    channelUpdatePeriod: 100
