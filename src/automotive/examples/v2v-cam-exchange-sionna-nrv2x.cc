@@ -179,6 +179,7 @@ int main (int argc, char *argv[])
   // (81-2+1) x (1/2^2) < 20
 
   bool sionna = false;
+  bool sumo_gui = true;
   std::string server_ip = "";
   bool local_machine = false;
   bool verb = false;
@@ -197,6 +198,7 @@ int main (int argc, char *argv[])
   cmd.AddValue ("tx-power", "OBUs transmission power [dBm]", txPower);
   cmd.AddValue ("sim-time", "Total duration of the simulation [s]", simTime);
   cmd.AddValue ("sionna", "Enable SIONNA usage", sionna);
+  cmd.AddValue ("sumo-gui", "Use SUMO gui or not", sumo_gui);
   cmd.AddValue ("sionna-server-ip", "SIONNA server IP address", server_ip);
   cmd.AddValue ("sionna-local-machine", "SIONNA will be executed on local machine", local_machine);
   cmd.AddValue ("sionna-verbose", "SIONNA server IP address", verb);
@@ -497,7 +499,7 @@ int main (int argc, char *argv[])
   sumoClient->SetAttribute ("SumoBinaryPath", StringValue (""));    // use system installation of sumo
   sumoClient->SetAttribute ("SynchInterval", TimeValue (Seconds (0.01)));
   sumoClient->SetAttribute ("StartTime", TimeValue (Seconds (0.0)));
-  sumoClient->SetAttribute ("SumoGUI", BooleanValue (true));
+  sumoClient->SetAttribute ("SumoGUI", BooleanValue (sumo_gui));
   sumoClient->SetAttribute ("SumoPort", UintegerValue (3400));
   sumoClient->SetAttribute ("PenetrationRate", DoubleValue (1.0));
   sumoClient->SetAttribute ("SumoLogFile", BooleanValue (false));
