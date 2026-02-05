@@ -134,8 +134,6 @@ void receiveCAM(asn1cpp::Seq<CAM> cam, Address from, StationId_t my_stationID, S
 
   double snr = phy_info.snr;
   double sinr = phy_info.sinr;
-  double rssi = phy_info.rssi;
-  double rsrp = phy_info.rsrp;
   if (std::isnan(sinr) && !std::isnan(snr))
     {
       sinr = snr;
@@ -213,8 +211,6 @@ void receiveCPM(asn1cpp::Seq<CollectivePerceptionMessage> cpm, Address from, Sta
 
   double snr = phy_info.snr;
   double sinr = phy_info.sinr;
-  double rssi = phy_info.rssi;
-  double rsrp = phy_info.rsrp;
   if (std::isnan(sinr) && !std::isnan(snr))
     {
       sinr = snr;
@@ -293,7 +289,7 @@ void savePRRs(Ptr<MetricSupervisor> metSup, std::vector<std::string> nodes, std:
       file.open("src/prr_latency_ns3_coexistence_11p.csv", std::ios::out | std::ios::app);
     }
   file << "node_id,prr,latency(ms)" << std::endl;
-  for (int i = 0; i < nodes.size(); i++)
+  for (size_t i = 0; i < nodes.size(); ++i)
     {
       double prr = metSup->getAveragePRR_vehicle (std::stol(nodes[i].substr (3)));
       double latency = metSup->getAverageLatency_vehicle (std::stol(nodes[i].substr (3)));
@@ -413,7 +409,6 @@ int main (int argc, char *argv[])
   uint16_t channelUpdatePeriod = 500; //ms
   uint8_t mcs = 14;
 
-  bool m_metric_sup = true;
 
   bool sionna = false;
   std::string server_ip = "";
@@ -490,12 +485,6 @@ int main (int argc, char *argv[])
   if (sionna)
     {
       sumoClient->SetSionnaUp();
-    }
-
-  bool odd = false;
-  if (numberOfNodes%2 != 0)
-    {
-      odd = true;
     }
 
   std::vector<std::string> wifiVehicles;
@@ -987,6 +976,8 @@ int main (int argc, char *argv[])
           case NodeType::NR:
             bs_container->linkMetricSupervisor (metSup_nr);
             break;
+          case NodeType::INTERFERING:
+            break;
           }
         bs_container->disablePRRSupervisorForGNBeacons();
         bs_container->setupContainer(true,false,false,true);
@@ -1005,6 +996,7 @@ int main (int argc, char *argv[])
       case NodeType::INTERFERING:
         return wifiNodes.Get(0);
       }
+    return nullptr;
   };
 
   // Important: what you write here is called every time a node exits the simulation in SUMO
@@ -1060,4 +1052,3 @@ int main (int argc, char *argv[])
 
   return 0;
 }
-

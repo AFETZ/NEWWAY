@@ -129,7 +129,7 @@ void savePRRs(Ptr<MetricSupervisor> metSup, uint64_t numberOfNodes)
   std::ofstream file;
   file.open("src/sionna/prr_with_sionna_nrv2x.csv", std::ios::out | std::ios::app);
   file << "node_id,prr" << std::endl;
-  for (int i = 1; i <= numberOfNodes; i++)
+  for (uint64_t i = 1; i <= numberOfNodes; ++i)
     {
       double prr = metSup->getAveragePRR_vehicle (i);
       file << i << "," << prr << std::endl;
@@ -146,8 +146,6 @@ int main (int argc, char *argv[])
   int numberOfNodes; // Total number of vehicles, automatically filled in by reading the XML file
   double m_baseline_prr = 150.0; // PRR baseline value (default: 150 m)
   int txPower = 30.0; // Transmission power in dBm (default: 23 dBm)
-  double sensitivity = -93.0;
-  double snr_threshold = 10; // Default value
   double sinr_threshold = 10; // Default value
   xmlDocPtr rou_xml_file;
   double simTime = 100.0; // Total simulation time (default: 200 seconds)
@@ -598,4 +596,3 @@ int main (int argc, char *argv[])
 
   return 0;
 }
-

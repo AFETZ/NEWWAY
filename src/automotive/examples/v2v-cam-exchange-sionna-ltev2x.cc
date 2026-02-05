@@ -127,7 +127,7 @@ void savePRRs(Ptr<MetricSupervisor> metSup, uint64_t numberOfNodes)
   std::ofstream file;
   file.open("src/sionna/prr_with_sionna_cv2x.csv", std::ios::out | std::ios::app);
   file << "node_id,prr" << std::endl;
-  for (int i = 1; i <= numberOfNodes; i++)
+  for (uint64_t i = 1; i <= numberOfNodes; ++i)
     {
       double prr = metSup->getAveragePRR_vehicle (i);
       file << i << "," << prr << std::endl;
@@ -542,4 +542,3 @@ int main (int argc, char *argv[])
 
   return 0;
 }
-
