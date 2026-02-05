@@ -209,14 +209,14 @@ cv2x_EpcTftClassifier::Classify (Ptr<Packet> p, cv2x_EpcTft::Direction direction
 
       if (direction ==  cv2x_EpcTft::UPLINK)
         {
-          localAddressIpv6 = ipv6Header.GetSourceAddress ();
-          remoteAddressIpv6 = ipv6Header.GetDestinationAddress ();
+          localAddressIpv6 = ipv6Header.GetSource ();
+          remoteAddressIpv6 = ipv6Header.GetDestination ();
         }
       else
         {
           NS_ASSERT (direction ==  cv2x_EpcTft::DOWNLINK);
-          remoteAddressIpv6 = ipv6Header.GetSourceAddress ();
-          localAddressIpv6 = ipv6Header.GetDestinationAddress ();
+          remoteAddressIpv6 = ipv6Header.GetSource ();
+          localAddressIpv6 = ipv6Header.GetDestination ();
         }
       NS_LOG_INFO ("local address: " << localAddressIpv6 << " remote address: " << remoteAddressIpv6);
 
