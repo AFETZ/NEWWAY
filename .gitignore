@@ -1829,3 +1829,10 @@ src/nr/tools/
 /src/automotive/examples/sumo_files_v2v_map/traci_pedestrian_crossing/viewsettings.xml
 src/sionna/sionna_log.csv
 src/sionna/phy_with_sionna_nrv2x.csv
+
+# mode2_loss local artifacts
+analysis/mode2_loss/.venv/
+analysis/mode2_loss/data/
+analysis/mode2_loss/figures/
+analysis/mode2_loss/logs/
+analysis/mode2_loss/results/
