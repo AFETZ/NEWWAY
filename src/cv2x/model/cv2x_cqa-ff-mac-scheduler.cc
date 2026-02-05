@@ -734,7 +734,7 @@ cv2x_CqaFfMacScheduler::DoSchedDlTriggerReq (const struct cv2x_FfMacSchedSapProv
   for (itRach = m_rachList.begin (); itRach != m_rachList.end (); itRach++)
     {
       NS_ASSERT_MSG (m_amc->GetUlTbSizeFromMcs (m_ulGrantMcs, m_cschedCellConfig.m_ulBandwidth) > (*itRach).m_estimatedSize, " Default UL Grant MCS does not allow to send RACH messages");
-      cv2x_BuildRarListElement_s newRar;
+      cv2x_BuildRarListElement_s newRar{};
       newRar.m_rnti = (*itRach).m_rnti;
       // DL-RACH Allocation
       // Ideal: no needs of configuring m_dci
