@@ -623,7 +623,7 @@ cv2x_LteFfrDistributedAlgorithm::SendLoadInformation (uint16_t targetCellId)
 
   std::vector<cv2x_EpcX2Sap::UlInterferenceOverloadIndicationItem> m_currentUlInterferenceOverloadIndicationList;
   std::vector <cv2x_EpcX2Sap::UlHighInterferenceInformationItem>  m_currentUlHighInterferenceInformationList;
-  cv2x_EpcX2Sap::RelativeNarrowbandTxBand m_currentRelativeNarrowbandTxBand;
+  cv2x_EpcX2Sap::RelativeNarrowbandTxBand m_currentRelativeNarrowbandTxBand{};
 
   m_currentRelativeNarrowbandTxBand.rntpPerPrbList = m_dlEdgeRbgMap;
 
@@ -633,7 +633,7 @@ cv2x_LteFfrDistributedAlgorithm::SendLoadInformation (uint16_t targetCellId)
   cii.ulHighInterferenceInformationList = m_currentUlHighInterferenceInformationList;
   cii.relativeNarrowbandTxBand = m_currentRelativeNarrowbandTxBand;
 
-  cv2x_EpcX2Sap::LoadInformationParams params;
+  cv2x_EpcX2Sap::LoadInformationParams params{};
   params.targetCellId = targetCellId;
   params.cellInformationList.push_back (cii);
 
@@ -686,26 +686,15 @@ cv2x_LteFfrDistributedAlgorithm::UpdateNeighbourMeasurements (uint16_t rnti,
     }
 
   NS_ASSERT (it1 != m_ueMeasures.end ());
-  Ptr<UeMeasure> cellMeasures;
-  std::map<uint16_t, Ptr<UeMeasure> >::iterator it2;
-  it2 = it1->second.find (cellId);
-
-  if (it2 != it1->second.end ())
+  Ptr<UeMeasure>& cellMeasures = it1->second[cellId];
+  if (cellMeasures == nullptr)
     {
-      cellMeasures = it2->second;
-      cellMeasures->m_cellId = cellId;
-      cellMeasures->m_rsrp = rsrp;
-      cellMeasures->m_rsrq = rsrq;
-    }
-  else
-    {
-      // insert a new cell entry
       cellMeasures = Create<UeMeasure> ();
-      cellMeasures->m_cellId = cellId;
-      cellMeasures->m_rsrp = rsrp;
-      cellMeasures->m_rsrq = rsrq;
-      it1->second[cellId] = cellMeasures;
     }
+
+  cellMeasures->m_cellId = cellId;
+  cellMeasures->m_rsrp = rsrp;
+  cellMeasures->m_rsrq = rsrq;
 
 } // end of UpdateNeighbourMeasurements
 
