@@ -28,6 +28,8 @@ VaN3Twin now integrates the whole ms-van3t framework, and much more, keeping the
 
 ## VaN3Twin installation
 
+For a reproducible developer checklist (`setup`, `configure`, `build`, `test`, `run`) and common bootstrap issues, see `DEVELOPMENT.md`.
+
 To build the project:
 * Install SUMO following the guide at [https://sumo.dlr.de/wiki/Downloads](https://sumo.dlr.de/wiki/Downloads)
     * You can use 
