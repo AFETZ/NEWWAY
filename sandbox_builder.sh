@@ -145,6 +145,9 @@ sleep 1
 set -v
 cd ns-3-dev
 sed -i -E 's#^([[:blank:]]*)project\(NS3 CXX\)#\1project\(NS3 C CXX\)#' CMakeLists.txt
+if ! grep -q '^#include <cstdint>$' src/network/utils/bit-deserializer.h; then
+	sed -i '/^#include <deque>/a #include <cstdint>' src/network/utils/bit-deserializer.h
+fi
 cd ..
 set +v
 
