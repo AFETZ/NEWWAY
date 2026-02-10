@@ -7,7 +7,7 @@ penetrationRate: 0.7
 base_args: []
 
 sweep_points:
-  - id: baseline
+  - id: txPower_23
     txPower: 23
     mcs: 14
     enableSensing: false
@@ -35,6 +35,13 @@ sweep_points:
     slThresPsschRsrp: -128
     enableChannelRandomness: false
     channelUpdatePeriod: 500
+  - id: txPower_6
+    txPower: 6
+    mcs: 14
+    enableSensing: false
+    slThresPsschRsrp: -128
+    enableChannelRandomness: false
+    channelUpdatePeriod: 500
   - id: txPower_0
     txPower: 0
     mcs: 14
@@ -42,45 +49,17 @@ sweep_points:
     slThresPsschRsrp: -128
     enableChannelRandomness: false
     channelUpdatePeriod: 500
-  - id: mcs_10
-    txPower: 23
-    mcs: 10
-    enableSensing: false
-    slThresPsschRsrp: -128
-    enableChannelRandomness: false
-    channelUpdatePeriod: 500
-  - id: mcs_6
-    txPower: 23
-    mcs: 6
-    enableSensing: false
-    slThresPsschRsrp: -128
-    enableChannelRandomness: false
-    channelUpdatePeriod: 500
-  - id: mcs_2
-    txPower: 23
-    mcs: 2
-    enableSensing: false
-    slThresPsschRsrp: -128
-    enableChannelRandomness: false
-    channelUpdatePeriod: 500
-  - id: slThres_-118
-    txPower: 23
-    mcs: 14
-    enableSensing: false
-    slThresPsschRsrp: -118
-    enableChannelRandomness: false
-    channelUpdatePeriod: 500
-  - id: slThres_-100
-    txPower: 23
-    mcs: 14
-    enableSensing: false
-    slThresPsschRsrp: -100
-    enableChannelRandomness: false
-    channelUpdatePeriod: 500
-  - id: chan_rand_on
-    txPower: 23
+  - id: txPower_-10
+    txPower: -10
     mcs: 14
     enableSensing: false
     slThresPsschRsrp: -128
-    enableChannelRandomness: true
-    channelUpdatePeriod: 100
+    enableChannelRandomness: false
+    channelUpdatePeriod: 500
+  - id: txPower_-20
+    txPower: -20
+    mcs: 14
+    enableSensing: false
+    slThresPsschRsrp: -128
+    enableChannelRandomness: false
+    channelUpdatePeriod: 500
