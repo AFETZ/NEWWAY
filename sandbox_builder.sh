@@ -151,6 +151,9 @@ fi
 if ! grep -q '^#include <cstdint>$' src/network/utils/bit-serializer.h; then
 	sed -i '/^#include <vector>/a #include <cstdint>' src/network/utils/bit-serializer.h
 fi
+if ! grep -q '^#include <cstdint>$' src/wifi/model/block-ack-type.h; then
+	sed -i '/^#include <vector>/a #include <cstdint>' src/wifi/model/block-ack-type.h
+fi
 cd ..
 set +v
 
