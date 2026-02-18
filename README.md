@@ -28,6 +28,11 @@ VaN3Twin now integrates the whole ms-van3t framework, and much more, keeping the
 
 ## VaN3Twin installation
 
+For a reproducible developer checklist (`setup`, `configure`, `build`, `test`, `run`) and common bootstrap issues, see `DEVELOPMENT.md`.
+
+For a curated launch map of key V2X scenarios (`cttc-nr-v2x-demo-simple`, `nr-v2x-west-to-east-highway`, `v2v-cam-exchange-sionna-nrv2x`, `v2v-coexistence-80211p-nrv2x`), see `scenarios/README.md`.
+Latest reproducible run evidence is stored in `analysis/scenario_runs/`.
+
 To build the project:
 * Install SUMO following the guide at [https://sumo.dlr.de/wiki/Downloads](https://sumo.dlr.de/wiki/Downloads)
     * You can use 

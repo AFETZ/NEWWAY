@@ -1,0 +1,9 @@
+scenario,technology,run_args,prr,latency_ms,pir_s,throughput_kbps,overlap_ratio,tb_fail_ratio,notes
+cttc-nr-v2x-demo-simple,NR-V2X,--simTag=run20260218-cttc,1.000000,,0.100765,16.000000,,,99/99 packets received
+nr-v2x-west-to-east-highway,NR-V2X,--simTag=run20260218-highway,0.988333,,0.101536,15.813333,0.054667,0.031573,KPI from SQLite tables avrgPrr/avrgPir/thput/simulPsschTx/PsschTbRx
+v2v-cam-exchange-sionna-nrv2x,NR-V2X,--sumo-gui=0 --sim-time=20,0.946519,11.786200,,,,,from src/output.txt
+v2v-coexistence-80211p-nrv2x,802.11p,--sumo-gui=0 --sim-time=20,0.924245,0.491460,,,,,from scenario stdout
+v2v-coexistence-80211p-nrv2x,NR-V2X,--sumo-gui=0 --sim-time=20,0.965817,12.442200,,,,,from scenario stdout
+v2v-emergencyVehicleAlert-nrv2x,NR-V2X,--sumo-gui=0 --sim-time=30 --met-sup=1 --rx-drop-prob-cam=0.0,0.952859,12.065600,,,,,loss_sweep control_actions=78 min_ttc_s=3.669 observed_cam_drop_ratio=0.000
+v2v-emergencyVehicleAlert-nrv2x,NR-V2X,--sumo-gui=0 --sim-time=30 --met-sup=1 --rx-drop-prob-cam=0.4,0.952314,12.153800,,,,,loss_sweep control_actions=42 min_ttc_s=4.439 observed_cam_drop_ratio=0.405
+v2v-emergencyVehicleAlert-nrv2x,NR-V2X,--sumo-gui=0 --sim-time=30 --met-sup=1 --rx-drop-prob-cam=0.8,0.951845,12.006400,,,,,loss_sweep control_actions=15 min_ttc_s=4.382 observed_cam_drop_ratio=0.805

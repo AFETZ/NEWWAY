@@ -17,6 +17,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--sim-time", type=float, default=30.0)
     p.add_argument("--rng-run", type=int, default=1)
     p.add_argument("--sumo-gui", type=str, default="0")
+    p.add_argument("--vehicle-visualizer", type=str, default="0")
     p.add_argument("--sumo-updates", type=str, default="0.01")
     p.add_argument("--penetrationRate", type=str, default="0.7")
     p.add_argument("--txPower", type=str, default=None)
@@ -28,6 +29,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--sumo-folder", type=str, default="src/automotive/examples/sumo_files_v2v_map/")
     p.add_argument("--mob-trace", type=str, default="cars.rou.xml")
     p.add_argument("--sumo-config", type=str, default="src/automotive/examples/sumo_files_v2v_map/map.sumo.cfg")
+    p.add_argument("--netstate-dump-file", type=str, default=None)
     p.add_argument("--extra-arg", action="append", default=[])
     return p.parse_args()
 
@@ -64,6 +66,7 @@ def main() -> None:
     cmd = [
         str(binary),
         f"--sumo-gui={args.sumo_gui}",
+        f"--vehicle-visualizer={args.vehicle_visualizer}",
         f"--sim-time={args.sim_time}",
         f"--csv-log={run_prefix}",
         f"--RngRun={args.rng_run}",
@@ -73,6 +76,9 @@ def main() -> None:
         f"--mob-trace={args.mob_trace}",
         f"--sumo-config={args.sumo_config}",
     ]
+
+    if args.netstate_dump_file is not None and str(args.netstate_dump_file).strip() != "":
+        cmd.append(f"--netstate-dump-file={args.netstate_dump_file}")
 
     for name in ["txPower", "mcs", "enableSensing", "slThresPsschRsrp", "enableChannelRandomness", "channelUpdatePeriod"]:
         val = getattr(args, name)
@@ -99,6 +105,7 @@ def main() -> None:
         "sim_time": args.sim_time,
         "rng_run": args.rng_run,
         "sumo_gui": args.sumo_gui,
+        "vehicle_visualizer": args.vehicle_visualizer,
         "sumo_updates": args.sumo_updates,
         "penetrationRate": args.penetrationRate,
         "txPower": args.txPower,
@@ -107,6 +114,7 @@ def main() -> None:
         "slThresPsschRsrp": args.slThresPsschRsrp,
         "enableChannelRandomness": args.enableChannelRandomness,
         "channelUpdatePeriod": args.channelUpdatePeriod,
+        "netstate_dump_file": args.netstate_dump_file,
     }
 
     with (out_dir / "metadata.json").open("w") as fp:

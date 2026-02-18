@@ -14,6 +14,7 @@
 #include "ns3/cpBasicService_v1.h"
 #include "ns3/vdpTraci.h"
 #include "ns3/socket.h"
+#include "ns3/random-variable-stream.h"
 
 #include "ns3/sumo-sensor.h"
 #include "ns3/LDM.h"
@@ -108,6 +109,13 @@ class emergencyVehicleAlert : public Application
      */
     void TriggerDenm(void);
     void logCamTx (asn1cpp::Seq<CAM> cam);
+    void LogControlEvent (const std::string& eventType,
+                          long txId,
+                          double distanceMeters,
+                          double headingDiffDeg,
+                          int laneBefore,
+                          int laneAfter,
+                          double speedTarget);
 
 
     /**
@@ -139,12 +147,16 @@ class emergencyVehicleAlert : public Application
     std::string m_csv_name; //!< CSV log file name
     std::ofstream m_csv_ofstream_cam; //!< CSV log stream (CAM), created using m_csv_name
     std::ofstream m_csv_ofstream_msg; //!< CSV log stream (TX/RX events), created using m_csv_name
+    std::ofstream m_csv_ofstream_ctrl; //!< CSV log stream (vehicle control events)
 
     /* Counters */
     int m_cam_received;
     int m_cpm_received;
+    int m_cam_dropped_app;
+    int m_cpm_dropped_app;
     int m_denm_sent;
     int m_denm_received;
+    uint64_t m_control_actions;
 
     EventId m_speed_ev; //!< Event to change the vehicle speed
     EventId m_send_denm_ev; //!< Event to send the DENM
@@ -153,6 +165,9 @@ class emergencyVehicleAlert : public Application
 
     bool m_send_cam;
     bool m_send_cpm;
+    double m_rx_drop_prob_cam;
+    double m_rx_drop_prob_cpm;
+    Ptr<UniformRandomVariable> m_drop_rv;
 
     Ptr<MetricSupervisor> m_metric_supervisor = nullptr;
 

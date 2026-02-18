@@ -1,0 +1,12 @@
+scenario,path
+cttc-nr-v2x-demo-simple,figures/cttc-nr-v2x-demo-simple/cttc_prr_over_time.png
+cttc-nr-v2x-demo-simple,figures/cttc-nr-v2x-demo-simple/cttc_pssch_sinr_distribution.png
+nr-v2x-west-to-east-highway,figures/nr-v2x-west-to-east-highway/highway_prr_per_tx.png
+nr-v2x-west-to-east-highway,figures/nr-v2x-west-to-east-highway/highway_pir_vs_distance.png
+nr-v2x-west-to-east-highway,figures/nr-v2x-west-to-east-highway/highway_top_links_throughput.png
+nr-v2x-west-to-east-highway,figures/nr-v2x-west-to-east-highway/highway_overlap_and_tb_fail_ratio.png
+v2v-cam-exchange-sionna-nrv2x,figures/v2v-cam-exchange-sionna-nrv2x/cam_sionna_prr_per_node.png
+v2v-cam-exchange-sionna-nrv2x,figures/v2v-cam-exchange-sionna-nrv2x/cam_sionna_phy_vs_distance.png
+v2v-coexistence-80211p-nrv2x,figures/v2v-coexistence-80211p-nrv2x/coexistence_prr_latency_by_tech.png
+v2v-coexistence-80211p-nrv2x,figures/v2v-coexistence-80211p-nrv2x/coexistence_prr_per_node.png
+v2v-coexistence-80211p-nrv2x,figures/v2v-coexistence-80211p-nrv2x/coexistence_sinr_cdf_by_tech.png
