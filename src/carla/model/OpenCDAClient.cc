@@ -20,6 +20,8 @@
 #include <fcntl.h>
 #include <libssh/libssh.h>
 #include <cstdlib>
+#include <cerrno>
+#include <sys/wait.h>
 
 #include "../proto/carla.pb.h"
 #include "../proto/carla.pb.h"
@@ -200,6 +202,22 @@ namespace ns3
   {
       m_includeNode = includeNode;
       m_excludeNode = excludeNode;
+      const char* forceOffscreenEnv = std::getenv("CARLA_FORCE_OFFSCREEN");
+      bool forceOffscreen = false;
+      if (forceOffscreenEnv != nullptr)
+        {
+          std::string offscreenValue(forceOffscreenEnv);
+          forceOffscreen = !(offscreenValue.empty() || offscreenValue == "0" || offscreenValue == "false" || offscreenValue == "FALSE");
+        }
+      const char* preferNvidiaEnv = std::getenv("CARLA_PREFER_NVIDIA");
+      bool preferNvidia = false;
+      if (preferNvidiaEnv != nullptr)
+        {
+          std::string preferValue(preferNvidiaEnv);
+          preferNvidia = !(preferValue.empty() || preferValue == "0" || preferValue == "false" || preferValue == "FALSE");
+        }
+      const char* extraArgsEnv = std::getenv("CARLA_EXTRA_ARGS");
+      std::string extraArgs = (extraArgsEnv != nullptr) ? std::string(extraArgsEnv) : std::string();
       if(!m_adapter_debug)
         {
           if (!m_carla_manual) {
@@ -207,12 +225,18 @@ namespace ns3
 
               if (m_carla_pid == 0) {
 
-                  std::string carla_command = "cd "+ m_carla_home +" && ./CarlaUE4.sh -prefernvidia -carla-port=" + std::to_string(m_carla_port) ;
-                  if (!m_carla_gui) {
+                  std::string carla_command = "cd "+ m_carla_home +" && ./CarlaUE4.sh -carla-port=" + std::to_string(m_carla_port);
+                  if (preferNvidia) {
+                      carla_command += " -prefernvidia";
+                  }
+                  if (!m_carla_gui || forceOffscreen) {
                       carla_command += " -RenderOffScreen";
                   }
-                  if(m_carla_gpu != 0 && !m_carla_gui) {
+                  if(m_carla_gpu != 0 && (!m_carla_gui || forceOffscreen)) {
                       carla_command += " -graphicsadapter=" + std::to_string(m_carla_gpu);
+                  }
+                  if (!extraArgs.empty()) {
+                      carla_command += " " + extraArgs;
                   }
                   setpgid(0, 0); // Create a new process group
 
@@ -354,6 +378,20 @@ namespace ns3
       if (m_opencda_manual) {
           server_ready = true;
       }
+      auto getLastOpencdaLogLine = [](const std::string& file_name) {
+          std::string lastLogLine = "(no OpenCDA output captured)";
+          std::ifstream errFile(file_name.c_str());
+          if (errFile.good()) {
+              std::string errLine;
+              while (std::getline(errFile, errLine)) {
+                  if (!errLine.empty()) {
+                      lastLogLine = errLine;
+                  }
+              }
+              errFile.close();
+          }
+          return lastLogLine;
+      };
       while (!server_ready) {
           // read /tmp/opencda_output.txt to see OpenCDA logs and check if there's a "Server ready" message
           std::string file_name = "/tmp/opencda_output_" + std::to_string(m_opencda_port) + ".txt";
@@ -368,12 +406,50 @@ namespace ns3
                 }
                 file.close();
             }
-          else {
-              // File does not exist, wait for 1 second before checking again
-              std::cout << "Waiting for OpenCDA Control Interface to be ready." << std::endl;
-              usleep(10000000);
+          if (!server_ready && !m_opencda_manual && m_opencda_pid > 0) {
+              int status = 0;
+              pid_t waitResult = waitpid(m_opencda_pid, &status, WNOHANG);
+              bool processExited = (waitResult == m_opencda_pid);
+              bool processMissing = (waitResult == -1 && errno == ECHILD);
+              if (!processExited && !processMissing && kill(m_opencda_pid, 0) != 0 && errno == ESRCH) {
+                  processMissing = true;
+              }
+              if (processExited || processMissing) {
+                  std::string lastLogLine = getLastOpencdaLogLine(file_name);
+                  std::string fatalMessage = "OpenCDA process exited before reporting 'Server ready'. "
+                                             "Check " + file_name + ". Last log line: " + lastLogLine;
+                  NS_FATAL_ERROR(fatalMessage.c_str());
+              }
           }
-
+          if (!server_ready && !m_carla_manual && m_carla_pid > 0) {
+              int carlaStatus = 0;
+              pid_t carlaWaitResult = waitpid(m_carla_pid, &carlaStatus, WNOHANG);
+              bool carlaExited = (carlaWaitResult == m_carla_pid);
+              bool carlaMissing = (carlaWaitResult == -1 && errno == ECHILD);
+              if (!carlaExited && !carlaMissing && kill(m_carla_pid, 0) != 0 && errno == ESRCH) {
+                  carlaMissing = true;
+              }
+              if (carlaExited || carlaMissing) {
+                  std::string carlaLog = "(no CARLA output captured)";
+                  std::ifstream carlaFile("/tmp/carla_output.txt");
+                  if (carlaFile.good()) {
+                      std::string carlaLine;
+                      while (std::getline(carlaFile, carlaLine)) {
+                          if (!carlaLine.empty()) {
+                              carlaLog = carlaLine;
+                          }
+                      }
+                      carlaFile.close();
+                  }
+                  std::string fatalMessage = "CARLA process exited before OpenCDA reported 'Server ready'. "
+                                             "Check /tmp/carla_output.txt. Last log line: " + carlaLog;
+                  NS_FATAL_ERROR(fatalMessage.c_str());
+              }
+          }
+          if (!server_ready) {
+              std::cout << "Waiting for OpenCDA Control Interface to be ready." << std::endl;
+              usleep(1000000);
+          }
       }
 
       if(m_opencda_host != "localhost") {
@@ -1010,4 +1086,3 @@ OpenCDAClient::getNextWaypoint(Vector location) {
   }
 
 }
-

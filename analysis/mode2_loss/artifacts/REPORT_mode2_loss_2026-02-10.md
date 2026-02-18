@@ -13,14 +13,14 @@ Sweep varied: txPower
 ## Measured Comms Degradation
 - PRR by tech: analysis/mode2_loss/figures/sweep/prr_by_tech.png
 - PRR vs loss knobs: analysis/mode2_loss/figures/sweep/prr_vs_txPower.png (and related plots)
+- AoI distribution: analysis/mode2_loss/figures/sweep/aoi_p95_hist_by_tech.png
 
 ## Measured Behavior Change
-- Histograms: analysis/mode2_loss/figures/sweep/hist_max_decel_by_tech.png, analysis/mode2_loss/figures/sweep/hist_time_to_first_brake_by_tech.png
+- Behavior vs PRR (time-to-first-brake): analysis/mode2_loss/figures/sweep/behavior_vs_prr_time_to_first_brake.png
+- Behavior vs PRR (max decel): analysis/mode2_loss/figures/sweep/behavior_vs_prr_max_decel.png
 
 ## Cross-link Comms → Behavior
-- PRR vs time_to_first_brake: analysis/mode2_loss/figures/sweep/scatter_prr_vs_time_to_first_brake.png
-- PRR vs max_decel: analysis/mode2_loss/figures/sweep/scatter_prr_vs_max_decel.png
-- PRR vs reaction delay: analysis/mode2_loss/figures/sweep/scatter_prr_vs_reaction_delay.png
+- PRR vs reaction delay: analysis/mode2_loss/figures/sweep/reaction_delay_vs_prr.png
 - PRR vs reaction delay (p90): analysis/mode2_loss/figures/sweep/reaction_delay_p90_vs_prr.png
 
 ## Conclusion Statement (Thesis-ready)

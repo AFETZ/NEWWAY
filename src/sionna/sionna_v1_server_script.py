@@ -3,10 +3,30 @@ import os
 import tensorflow as tf
 import numpy as np
 import socket
-from sionna.rt import load_scene, PlanarArray, Transmitter, Receiver, PathSolver
+import mitsuba as mi
 from scipy.spatial import cKDTree
 import subprocess, signal
 import argparse
+
+
+def _configure_mitsuba_variant():
+    requested_variant = os.getenv("SIONNA_MI_VARIANT")
+    if not requested_variant:
+        # Keep Sionna/Mitsuba default behavior (typically CUDA variant when available).
+        return
+    try:
+        mi.set_variant(requested_variant)
+    except Exception as exc:
+        if requested_variant != "llvm_ad_mono_polarized":
+            print(f"Failed to set Mitsuba variant '{requested_variant}' ({exc}), falling back to llvm_ad_mono_polarized.")
+            mi.set_variant("llvm_ad_mono_polarized")
+        else:
+            raise
+
+
+_configure_mitsuba_variant()
+
+from sionna.rt import load_scene, PlanarArray, Transmitter, Receiver, PathSolver
 
 
 def manage_location_message(message, sionna_structure):
@@ -438,21 +458,30 @@ def kill_process_using_port(port, verbose=False):
 # Configure GPU settings
 def configure_gpu(verbose=False, gpus=0):
     if os.getenv("CUDA_VISIBLE_DEVICES") is None:
-        gpu_num = gpus
-        os.environ["CUDA_VISIBLE_DEVICES"] = f"{gpu_num}"
+        if gpus <= 0:
+            # Keep CPU-only behavior for WSL/no-CUDA setups.
+            os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+        elif gpus == 1:
+            # One GPU requested -> first visible GPU.
+            os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+        else:
+            # N GPUs requested -> expose [0..N-1].
+            os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(str(i) for i in range(gpus))
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-    gpus = tf.config.list_physical_devices('GPU')
-    if gpus:
+    visible_gpus = tf.config.list_physical_devices('GPU')
+    if visible_gpus:
         try:
-            for gpu in gpus:
+            for gpu in visible_gpus:
                 tf.config.experimental.set_memory_growth(gpu, True)
         except RuntimeError as e:
             print(e)
 
     tf.get_logger().setLevel('ERROR')
     if verbose:
-        print("Configured TensorFlow and GPU settings.")
+        print(f"Configured TensorFlow and GPU settings. CUDA_VISIBLE_DEVICES={os.getenv('CUDA_VISIBLE_DEVICES')}")
+        print(f"Visible TensorFlow GPUs: {visible_gpus}")
+        print(f"Mitsuba variant: {mi.variant()}")
 
 
 # Main function to manage initialization and variables

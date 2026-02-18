@@ -108,6 +108,8 @@ main (int argc, char *argv[])
   xmlDocPtr rou_xml_file;
   double m_baseline_prr = 150.0;
   bool m_metric_sup = false;
+  double rx_drop_prob_cam = 0.0;
+  double rx_drop_prob_cpm = 0.0;
 
 
   // Simulation parameters.
@@ -159,6 +161,8 @@ main (int argc, char *argv[])
   cmd.AddValue ("netstate-dump-file", "Name of the SUMO netstate-dump file containing the vehicle-related information throughout the whole simulation", sumo_netstate_file_name);
   cmd.AddValue ("baseline", "Baseline for PRR calculation", m_baseline_prr);
   cmd.AddValue ("met-sup","Use the Metric supervisor or not",m_metric_sup);
+  cmd.AddValue ("rx-drop-prob-cam", "Application-level probability to drop received CAM packets", rx_drop_prob_cam);
+  cmd.AddValue ("rx-drop-prob-cpm", "Application-level probability to drop received CPM packets", rx_drop_prob_cpm);
   cmd.AddValue ("penetrationRate", "Rate of vehicles equipped with wireless communication devices", penetrationRate);
 
   cmd.AddValue ("simTime",
@@ -681,6 +685,8 @@ main (int argc, char *argv[])
   EmergencyVehicleAlertHelper.SetAttribute ("CSV", StringValue(csv_name));
   EmergencyVehicleAlertHelper.SetAttribute ("Model", StringValue ("nrv2x"));
   EmergencyVehicleAlertHelper.SetAttribute ("MetricSupervisor", PointerValue (metSup));
+  EmergencyVehicleAlertHelper.SetAttribute ("RxDropProbCam", DoubleValue (rx_drop_prob_cam));
+  EmergencyVehicleAlertHelper.SetAttribute ("RxDropProbCpm", DoubleValue (rx_drop_prob_cpm));
 
   /* callback function for node creation */
   int i=0;
@@ -758,4 +764,3 @@ main (int argc, char *argv[])
 
   return 0;
 }
-

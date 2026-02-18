@@ -1,0 +1,4 @@
+case_id,rx_drop_prob_cam,avg_prr,avg_latency_ms,min_gap_m,min_ttc_s,risky_gap_events,risky_ttc_events,control_actions,cam_drop_app_events,cam_rx_ok_events,observed_cam_drop_ratio,run_dir
+drop_0p0,0.0,0.952859,12.0656,6.01,3.669,0.0,0.0,78,0,14988,0.0,/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-18/eva-loss-sweep-1550/drop_0p0
+drop_0p4,0.4,0.952314,12.1538,6.01,4.439,0.0,0.0,42,6090,8939,0.40521658127619936,/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-18/eva-loss-sweep-1550/drop_0p4
+drop_0p8,0.8,0.951845,12.0064,6.01,4.382,0.0,0.0,15,12198,2962,0.8046174142480211,/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-18/eva-loss-sweep-1550/drop_0p8

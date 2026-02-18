@@ -110,7 +110,17 @@ namespace ns3
            "To enable/disable the transmission of CPM messages",
            BooleanValue(true),
            MakeBooleanAccessor (&emergencyVehicleAlert::m_send_cpm),
-           MakeBooleanChecker ());
+           MakeBooleanChecker ())
+        .AddAttribute ("RxDropProbCam",
+           "Probability to drop received CAM messages at the application level",
+           DoubleValue (0.0),
+           MakeDoubleAccessor (&emergencyVehicleAlert::m_rx_drop_prob_cam),
+           MakeDoubleChecker<double> (0.0, 1.0))
+        .AddAttribute ("RxDropProbCpm",
+           "Probability to drop received CPM messages at the application level",
+           DoubleValue (0.0),
+           MakeDoubleAccessor (&emergencyVehicleAlert::m_rx_drop_prob_cpm),
+           MakeDoubleChecker<double> (0.0, 1.0));
         return tid;
   }
 
@@ -121,12 +131,21 @@ namespace ns3
     m_print_summary = true;
     m_already_print = false;
     m_send_cam = true;
+    m_send_cpm = true;
 
     m_denm_sent = 0;
     m_cam_received = 0;
     m_cpm_received = 0;
+    m_cam_dropped_app = 0;
+    m_cpm_dropped_app = 0;
     m_denm_received = 0;
+    m_control_actions = 0;
     m_denm_intertime = 0;
+    m_rx_drop_prob_cam = 0.0;
+    m_rx_drop_prob_cpm = 0.0;
+    m_drop_rv = CreateObject<UniformRandomVariable> ();
+    m_drop_rv->SetAttribute ("Min", DoubleValue (0.0));
+    m_drop_rv->SetAttribute ("Max", DoubleValue (1.0));
 
     m_distance_threshold = 75; // Distance used in GeoNet to determine the radius of the circumference arounf the emergency vehicle where the DENMs are valid
     m_heading_threshold = 45; // Max heading angle difference between the normal vehicles and the emergenecy vehicle, that triggers a reaction in the normal vehicles
@@ -159,6 +178,10 @@ namespace ns3
     m_id = m_client->GetVehicleId (this->GetNode ());
     m_type = m_client->TraCIAPI::vehicle.getVehicleClass (m_id);
     m_max_speed = m_client->TraCIAPI::vehicle.getMaxSpeed (m_id);
+    if (m_drop_rv != nullptr && m_id.size () > 3)
+      {
+        m_drop_rv->SetStream (std::stol (m_id.substr (3)));
+      }
 
     VDP* traci_vdp = new VDPTraCI(m_client,m_id);
 
@@ -311,6 +334,8 @@ namespace ns3
       m_csv_ofstream_cam << "messageId,camId,timestamp,latitude,longitude,heading,speed,acceleration" << std::endl;
       m_csv_ofstream_msg.open (m_csv_name+"-"+m_id+"-MSG.csv",std::ofstream::trunc);
       m_csv_ofstream_msg << "vehicle_id,msg_seq,tx_t_s,rx_t_s,rx_ok,msg_type,tx_id,rx_id,cam_gdt_ms" << std::endl;
+      m_csv_ofstream_ctrl.open (m_csv_name+"-"+m_id+"-CTRL.csv",std::ofstream::trunc);
+      m_csv_ofstream_ctrl << "time_s,vehicle_id,event_type,source_id,distance_m,heading_diff_deg,lane_before,lane_after,target_speed_mps" << std::endl;
     }
   }
 
@@ -331,6 +356,10 @@ namespace ns3
         {
           m_csv_ofstream_msg.close ();
         }
+      if (m_csv_ofstream_ctrl.is_open ())
+        {
+          m_csv_ofstream_ctrl.close ();
+        }
     }
 
     cam_sent = m_caService.terminateDissemination ();
@@ -344,8 +373,11 @@ namespace ns3
       std::cout << "INFO-" << m_id
                 << ",CAM-SENT:" << cam_sent
                 << ",CAM-RECEIVED:" << m_cam_received
+                << ",CAM-DROPPED-APP:" << m_cam_dropped_app
                 << ",CPM-SENT: " << cpm_sent
                 << ",CPM-RECEIVED: " << m_cpm_received
+                << ",CPM-DROPPED-APP:" << m_cpm_dropped_app
+                << ",CONTROL-ACTIONS:" << m_control_actions
                 << std::endl;
       m_already_print=true;
     }
@@ -373,9 +405,55 @@ namespace ns3
   }
 
   void
+  emergencyVehicleAlert::LogControlEvent (const std::string& eventType,
+                                          long txId,
+                                          double distanceMeters,
+                                          double headingDiffDeg,
+                                          int laneBefore,
+                                          int laneAfter,
+                                          double speedTarget)
+  {
+    if (m_csv_name.empty () || !m_csv_ofstream_ctrl.is_open ())
+      {
+        return;
+      }
+    m_csv_ofstream_ctrl << Simulator::Now ().GetSeconds ()
+                        << "," << m_id
+                        << "," << eventType
+                        << "," << txId
+                        << "," << distanceMeters
+                        << "," << headingDiffDeg
+                        << "," << laneBefore
+                        << "," << laneAfter
+                        << "," << speedTarget
+                        << std::endl;
+  }
+
+  void
   emergencyVehicleAlert::receiveCAM (asn1cpp::Seq<CAM> cam, Address from)
   {
     /* Implement CAM strategy here */
+   (void) from;
+   long tx_id = asn1cpp::getField (cam->header.stationId,long);
+   long cam_gdt_ms = asn1cpp::getField (cam->cam.generationDeltaTime,long);
+   long rx_id = 0;
+   if (m_id.size () > 3)
+     {
+       rx_id = std::stol(m_id.substr (3));
+     }
+
+   if (m_rx_drop_prob_cam > 0.0 && m_drop_rv != nullptr && m_drop_rv->GetValue () < m_rx_drop_prob_cam)
+     {
+       m_cam_dropped_app++;
+       if (!m_csv_name.empty () && m_csv_ofstream_msg.is_open ())
+         {
+           m_csv_ofstream_msg << m_id << "," << cam_gdt_ms << ",,"
+                              << Simulator::Now ().GetSeconds ()
+                              << "," << 0 << ",CAM_DROP_APP,"
+                              << tx_id << "," << rx_id << "," << cam_gdt_ms << std::endl;
+         }
+       return;
+     }
    m_cam_received++;
 
    /* If the CAM is received from an emergency vehicle, and the host vehicle is a "passenger" car, then process the CAM */
@@ -383,36 +461,43 @@ namespace ns3
    {
      libsumo::TraCIPosition pos=m_client->TraCIAPI::vehicle.getPosition(m_id);
      pos=m_client->TraCIAPI::simulation.convertXYtoLonLat (pos.x,pos.y);
+     double emergencyLat = asn1cpp::getField(cam->cam.camParameters.basicContainer.referencePosition.latitude,double)/DOT_ONE_MICRO;
+     double emergencyLon = asn1cpp::getField(cam->cam.camParameters.basicContainer.referencePosition.longitude,double)/DOT_ONE_MICRO;
+     double distance = appUtil_haversineDist (pos.y,pos.x, emergencyLat, emergencyLon);
+     double headingDiff = appUtil_angDiff (m_client->TraCIAPI::vehicle.getAngle (m_id),
+                                           (double)asn1cpp::getField(cam->cam.camParameters.highFrequencyContainer.choice.basicVehicleContainerHighFrequency.heading.headingValue,HeadingValue_t)/DECI);
 
      /* If the distance between the "passenger" car and the emergency vehicle and the difference in the heading angles
       * are below certain thresholds, then actuate the slow-down strategy */
-     if (appUtil_haversineDist (pos.y,pos.x,
-                                asn1cpp::getField(cam->cam.camParameters.basicContainer.referencePosition.latitude,double)/DOT_ONE_MICRO,
-                                asn1cpp::getField(cam->cam.camParameters.basicContainer.referencePosition.longitude,double)/DOT_ONE_MICRO)
-         < m_distance_threshold
-         &&
-         appUtil_angDiff (m_client->TraCIAPI::vehicle.getAngle (m_id),(double)asn1cpp::getField(cam->cam.camParameters.highFrequencyContainer.choice.basicVehicleContainerHighFrequency.heading.headingValue,HeadingValue_t)/DECI)<m_heading_threshold)
+     if (distance < m_distance_threshold && headingDiff < m_heading_threshold)
      {
        /* Slowdown only if you are not in the takeover lane,
         * otherwise the emergency vechicle may get stuck behind */
-       if (m_client->TraCIAPI::vehicle.getLaneIndex (m_id) == 0)
+       int laneBefore = m_client->TraCIAPI::vehicle.getLaneIndex (m_id);
+       if (laneBefore == 0)
        {
+         double targetSpeed = m_max_speed * 0.5;
          m_client->TraCIAPI::vehicle.changeLane (m_id,0,3);
-         m_client->TraCIAPI::vehicle.setMaxSpeed (m_id, m_max_speed*0.5);
+         m_client->TraCIAPI::vehicle.setMaxSpeed (m_id, targetSpeed);
          libsumo::TraCIColor orange;
          orange.r=232;orange.g=126;orange.b=4;orange.a=255;
          m_client->TraCIAPI::vehicle.setColor (m_id,orange);
+         m_control_actions++;
+         LogControlEvent ("lane0_slowdown", tx_id, distance, headingDiff, laneBefore, 0, targetSpeed);
 
          Simulator::Remove(m_speed_ev);
          m_speed_ev = Simulator::Schedule (Seconds (3.0), &emergencyVehicleAlert::SetMaxSpeed, this);
        }
        else
        {
+         double targetSpeed = m_max_speed * 1.5;
          m_client->TraCIAPI::vehicle.changeLane (m_id,0,3);
-         m_client->TraCIAPI::vehicle.setMaxSpeed (m_id, m_max_speed*1.5);
+         m_client->TraCIAPI::vehicle.setMaxSpeed (m_id, targetSpeed);
          libsumo::TraCIColor green;
          green.r=0;green.g=128;green.b=80;green.a=255;
          m_client->TraCIAPI::vehicle.setColor (m_id,green);
+         m_control_actions++;
+         LogControlEvent ("lane1_speedup", tx_id, distance, headingDiff, laneBefore, 0, targetSpeed);
 
          Simulator::Remove(m_speed_ev);
          m_speed_ev = Simulator::Schedule (Seconds (3.0), &emergencyVehicleAlert::SetMaxSpeed, this);
@@ -431,15 +516,7 @@ namespace ns3
      }
    if (!m_csv_name.empty () && m_csv_ofstream_msg.is_open ())
      {
-       long cam_gdt_ms = asn1cpp::getField(cam->cam.generationDeltaTime,long);
-       long tx_id = asn1cpp::getField(cam->header.stationId,long);
-       long rx_id = 0;
-       if (m_id.size () > 3)
-         {
-           rx_id = std::stol(m_id.substr (3));
-         }
-       double now_s = Simulator::Now ().GetSeconds ();
-       m_csv_ofstream_msg << m_id << "," << cam_gdt_ms << ",," << now_s
+       m_csv_ofstream_msg << m_id << "," << cam_gdt_ms << ",," << Simulator::Now ().GetSeconds ()
                           << "," << 1 << ",CAM," << tx_id << "," << rx_id << "," << cam_gdt_ms << std::endl;
      }
 
@@ -449,9 +526,28 @@ namespace ns3
   emergencyVehicleAlert::receiveCPMV1 (asn1cpp::Seq<CPMV1> cpm, Address from)
   {
     /* Implement CPM strategy here */
+    long tx_id = asn1cpp::getField (cpm->header.stationId,long);
+    long msg_seq = asn1cpp::getField (cpm->cpm.generationDeltaTime,long);
+    long rx_id = 0;
+    if (m_id.size () > 3)
+      {
+        rx_id = std::stol(m_id.substr (3));
+      }
+    if (m_rx_drop_prob_cpm > 0.0 && m_drop_rv != nullptr && m_drop_rv->GetValue () < m_rx_drop_prob_cpm)
+      {
+        m_cpm_dropped_app++;
+        if (!m_csv_name.empty () && m_csv_ofstream_msg.is_open ())
+          {
+            m_csv_ofstream_msg << m_id << "," << msg_seq << ",,"
+                               << Simulator::Now ().GetSeconds ()
+                               << "," << 0 << ",CPM_DROP_APP,"
+                               << tx_id << "," << rx_id << "," << msg_seq << std::endl;
+          }
+        return;
+      }
     m_cpm_received++;
     (void) from;
-    std::cout << "["<< Simulator::Now ().GetSeconds ()<<"] " << m_id <<" received a new CPMv1 from vehicle " << asn1cpp::getField(cpm->header.stationId,long) <<" with "<< asn1cpp::getField(cpm->cpm.cpmParameters.numberOfPerceivedObjects,long)<< " perceived objects." <<std::endl;
+    std::cout << "["<< Simulator::Now ().GetSeconds ()<<"] " << m_id <<" received a new CPMv1 from vehicle " << tx_id <<" with "<< asn1cpp::getField(cpm->cpm.cpmParameters.numberOfPerceivedObjects,long)<< " perceived objects." <<std::endl;
     //For every PO inside the CPM, if any
     bool POs_ok;
     auto PObjects = asn1cpp::getSeqOpt(cpm->cpm.cpmParameters.perceivedObjectContainer,PerceivedObjectContainer,&POs_ok);
@@ -555,10 +651,28 @@ namespace ns3
   emergencyVehicleAlert::receiveCPM (asn1cpp::Seq<CollectivePerceptionMessage> cpm, Address from)
   {
     /* Implement CPM strategy here */
+    long tx_id = asn1cpp::getField (cpm->header.stationId,long);
+    long msg_seq = asn1cpp::getField (cpm->payload.managementContainer.referenceTime,long);
+    long rx_id = 0;
+    if (m_id.size () > 3)
+      {
+        rx_id = std::stol(m_id.substr (3));
+      }
+    if (m_rx_drop_prob_cpm > 0.0 && m_drop_rv != nullptr && m_drop_rv->GetValue () < m_rx_drop_prob_cpm)
+      {
+        m_cpm_dropped_app++;
+        if (!m_csv_name.empty () && m_csv_ofstream_msg.is_open ())
+          {
+            m_csv_ofstream_msg << m_id << "," << msg_seq << ",,"
+                               << Simulator::Now ().GetSeconds ()
+                               << "," << 0 << ",CPM_DROP_APP,"
+                               << tx_id << "," << rx_id << "," << msg_seq << std::endl;
+          }
+        return;
+      }
     m_cpm_received++;
     (void) from;
     //For every PO inside the CPM, if any
-    bool POs_ok;
     //auto wrappedContainer = asn1cpp::makeSeq(WrappedCpmContainer);
     int wrappedContainer_size = asn1cpp::sequenceof::getSize(cpm->payload.cpmContainers);
     for (int i=0; i<wrappedContainer_size; i++)
@@ -569,7 +683,7 @@ namespace ns3
         {
           auto POcontainer = asn1cpp::getSeq(wrappedContainer->containerData.choice.PerceivedObjectContainer,PerceivedObjectContainer);
           int PObjects_size = asn1cpp::sequenceof::getSize(POcontainer->perceivedObjects);
-          std::cout << "["<< Simulator::Now ().GetSeconds ()<<"] " << m_id <<" received a new CPMv2 from " << asn1cpp::getField(cpm->header.stationId,long) << " with " << PObjects_size << " perceived objects." << std::endl;
+          std::cout << "["<< Simulator::Now ().GetSeconds ()<<"] " << m_id <<" received a new CPMv2 from " << tx_id << " with " << PObjects_size << " perceived objects." << std::endl;
           for(int j=0; j<PObjects_size;j++)
               {
                LDM::returnedVehicleData_t PO_data;
@@ -629,4 +743,3 @@ namespace ns3
 
 
   }
-

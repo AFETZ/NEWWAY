@@ -33,6 +33,7 @@
 #include "ns3/log.h"
 #include "ns3/antenna-module.h"
 #include <iomanip>
+#include <cstdlib>
 
 
 #include <unistd.h>
@@ -688,6 +689,17 @@ main (int argc, char *argv[])
 
   /*** 6. Setup OpenCDA client ***/
   Ptr<OpenCDAClient> opencda_client = CreateObject<OpenCDAClient> ();
+  auto envBool = [] (const char* key, bool defaultValue) -> bool
+    {
+      const char* value = std::getenv (key);
+      if (value == nullptr)
+        {
+          return defaultValue;
+        }
+      std::string s (value);
+      return !(s.empty () || s == "0" || s == "false" || s == "FALSE");
+    };
+
   if (sionna)
     {
       opencda_client->SetSionnaUp();
@@ -700,6 +712,8 @@ main (int argc, char *argv[])
   opencda_client->SetAttribute ("OpenCDA_HOME", StringValue(OpenCDA_HOME));
   opencda_client->SetAttribute ("CARLA_HOME", StringValue(CARLA_HOME));
   opencda_client->SetAttribute ("PythonInterpreter", StringValue(Python_Interpreter));
+  opencda_client->SetAttribute ("CARLAManual", BooleanValue (envBool ("CARLA_MANUAL", false)));
+  opencda_client->SetAttribute ("OpenCDAManual", BooleanValue (envBool ("OPENCDA_MANUAL", false)));
   /* If active perception is specified in OpenCDA's config YAML (eg. ms_van3t_example_ml). Default -> false */
   opencda_client->SetAttribute ("ApplyML", BooleanValue(opencda_ml));
 
@@ -798,5 +812,4 @@ main (int argc, char *argv[])
 
   return 0;
 }
-
 
