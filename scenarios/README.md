@@ -26,6 +26,12 @@ scenarios/v2v-emergencyVehicleAlert-nrv2x/run.sh
 - `OUT_DIR` — куда складывать лог/артефакты
 - `PLOT=0|1` — строить ли графики после прогона (по умолчанию `1`)
 - `NS3_USER_OVERRIDE` — имя пользователя для вызова `./ns3` при запуске из root-shell (по умолчанию `ns3`)
+- `NS3_CONFIGURE_ARGS` — аргументы для auto-`./ns3 configure` (по умолчанию `--enable-examples --build-profile=optimized --disable-werror`)
+- `NS3_REQUIRE_OPTIMIZED=0|1` — требовать ли optimized profile при auto-configure (по умолчанию `1`)
+- `NS3_SYNC_OVERLAY=0|1` — синхронизировать `src/` из overlay в `.bootstrap-ns3` перед сборкой (по умолчанию `1`)
+- `EXPORT_RESULTS=0|1` — дублировать результаты в `analysis/scenario_runs/chatgpt_exports/` (по умолчанию `1`)
+- `EXPORT_ROOT` — корень export-папки
+- `EXPORT_INCLUDE_RAW_CSV=0|1` — включать все CSV в экспортный бандл
 
 ## Автоподготовка `ns-3-dev`
 
@@ -36,7 +42,8 @@ scenarios/v2v-emergencyVehicleAlert-nrv2x/run.sh
   - `<repo>/.bootstrap-ns3/repo/ns-3-dev`
 - если ничего не найдено, запускается bootstrap в `<repo>/.bootstrap-ns3`.
 - после обнаружения дерева `ns-3-dev`, `run.sh` проверяет конфиг и при необходимости выполняет
-  `./ns3 configure --enable-examples`, чтобы целевые сценарии были доступны для сборки.
+  `./ns3 configure` (по умолчанию: `--enable-examples --build-profile=optimized --disable-werror`),
+  чтобы целевые сценарии были доступны для сборки и не падали на debug-assert в default profile.
 
 Управляющие переменные:
 - `AUTO_BOOTSTRAP_NS3=0|1` — включить/выключить авто-bootstrap (по умолчанию `1`)
@@ -46,6 +53,7 @@ scenarios/v2v-emergencyVehicleAlert-nrv2x/run.sh
 Для сценария `v2v-emergencyVehicleAlert-nrv2x`:
 - есть `run_loss_sweep.sh` для baseline/lossy sweep по `--rx-drop-prob-cam`
 - автоматически считается safety-прокси из SUMO netstate (`min gap`, `min TTC`, risky events)
+- доступен incident-mode (`--incident-enable=1`) для кейса "сломавшееся авто + объезд"
 
 ## Где результаты
 

@@ -41,6 +41,10 @@
 
 
 #include <unistd.h>
+#include <algorithm>
+#include <functional>
+#include <iostream>
+#include <memory>
 #include "ns3/core-module.h"
 
 
@@ -110,6 +114,12 @@ main (int argc, char *argv[])
   bool m_metric_sup = false;
   double rx_drop_prob_cam = 0.0;
   double rx_drop_prob_cpm = 0.0;
+  bool incident_enable = false;
+  std::string incident_vehicle_id = "veh2";
+  double incident_time_s = 12.0;
+  double incident_stop_duration_s = 15.0;
+  double incident_recover_max_speed_mps = -1.0;
+  uint32_t incident_retry_max = 20;
 
 
   // Simulation parameters.
@@ -164,6 +174,14 @@ main (int argc, char *argv[])
   cmd.AddValue ("rx-drop-prob-cam", "Application-level probability to drop received CAM packets", rx_drop_prob_cam);
   cmd.AddValue ("rx-drop-prob-cpm", "Application-level probability to drop received CPM packets", rx_drop_prob_cpm);
   cmd.AddValue ("penetrationRate", "Rate of vehicles equipped with wireless communication devices", penetrationRate);
+  cmd.AddValue ("incident-enable", "Enable stalled incident vehicle injection", incident_enable);
+  cmd.AddValue ("incident-vehicle-id", "Vehicle ID to force-stop as incident source", incident_vehicle_id);
+  cmd.AddValue ("incident-time-s", "Simulation time [s] when incident stop is injected", incident_time_s);
+  cmd.AddValue ("incident-stop-duration-s", "How long to keep incident vehicle stopped [s]", incident_stop_duration_s);
+  cmd.AddValue ("incident-recover-max-speed-mps",
+                "Recovery max speed [m/s] after incident; negative keeps original speed",
+                incident_recover_max_speed_mps);
+  cmd.AddValue ("incident-retry-max", "Max retries while waiting for incident vehicle to appear", incident_retry_max);
 
   cmd.AddValue ("simTime",
                 "Simulation time in seconds",
@@ -729,6 +747,143 @@ main (int argc, char *argv[])
 
   /* start traci client with given function pointers */
   sumoClient->SumoSetup (setupNewWifiNode, shutdownWifiNode);
+
+  if (incident_enable)
+    {
+      auto incidentAttempts = std::make_shared<uint32_t> (0);
+      auto originalMaxSpeed = std::make_shared<double> (-1.0);
+      std::function<void ()> applyIncident;
+      applyIncident = [&, incidentAttempts, originalMaxSpeed] () mutable
+        {
+          ++(*incidentAttempts);
+          std::vector<std::string> activeVehicles = sumoClient->TraCIAPI::vehicle.getIDList ();
+          bool found = std::find (activeVehicles.begin (), activeVehicles.end (), incident_vehicle_id) != activeVehicles.end ();
+          if (!found)
+            {
+              if (*incidentAttempts <= incident_retry_max)
+                {
+                  NS_LOG_WARN ("Incident vehicle '" << incident_vehicle_id
+                               << "' not present yet; retry " << *incidentAttempts << "/" << incident_retry_max);
+                  Simulator::Schedule (Seconds (1.0), applyIncident);
+                }
+              else
+                {
+                  NS_LOG_ERROR ("Incident injection failed: vehicle '" << incident_vehicle_id << "' never appeared");
+                }
+              return;
+            }
+
+          std::string roadId = sumoClient->TraCIAPI::vehicle.getRoadID (incident_vehicle_id);
+          int laneIdx = sumoClient->TraCIAPI::vehicle.getLaneIndex (incident_vehicle_id);
+          double lanePos = sumoClient->TraCIAPI::vehicle.getLanePosition (incident_vehicle_id);
+          *originalMaxSpeed = sumoClient->TraCIAPI::vehicle.getMaxSpeed (incident_vehicle_id);
+
+          // Force immediate low-speed hold first (works even when setStop is rejected by SUMO).
+          sumoClient->TraCIAPI::vehicle.setMaxSpeed (incident_vehicle_id, 0.1);
+          sumoClient->TraCIAPI::vehicle.setSpeed (incident_vehicle_id, 0.0);
+          sumoClient->TraCIAPI::vehicle.slowDown (incident_vehicle_id, 0.0, 1.0);
+
+          auto holdStopped = std::make_shared<std::function<void (double)>> ();
+          *holdStopped = [&, holdStopped] (double remainingS)
+            {
+              if (remainingS <= 0.0)
+                {
+                  return;
+                }
+              try
+                {
+                  sumoClient->TraCIAPI::vehicle.setMaxSpeed (incident_vehicle_id, 0.1);
+                  sumoClient->TraCIAPI::vehicle.setSpeed (incident_vehicle_id, 0.0);
+                  sumoClient->TraCIAPI::vehicle.slowDown (incident_vehicle_id, 0.0, 0.2);
+                }
+              catch (const std::exception &)
+                {
+                  return;
+                }
+              double next = std::min (0.5, remainingS);
+              Simulator::Schedule (Seconds (next), [holdStopped, remainingS, next] () mutable {
+                (*holdStopped) (remainingS - next);
+              });
+            };
+
+          bool stopApplied = false;
+          if (!roadId.empty () && roadId[0] != ':')
+            {
+              int stopLane = std::max (0, laneIdx);
+              double stopPos = lanePos + 5.0;
+              if (!std::isfinite (stopPos) || stopPos < 1.0)
+                {
+                  stopPos = 1.0;
+                }
+              try
+                {
+                  sumoClient->TraCIAPI::vehicle.setStop (incident_vehicle_id,
+                                                         roadId,
+                                                         stopPos,
+                                                         stopLane,
+                                                         incident_stop_duration_s,
+                                                         0,
+                                                         0.0,
+                                                         -1.0);
+                  stopApplied = true;
+                }
+              catch (const std::exception &e)
+                {
+                  NS_LOG_WARN ("setStop failed for incident vehicle '" << incident_vehicle_id
+                               << "': " << e.what () << ". Falling back to low max-speed hold.");
+                }
+            }
+          (*holdStopped) (incident_stop_duration_s);
+
+          libsumo::TraCIColor incidentColor;
+          incidentColor.r = 230;
+          incidentColor.g = 30;
+          incidentColor.b = 30;
+          incidentColor.a = 255;
+          sumoClient->TraCIAPI::vehicle.setColor (incident_vehicle_id, incidentColor);
+
+          std::cout << "INCIDENT-APPLIED,id=" << incident_vehicle_id
+                    << ",time_s=" << Simulator::Now ().GetSeconds ()
+                    << ",road=" << roadId
+                    << ",lane=" << laneIdx
+                    << ",lane_pos_m=" << lanePos
+                    << ",duration_s=" << incident_stop_duration_s
+                    << ",setStopApplied=" << (stopApplied ? 1 : 0)
+                    << std::endl;
+
+          if (incident_stop_duration_s > 0.0)
+            {
+              Simulator::Schedule (Seconds (incident_stop_duration_s),
+                                   [&, originalMaxSpeed] ()
+                                   {
+                                     double recoverSpeed = incident_recover_max_speed_mps;
+                                     if (recoverSpeed < 0.0)
+                                       {
+                                         recoverSpeed = *originalMaxSpeed;
+                                       }
+                                     if (recoverSpeed > 0.0)
+                                       {
+                                         sumoClient->TraCIAPI::vehicle.setMaxSpeed (incident_vehicle_id, recoverSpeed);
+                                         sumoClient->TraCIAPI::vehicle.setSpeed (incident_vehicle_id, -1.0);
+                                         sumoClient->TraCIAPI::vehicle.slowDown (incident_vehicle_id, recoverSpeed, 2.0);
+                                         std::cout << "INCIDENT-RELEASED,id=" << incident_vehicle_id
+                                                   << ",time_s=" << Simulator::Now ().GetSeconds ()
+                                                   << ",recover_max_speed_mps=" << recoverSpeed
+                                                   << std::endl;
+                                       }
+                                   });
+            }
+        };
+      if (incident_time_s >= simTime)
+        {
+          NS_LOG_WARN ("incident-time-s >= simTime, incident will not trigger: "
+                       << incident_time_s << " >= " << simTime);
+        }
+      else
+        {
+          Simulator::Schedule (Seconds (incident_time_s), applyIncident);
+        }
+    }
 
   /*** 8. Start Simulation ***/
   Simulator::Stop (Seconds(simTime));

@@ -9,8 +9,14 @@ RUN_ARGS="${RUN_ARGS:---sumo-gui=0 --sim-time=20}"
 EXTRA_ARGS="${EXTRA_ARGS:-}"
 PLOT="${PLOT:-1}"
 RUN_RETRIES="${RUN_RETRIES:-3}"
+EXPORT_RESULTS="${EXPORT_RESULTS:-1}"
+EXPORT_ROOT="${EXPORT_ROOT:-$ROOT/analysis/scenario_runs/chatgpt_exports}"
+EXPORT_INCLUDE_RAW_CSV="${EXPORT_INCLUDE_RAW_CSV:-0}"
+NS3_CONFIGURE_ARGS="${NS3_CONFIGURE_ARGS:---enable-examples --build-profile=optimized --disable-werror}"
+NS3_REQUIRE_OPTIMIZED="${NS3_REQUIRE_OPTIMIZED:-1}"
 
 NS3_DIR="$("$ROOT/scripts/ensure-ns3-dev.sh" --root "$ROOT" --ns3-dir "$NS3_DIR")"
+"$ROOT/scripts/sync-overlay-into-bootstrap-ns3.sh" --root "$ROOT" --ns3-dir "$NS3_DIR"
 if [[ ! -x "$NS3_DIR/switch_ms-van3t-interference.sh" ]]; then
   echo "Missing script: $NS3_DIR/switch_ms-van3t-interference.sh"
   exit 1
@@ -26,10 +32,17 @@ else
   run_ns3() { ./ns3 "$@"; }
 fi
 
-if ! run_ns3 show config 2>/dev/null \
-  | sed -r 's/\x1B\[[0-9;]*[mK]//g' \
-  | grep -Eq 'Examples[[:space:]]*:[[:space:]]*ON'; then
-  run_ns3 configure --enable-examples
+CONFIG_STATE="$(run_ns3 show config 2>/dev/null | sed -r 's/\x1B\[[0-9;]*[mK]//g' || true)"
+need_configure=0
+if ! grep -Eq 'Examples[[:space:]]*:[[:space:]]*ON' <<<"$CONFIG_STATE"; then
+  need_configure=1
+fi
+if [[ "$NS3_REQUIRE_OPTIMIZED" == "1" ]] && ! grep -Eq 'Build profile[[:space:]]*:[[:space:]]*optimized' <<<"$CONFIG_STATE"; then
+  need_configure=1
+fi
+if [[ "$need_configure" -eq 1 ]]; then
+  read -r -a configure_args <<< "$NS3_CONFIGURE_ARGS"
+  run_ns3 configure "${configure_args[@]}"
 fi
 
 cleanup() {
@@ -77,15 +90,26 @@ do
   fi
 done
 
+PY_BIN="$ROOT/.venv/bin/python"
+if [[ ! -x "$PY_BIN" ]]; then
+  PY_BIN="python3"
+fi
+
 if [[ "$PLOT" == "1" ]]; then
-  PLOT_PY="$ROOT/.venv/bin/python"
-  if [[ ! -x "$PLOT_PY" ]]; then
-    PLOT_PY="python3"
-  fi
-  if ! "$PLOT_PY" "$ROOT/analysis/scenario_runs/make_plots.py" \
+  if ! "$PY_BIN" "$ROOT/analysis/scenario_runs/make_plots.py" \
     --run-dir "$OUT_DIR" \
     --scenario "v2v-coexistence-80211p-nrv2x"; then
     echo "Warning: plot generation failed for v2v-coexistence-80211p-nrv2x"
+  fi
+fi
+
+if [[ "$EXPORT_RESULTS" == "1" ]]; then
+  export_args=(--run-dir "$OUT_DIR" --export-root "$EXPORT_ROOT")
+  if [[ "$EXPORT_INCLUDE_RAW_CSV" == "1" ]]; then
+    export_args+=(--include-raw-csv)
+  fi
+  if ! "$PY_BIN" "$ROOT/analysis/scenario_runs/export_results_bundle.py" "${export_args[@]}"; then
+    echo "Warning: export bundle generation failed for v2v-coexistence-80211p-nrv2x"
   fi
 fi
 

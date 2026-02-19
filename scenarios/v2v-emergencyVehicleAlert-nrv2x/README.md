@@ -11,6 +11,12 @@ NR-V2X Mode 2 сценарий с поведенческой реакцией н
   управляемый application-level fault injection для приема CAM/CPM.
 - Логи управления `*-CTRL.csv`:
   фиксируют моменты и типы маневров (`lane0_slowdown` / `lane1_speedup`).
+- Incident-mode для "сломавшегося" автомобиля:
+  - `--incident-enable=1`
+  - `--incident-vehicle-id=<vehX>`
+  - `--incident-time-s=<t>`
+  - `--incident-stop-duration-s=<sec>`
+  - `--incident-recover-max-speed-mps=<v>` (отрицательное значение = восстановить исходную скорость)
 
 ## Запуск одного прогона
 
@@ -29,6 +35,9 @@ scenarios/v2v-emergencyVehicleAlert-nrv2x/run.sh
 - `CSV_PREFIX` — префикс CSV артефактов
 - `NETSTATE_FILE` — путь к netstate XML
 - `RISK_GAP_THRESHOLD`, `RISK_TTC_THRESHOLD` — пороги risky events
+- `EXPORT_RESULTS=0|1` — дублировать результаты в export-папку
+- `EXPORT_ROOT` — корень export-папки (по умолчанию `analysis/scenario_runs/chatgpt_exports`)
+- `EXPORT_INCLUDE_RAW_CSV=0|1` — включать все CSV (может быть много файлов)
 
 ## Sweep baseline vs lossy
 
@@ -37,6 +46,7 @@ scenarios/v2v-emergencyVehicleAlert-nrv2x/run_loss_sweep.sh
 ```
 
 По умолчанию sweep по `LOSS_PROBS="0.0 0.3 0.6"`.
+По умолчанию incident-mode включен через `INCIDENT_ARGS` в `run_loss_sweep.sh`.
 
 ## Что сохраняется
 
@@ -54,3 +64,7 @@ scenarios/v2v-emergencyVehicleAlert-nrv2x/run_loss_sweep.sh
 - Для sweep:
   - `loss_sweep_summary.csv`
   - `loss_sweep_summary.png`
+  - `loss_sweep_behavior_timing.png` (first/P90 control-action time, [s])
+- Экспорт для загрузки в внешние инструменты:
+  - `analysis/scenario_runs/chatgpt_exports/<run_path>/`
+  - `EXPORT_MANIFEST.csv` внутри export-папки

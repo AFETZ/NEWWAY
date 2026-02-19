@@ -13,8 +13,14 @@ CSV_PREFIX="${CSV_PREFIX:-$OUT_DIR/artifacts/eva}"
 NETSTATE_FILE="${NETSTATE_FILE:-$OUT_DIR/artifacts/eva-netstate.xml}"
 RISK_GAP_THRESHOLD="${RISK_GAP_THRESHOLD:-2.0}"
 RISK_TTC_THRESHOLD="${RISK_TTC_THRESHOLD:-1.5}"
+EXPORT_RESULTS="${EXPORT_RESULTS:-1}"
+EXPORT_ROOT="${EXPORT_ROOT:-$ROOT/analysis/scenario_runs/chatgpt_exports}"
+EXPORT_INCLUDE_RAW_CSV="${EXPORT_INCLUDE_RAW_CSV:-0}"
+NS3_CONFIGURE_ARGS="${NS3_CONFIGURE_ARGS:---enable-examples --build-profile=optimized --disable-werror}"
+NS3_REQUIRE_OPTIMIZED="${NS3_REQUIRE_OPTIMIZED:-1}"
 
 NS3_DIR="$("$ROOT/scripts/ensure-ns3-dev.sh" --root "$ROOT" --ns3-dir "$NS3_DIR")"
+"$ROOT/scripts/sync-overlay-into-bootstrap-ns3.sh" --root "$ROOT" --ns3-dir "$NS3_DIR"
 
 mkdir -p "$OUT_DIR/artifacts"
 mkdir -p "$(dirname "$CSV_PREFIX")"
@@ -27,10 +33,17 @@ else
   run_ns3() { ./ns3 "$@"; }
 fi
 
-if ! run_ns3 show config 2>/dev/null \
-  | sed -r 's/\x1B\[[0-9;]*[mK]//g' \
-  | grep -Eq 'Examples[[:space:]]*:[[:space:]]*ON'; then
-  run_ns3 configure --enable-examples
+CONFIG_STATE="$(run_ns3 show config 2>/dev/null | sed -r 's/\x1B\[[0-9;]*[mK]//g' || true)"
+need_configure=0
+if ! grep -Eq 'Examples[[:space:]]*:[[:space:]]*ON' <<<"$CONFIG_STATE"; then
+  need_configure=1
+fi
+if [[ "$NS3_REQUIRE_OPTIMIZED" == "1" ]] && ! grep -Eq 'Build profile[[:space:]]*:[[:space:]]*optimized' <<<"$CONFIG_STATE"; then
+  need_configure=1
+fi
+if [[ "$need_configure" -eq 1 ]]; then
+  read -r -a configure_args <<< "$NS3_CONFIGURE_ARGS"
+  run_ns3 configure "${configure_args[@]}"
 fi
 
 run_ns3 build -j "$JOBS" v2v-emergencyVehicleAlert-nrv2x
@@ -80,6 +93,16 @@ if [[ "$PLOT" == "1" ]]; then
     --run-dir "$OUT_DIR" \
     --scenario "v2v-emergencyVehicleAlert-nrv2x"; then
     echo "Warning: plot generation failed for v2v-emergencyVehicleAlert-nrv2x"
+  fi
+fi
+
+if [[ "$EXPORT_RESULTS" == "1" ]]; then
+  export_args=(--run-dir "$OUT_DIR" --export-root "$EXPORT_ROOT")
+  if [[ "$EXPORT_INCLUDE_RAW_CSV" == "1" ]]; then
+    export_args+=(--include-raw-csv)
+  fi
+  if ! "$PY_BIN" "$ROOT/analysis/scenario_runs/export_results_bundle.py" "${export_args[@]}"; then
+    echo "Warning: export bundle generation failed for v2v-emergencyVehicleAlert-nrv2x"
   fi
 fi
 
