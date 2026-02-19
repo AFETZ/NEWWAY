@@ -9,6 +9,7 @@ Usage:
 Options:
   --destination <dir>        Destination directory (default: /tmp/van3t-bootstrap-<timestamp>)
   --source <dir>             Source repository path (default: repo root)
+  --copy-source              Copy current source tree (including uncommitted files, excluding .git) instead of git clone
   --install-dependencies     Pass install-dependencies to sandbox_builder.sh
   --force                    Remove destination if it already exists
   --dry-run                  Print planned commands without executing
@@ -19,6 +20,7 @@ EOF
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DESTINATION=""
 INSTALL_DEPS=0
+COPY_SOURCE=0
 FORCE=0
 DRY_RUN=0
 
@@ -31,6 +33,10 @@ while [[ $# -gt 0 ]]; do
     --source)
       SOURCE_DIR="${2:-}"
       shift 2
+      ;;
+    --copy-source)
+      COPY_SOURCE=1
+      shift
       ;;
     --install-dependencies)
       INSTALL_DEPS=1
@@ -85,19 +91,47 @@ if [[ -e "${DESTINATION}" ]]; then
 fi
 
 run_cmd mkdir -p "${DESTINATION}"
-run_cmd git clone --local "${SOURCE_DIR}" "${REPO_DIR}"
+if [[ "${COPY_SOURCE}" -eq 1 ]]; then
+  RSYNC_ARGS=(-a --delete --exclude '.git' --exclude '.venv' --exclude '.bootstrap-ns3')
+  if [[ "${DESTINATION}" == "${SOURCE_DIR}/"* ]]; then
+    REL_DEST="${DESTINATION#${SOURCE_DIR}/}"
+    if [[ "${REL_DEST}" != ".bootstrap-ns3" ]]; then
+      RSYNC_ARGS+=(--exclude "${REL_DEST}")
+    fi
+  fi
+  run_cmd mkdir -p "${REPO_DIR}"
+  if command -v rsync >/dev/null 2>&1; then
+    run_cmd rsync "${RSYNC_ARGS[@]}" "${SOURCE_DIR}/" "${REPO_DIR}/"
+  else
+    echo "rsync is required for --copy-source mode but is not available." >&2
+    exit 1
+  fi
+else
+  run_cmd git clone --local "${SOURCE_DIR}" "${REPO_DIR}"
+fi
 
 if [[ "${DRY_RUN}" -eq 1 ]]; then
   if [[ "${INSTALL_DEPS}" -eq 1 ]]; then
-    echo "[dry-run] cd ${REPO_DIR} && printf '\\n' | ./sandbox_builder.sh install-dependencies"
+    if [[ "$EUID" -eq 0 ]]; then
+      echo "[dry-run] cd ${REPO_DIR} && ALLOW_ROOT=1 printf '\\n' | ./sandbox_builder.sh install-dependencies"
+    else
+      echo "[dry-run] cd ${REPO_DIR} && printf '\\n' | ./sandbox_builder.sh install-dependencies"
+    fi
   else
-    echo "[dry-run] cd ${REPO_DIR} && printf '\\n' | ./sandbox_builder.sh"
+    if [[ "$EUID" -eq 0 ]]; then
+      echo "[dry-run] cd ${REPO_DIR} && ALLOW_ROOT=1 printf '\\n' | ./sandbox_builder.sh"
+    else
+      echo "[dry-run] cd ${REPO_DIR} && printf '\\n' | ./sandbox_builder.sh"
+    fi
   fi
   echo "[dry-run] expected ns-3 root: ${REPO_DIR}/ns-3-dev"
   exit 0
 fi
 
 cd "${REPO_DIR}"
+if [[ "$EUID" -eq 0 ]]; then
+  export ALLOW_ROOT=1
+fi
 if [[ "${INSTALL_DEPS}" -eq 1 ]]; then
   printf '\n' | ./sandbox_builder.sh install-dependencies
 else

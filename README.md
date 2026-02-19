@@ -33,6 +33,8 @@ For a reproducible developer checklist (`setup`, `configure`, `build`, `test`, `
 For a curated launch map of key V2X scenarios (`cttc-nr-v2x-demo-simple`, `nr-v2x-west-to-east-highway`, `v2v-cam-exchange-sionna-nrv2x`, `v2v-coexistence-80211p-nrv2x`), see `scenarios/README.md`.
 Latest reproducible run evidence is stored in `analysis/scenario_runs/`.
 
+Scenario `run.sh` scripts can now auto-bootstrap a local `ns-3-dev` workspace if it is missing, auto-configure it with examples enabled, and work from root shells (`NS3_USER_OVERRIDE`) when needed (see `scenarios/README.md`).
+
 To build the project:
 * Install SUMO following the guide at [https://sumo.dlr.de/wiki/Downloads](https://sumo.dlr.de/wiki/Downloads)
     * You can use 
