@@ -2,18 +2,15 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-NS3_DIR="${NS3_DIR:-$ROOT/ns-3-dev}"
+NS3_DIR="${NS3_DIR:-}"
 SIM_TIME="${SIM_TIME:-20}"
 OUT_BASE="${OUT_BASE:-$ROOT/analysis/scenario_runs/$(date +%F)/cam-sionna-backend-compare-$(date +%H%M%S)}"
-SCENE_XML="${SCENE_XML:-$NS3_DIR/src/sionna/scenarios/SionnaCircleScenario/scene.xml}"
 SIONNA_PY="${SIONNA_PY:-$ROOT/.venv/bin/python}"
 SIONNA_GPU="${SIONNA_GPU:-0}"
 
-if [[ ! -x "$NS3_DIR/ns3" ]]; then
-  echo "Missing executable: $NS3_DIR/ns3"
-  echo "Set NS3_DIR to your prepared ns-3-dev tree."
-  exit 1
-fi
+NS3_DIR="$("$ROOT/scripts/ensure-ns3-dev.sh" --root "$ROOT" --ns3-dir "$NS3_DIR")"
+SCENE_XML="${SCENE_XML:-$NS3_DIR/src/sionna/scenarios/SionnaCircleScenario/scene.xml}"
+
 if [[ ! -f "$NS3_DIR/src/sionna/sionna_v1_server_script.py" ]]; then
   echo "Missing Sionna server script in $NS3_DIR/src/sionna/"
   exit 1

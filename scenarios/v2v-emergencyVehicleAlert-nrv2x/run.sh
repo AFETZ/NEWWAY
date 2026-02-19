@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-NS3_DIR="${NS3_DIR:-$ROOT/ns-3-dev}"
+NS3_DIR="${NS3_DIR:-}"
 OUT_DIR="${OUT_DIR:-$ROOT/analysis/scenario_runs/$(date +%F)}"
 JOBS="${JOBS:-8}"
 RUN_ARGS="${RUN_ARGS:---sumo-gui=0 --sim-time=40 --met-sup=1}"
@@ -14,17 +14,26 @@ NETSTATE_FILE="${NETSTATE_FILE:-$OUT_DIR/artifacts/eva-netstate.xml}"
 RISK_GAP_THRESHOLD="${RISK_GAP_THRESHOLD:-2.0}"
 RISK_TTC_THRESHOLD="${RISK_TTC_THRESHOLD:-1.5}"
 
-if [[ ! -x "$NS3_DIR/ns3" ]]; then
-  echo "Missing executable: $NS3_DIR/ns3"
-  echo "Set NS3_DIR to your prepared ns-3-dev tree."
-  exit 1
-fi
+NS3_DIR="$("$ROOT/scripts/ensure-ns3-dev.sh" --root "$ROOT" --ns3-dir "$NS3_DIR")"
 
 mkdir -p "$OUT_DIR/artifacts"
 mkdir -p "$(dirname "$CSV_PREFIX")"
 cd "$NS3_DIR"
 
-./ns3 build -j "$JOBS" v2v-emergencyVehicleAlert-nrv2x
+if [[ "$EUID" -eq 0 ]]; then
+  NS3_USER_OVERRIDE="${NS3_USER_OVERRIDE:-ns3}"
+  run_ns3() { USER="$NS3_USER_OVERRIDE" ./ns3 "$@"; }
+else
+  run_ns3() { ./ns3 "$@"; }
+fi
+
+if ! run_ns3 show config 2>/dev/null \
+  | sed -r 's/\x1B\[[0-9;]*[mK]//g' \
+  | grep -Eq 'Examples[[:space:]]*:[[:space:]]*ON'; then
+  run_ns3 configure --enable-examples
+fi
+
+run_ns3 build -j "$JOBS" v2v-emergencyVehicleAlert-nrv2x
 
 rm -f "$NETSTATE_FILE"
 rm -f "${CSV_PREFIX}"-veh*-CAM.csv "${CSV_PREFIX}"-veh*-MSG.csv "${CSV_PREFIX}"-veh*-CTRL.csv 2>/dev/null || true
@@ -37,7 +46,7 @@ fi
 attempt=1
 while true; do
   set +e
-  ./ns3 run --no-build "$RUN_CMD" > "$OUT_DIR/v2v-emergencyVehicleAlert-nrv2x.log" 2>&1
+  run_ns3 run --no-build "$RUN_CMD" > "$OUT_DIR/v2v-emergencyVehicleAlert-nrv2x.log" 2>&1
   rc=$?
   set -e
   if [[ $rc -eq 0 ]]; then

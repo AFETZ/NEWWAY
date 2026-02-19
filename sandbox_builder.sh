@@ -9,7 +9,7 @@ if [ $# -ne 0 -a $# -ne 1 ]; then
     exit 1
 fi
 
-if [ "$EUID" -eq 0 ]; then
+if [ "$EUID" -eq 0 -a "${ALLOW_ROOT:-0}" != "1" ]; then
 	echo "Please do NOT run this script as root."
 	exit 1
 fi

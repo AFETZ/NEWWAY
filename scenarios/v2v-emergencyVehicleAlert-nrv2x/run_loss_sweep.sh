@@ -2,13 +2,15 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-NS3_DIR="${NS3_DIR:-$ROOT/ns-3-dev}"
+NS3_DIR="${NS3_DIR:-}"
 OUT_BASE="${OUT_BASE:-$ROOT/analysis/scenario_runs/$(date +%F)/eva-loss-sweep-$(date +%H%M%S)}"
 SIM_TIME="${SIM_TIME:-40}"
 LOSS_PROBS="${LOSS_PROBS:-0.0 0.3 0.6}"
 BASE_RADIO_ARGS="${BASE_RADIO_ARGS:---enableSensing=0 --txPower=23 --slThresPsschRsrp=-128}"
 RUN_RETRIES="${RUN_RETRIES:-3}"
 PLOT="${PLOT:-1}"
+
+NS3_DIR="$("$ROOT/scripts/ensure-ns3-dev.sh" --root "$ROOT" --ns3-dir "$NS3_DIR")"
 
 mkdir -p "$OUT_BASE"
 
