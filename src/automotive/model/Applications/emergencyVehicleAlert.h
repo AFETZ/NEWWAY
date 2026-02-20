@@ -116,6 +116,7 @@ class emergencyVehicleAlert : public Application
                           int laneBefore,
                           int laneAfter,
                           double speedTarget);
+    void LogPhyDropEvent (uint16_t btpDestPort);
 
 
     /**
@@ -154,6 +155,8 @@ class emergencyVehicleAlert : public Application
     int m_cpm_received;
     int m_cam_dropped_app;
     int m_cpm_dropped_app;
+    int m_cam_dropped_phy;
+    int m_cpm_dropped_phy;
     int m_denm_sent;
     int m_denm_received;
     uint64_t m_control_actions;
@@ -167,6 +170,8 @@ class emergencyVehicleAlert : public Application
     bool m_send_cpm;
     double m_rx_drop_prob_cam;
     double m_rx_drop_prob_cpm;
+    double m_rx_drop_prob_phy_cam;
+    double m_rx_drop_prob_phy_cpm;
     Ptr<UniformRandomVariable> m_drop_rv;
 
     Ptr<MetricSupervisor> m_metric_supervisor = nullptr;

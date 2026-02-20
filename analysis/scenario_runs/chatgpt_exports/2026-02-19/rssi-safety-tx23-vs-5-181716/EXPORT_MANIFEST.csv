@@ -1,0 +1,13 @@
+relative_path,size_bytes
+rssi_safety_summary.csv,832
+rssi_safety_summary.png,104731
+tx_23/cam/v2v-cam-exchange-sionna-nrv2x.log,254
+tx_23/eva/artifacts/collision_risk/collision_risk_summary.csv,108
+tx_23/eva/artifacts/collision_risk/collision_risk_timeseries.csv,160075
+tx_23/eva/artifacts/collision_risk/collision_risk_timeseries.png,72209
+tx_23/eva/v2v-emergencyVehicleAlert-nrv2x.log,2705573
+tx_5/cam/v2v-cam-exchange-sionna-nrv2x.log,253
+tx_5/eva/artifacts/collision_risk/collision_risk_summary.csv,108
+tx_5/eva/artifacts/collision_risk/collision_risk_timeseries.csv,160075
+tx_5/eva/artifacts/collision_risk/collision_risk_timeseries.png,72209
+tx_5/eva/v2v-emergencyVehicleAlert-nrv2x.log,2421242

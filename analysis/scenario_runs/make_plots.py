@@ -427,14 +427,14 @@ def plot_emergency(run_dir: Path) -> list[Path]:
                 rows.append(row)
         if rows:
             info = pd.DataFrame(rows)
-            for col in ("cam_received", "cam_dropped_app", "control_actions"):
+            for col in ("cam_received", "cam_dropped_app", "cam_dropped_phy", "control_actions"):
                 if col in info.columns:
                     info[col] = pd.to_numeric(info[col], errors="coerce")
                 else:
                     info[col] = 0.0
-            denom = info["cam_received"] + info["cam_dropped_app"]
+            denom = info["cam_received"] + info["cam_dropped_app"] + info["cam_dropped_phy"]
             info["cam_drop_ratio"] = np.divide(
-                info["cam_dropped_app"],
+                info["cam_dropped_app"] + info["cam_dropped_phy"],
                 denom,
                 out=np.zeros_like(denom, dtype=float),
                 where=denom > 0,

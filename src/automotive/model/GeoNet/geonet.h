@@ -7,6 +7,7 @@
 #include <map>
 #include <set>
 #include <mutex>
+#include <functional>
 #include "ns3/vdpTraci.h"
 #include "ns3/asn_utils.h"
 #include "ns3/address.h"
@@ -25,6 +26,7 @@
 #include "ns3/btpdatarequest.h"
 #include "ns3/VRUdp.h"
 #include "ns3/DCC.h"
+#include "ns3/random-variable-stream.h"
 
 extern "C" {
   #include "ns3/CAM.h"
@@ -151,6 +153,10 @@ namespace ns3
        */
       void disablePRRsupervisorForBeacons() {m_PRRsupervisor_beacons=false;}
       void enablePRRsupervisorForBeacons() {m_PRRsupervisor_beacons=true;}
+      void setRxPhyDropCallback(std::function<void(uint16_t)> cb) { m_rx_phy_drop_callback = cb; }
+      uint64_t GetCamDroppedPhy () const { return m_cam_dropped_phy; }
+      uint64_t GetCpmDroppedPhy () const { return m_cpm_dropped_phy; }
+      uint64_t GetOtherDroppedPhy () const { return m_other_dropped_phy; }
 
       // This static method creates a new GeoNetworking socket, starting from the ns-3 PacketSocket and properly binding/connecting it
       // It requires as input a pointer to the node to which the socket should be bound
@@ -250,6 +256,13 @@ namespace ns3
 
       Ptr<MetricSupervisor> m_metric_supervisor_ptr = nullptr;
       bool m_PRRsupervisor_beacons = true;
+      double m_rx_drop_prob_phy_cam = 0.0;
+      double m_rx_drop_prob_phy_cpm = 0.0;
+      Ptr<UniformRandomVariable> m_rx_phy_drop_rv = nullptr;
+      std::function<void(uint16_t)> m_rx_phy_drop_callback = nullptr;
+      uint64_t m_cam_dropped_phy = 0;
+      uint64_t m_cpm_dropped_phy = 0;
+      uint64_t m_other_dropped_phy = 0;
 
       bool m_EPVupdate_running = true;
       Ptr<DCC> m_dcc = nullptr;

@@ -32,6 +32,7 @@
 #include "ns3/lte-module.h"
 #include "ns3/stats-module.h"
 #include "ns3/config-store-module.h"
+#include "ns3/sionna-helper.h"
 #include "ns3/log.h"
 #include "ns3/antenna-module.h"
 #include <iomanip>
@@ -99,6 +100,7 @@ main (int argc, char *argv[])
   bool realtime = false;
   bool sumo_gui = true;
   double sumo_updates = 0.01;
+  uint16_t sumo_port = 3400;
   std::string csv_name;
   std::string csv_name_cumulative;
   std::string sumo_netstate_file_name;
@@ -108,12 +110,18 @@ main (int argc, char *argv[])
   uint32_t nodeCounter = 0;
 
   double penetrationRate = 0.7;
+  bool sionna = false;
+  std::string server_ip = "";
+  bool local_machine = false;
+  bool sionna_verbose = false;
 
   xmlDocPtr rou_xml_file;
   double m_baseline_prr = 150.0;
   bool m_metric_sup = false;
   double rx_drop_prob_cam = 0.0;
   double rx_drop_prob_cpm = 0.0;
+  double rx_drop_prob_phy_cam = 0.0;
+  double rx_drop_prob_phy_cpm = 0.0;
   bool incident_enable = false;
   std::string incident_vehicle_id = "veh2";
   double incident_time_s = 12.0;
@@ -162,6 +170,7 @@ main (int argc, char *argv[])
   cmd.AddValue ("realtime", "Use the realtime scheduler or not", realtime);
   cmd.AddValue ("sumo-gui", "Use SUMO gui or not", sumo_gui);
   cmd.AddValue ("sumo-updates", "SUMO granularity", sumo_updates);
+  cmd.AddValue ("sumo-port", "TraCI TCP port for SUMO", sumo_port);
   cmd.AddValue ("sumo-folder","Position of sumo config files",sumo_folder);
   cmd.AddValue ("mob-trace", "Name of the mobility trace file", mob_trace);
   cmd.AddValue ("sumo-config", "Location and name of SUMO configuration file", sumo_config);
@@ -173,7 +182,17 @@ main (int argc, char *argv[])
   cmd.AddValue ("met-sup","Use the Metric supervisor or not",m_metric_sup);
   cmd.AddValue ("rx-drop-prob-cam", "Application-level probability to drop received CAM packets", rx_drop_prob_cam);
   cmd.AddValue ("rx-drop-prob-cpm", "Application-level probability to drop received CPM packets", rx_drop_prob_cpm);
+  cmd.AddValue ("rx-drop-prob-phy-cam",
+                "PHY/MAC-level probability to drop received CAM packets before upper layers",
+                rx_drop_prob_phy_cam);
+  cmd.AddValue ("rx-drop-prob-phy-cpm",
+                "PHY/MAC-level probability to drop received CPM packets before upper layers",
+                rx_drop_prob_phy_cpm);
   cmd.AddValue ("penetrationRate", "Rate of vehicles equipped with wireless communication devices", penetrationRate);
+  cmd.AddValue ("sionna", "Enable SIONNA usage", sionna);
+  cmd.AddValue ("sionna-server-ip", "SIONNA server IP address", server_ip);
+  cmd.AddValue ("sionna-local-machine", "SIONNA will be executed on local machine", local_machine);
+  cmd.AddValue ("sionna-verbose", "Enable verbose logs in SIONNA helper", sionna_verbose);
   cmd.AddValue ("incident-enable", "Enable stalled incident vehicle injection", incident_enable);
   cmd.AddValue ("incident-vehicle-id", "Vehicle ID to force-stop as incident source", incident_vehicle_id);
   cmd.AddValue ("incident-time-s", "Simulation time [s] when incident stop is injected", incident_time_s);
@@ -263,6 +282,15 @@ main (int argc, char *argv[])
 
   // Parse the command line
   cmd.Parse (argc, argv);
+
+  SionnaHelper& sionnaHelper = SionnaHelper::GetInstance ();
+  if (sionna)
+    {
+      sionnaHelper.SetSionna (sionna);
+      sionnaHelper.SetServerIp (server_ip);
+      sionnaHelper.SetLocalMachine (local_machine);
+      sionnaHelper.SetVerbose (sionna_verbose);
+    }
 
   if (verbose)
     {
@@ -656,18 +684,22 @@ main (int argc, char *argv[])
 
   /*** 6. Setup Traci and start SUMO ***/
   Ptr<TraciClient> sumoClient = CreateObject<TraciClient> ();
+  if (sionna)
+    {
+      sumoClient->SetSionnaUp ();
+    }
   sumoClient->SetAttribute ("SumoConfigPath", StringValue (sumo_config));
   sumoClient->SetAttribute ("SumoBinaryPath", StringValue (""));    // use system installation of sumo
   sumoClient->SetAttribute ("SynchInterval", TimeValue (Seconds (sumo_updates)));
   sumoClient->SetAttribute ("StartTime", TimeValue (Seconds (0.0)));
   sumoClient->SetAttribute ("SumoGUI", BooleanValue (sumo_gui));
-  sumoClient->SetAttribute ("SumoPort", UintegerValue (3400));
+  sumoClient->SetAttribute ("SumoPort", UintegerValue (sumo_port));
   sumoClient->SetAttribute ("PenetrationRate", DoubleValue (penetrationRate));
   sumoClient->SetAttribute ("SumoLogFile", BooleanValue (false));
   sumoClient->SetAttribute ("SumoStepLog", BooleanValue (false));
   sumoClient->SetAttribute ("SumoSeed", IntegerValue (10));
 
-  std::string sumo_additional_options = "--verbose true";
+  std::string sumo_additional_options = "--verbose false";
 
   if(sumo_netstate_file_name!="")
   {
@@ -675,7 +707,9 @@ main (int argc, char *argv[])
   }
 
   sumoClient->SetAttribute ("SumoAdditionalCmdOptions", StringValue (sumo_additional_options));
-  sumoClient->SetAttribute ("SumoWaitForSocket", TimeValue (Seconds (1.0)));
+  // 1s is occasionally too short on loaded hosts/WSL and causes transient
+  // TraCI "Connection refused" right after SUMO startup.
+  sumoClient->SetAttribute ("SumoWaitForSocket", TimeValue (Seconds (5.0)));
 
   /* Create and setup the web-based vehicle visualizer of ms-van3t */
   vehicleVisualizer vehicleVisObj;
@@ -705,6 +739,8 @@ main (int argc, char *argv[])
   EmergencyVehicleAlertHelper.SetAttribute ("MetricSupervisor", PointerValue (metSup));
   EmergencyVehicleAlertHelper.SetAttribute ("RxDropProbCam", DoubleValue (rx_drop_prob_cam));
   EmergencyVehicleAlertHelper.SetAttribute ("RxDropProbCpm", DoubleValue (rx_drop_prob_cpm));
+  EmergencyVehicleAlertHelper.SetAttribute ("RxDropProbPhyCam", DoubleValue (rx_drop_prob_phy_cam));
+  EmergencyVehicleAlertHelper.SetAttribute ("RxDropProbPhyCpm", DoubleValue (rx_drop_prob_phy_cpm));
 
   /* callback function for node creation */
   int i=0;

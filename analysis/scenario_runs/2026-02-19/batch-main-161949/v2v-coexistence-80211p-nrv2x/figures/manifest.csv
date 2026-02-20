@@ -1,0 +1,4 @@
+scenario,path
+v2v-coexistence-80211p-nrv2x,figures/v2v-coexistence-80211p-nrv2x/coexistence_prr_latency_by_tech.png
+v2v-coexistence-80211p-nrv2x,figures/v2v-coexistence-80211p-nrv2x/coexistence_prr_per_node.png
+v2v-coexistence-80211p-nrv2x,figures/v2v-coexistence-80211p-nrv2x/coexistence_sinr_cdf_by_tech.png

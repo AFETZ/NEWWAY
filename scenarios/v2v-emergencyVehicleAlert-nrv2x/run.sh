@@ -9,15 +9,32 @@ RUN_ARGS="${RUN_ARGS:---sumo-gui=0 --sim-time=40 --met-sup=1}"
 EXTRA_ARGS="${EXTRA_ARGS:-}"
 PLOT="${PLOT:-1}"
 RUN_RETRIES="${RUN_RETRIES:-3}"
+SUMO_PORT="${SUMO_PORT:-}"
 CSV_PREFIX="${CSV_PREFIX:-$OUT_DIR/artifacts/eva}"
 NETSTATE_FILE="${NETSTATE_FILE:-$OUT_DIR/artifacts/eva-netstate.xml}"
 RISK_GAP_THRESHOLD="${RISK_GAP_THRESHOLD:-2.0}"
 RISK_TTC_THRESHOLD="${RISK_TTC_THRESHOLD:-1.5}"
+ENABLE_COLLISION_OUTPUT="${ENABLE_COLLISION_OUTPUT:-0}"
+COLLISION_OUTPUT_FILE="${COLLISION_OUTPUT_FILE:-$OUT_DIR/artifacts/eva-collision.xml}"
+COLLISION_ACTION="${COLLISION_ACTION:-warn}"
 EXPORT_RESULTS="${EXPORT_RESULTS:-1}"
 EXPORT_ROOT="${EXPORT_ROOT:-$ROOT/analysis/scenario_runs/chatgpt_exports}"
 EXPORT_INCLUDE_RAW_CSV="${EXPORT_INCLUDE_RAW_CSV:-0}"
 NS3_CONFIGURE_ARGS="${NS3_CONFIGURE_ARGS:---enable-examples --build-profile=optimized --disable-werror}"
 NS3_REQUIRE_OPTIMIZED="${NS3_REQUIRE_OPTIMIZED:-1}"
+
+if [[ "$OUT_DIR" != /* ]]; then
+  OUT_DIR="$ROOT/$OUT_DIR"
+fi
+if [[ "$CSV_PREFIX" != /* ]]; then
+  CSV_PREFIX="$ROOT/$CSV_PREFIX"
+fi
+if [[ "$NETSTATE_FILE" != /* ]]; then
+  NETSTATE_FILE="$ROOT/$NETSTATE_FILE"
+fi
+if [[ "$COLLISION_OUTPUT_FILE" != /* ]]; then
+  COLLISION_OUTPUT_FILE="$ROOT/$COLLISION_OUTPUT_FILE"
+fi
 
 NS3_DIR="$("$ROOT/scripts/ensure-ns3-dev.sh" --root "$ROOT" --ns3-dir "$NS3_DIR")"
 "$ROOT/scripts/sync-overlay-into-bootstrap-ns3.sh" --root "$ROOT" --ns3-dir "$NS3_DIR"
@@ -49,9 +66,48 @@ fi
 run_ns3 build -j "$JOBS" v2v-emergencyVehicleAlert-nrv2x
 
 rm -f "$NETSTATE_FILE"
+rm -f "$COLLISION_OUTPUT_FILE"
 rm -f "${CSV_PREFIX}"-veh*-CAM.csv "${CSV_PREFIX}"-veh*-MSG.csv "${CSV_PREFIX}"-veh*-CTRL.csv 2>/dev/null || true
 
-RUN_CMD="v2v-emergencyVehicleAlert-nrv2x $RUN_ARGS --csv-log=$CSV_PREFIX --netstate-dump-file=$NETSTATE_FILE"
+sumo_cfg_arg=""
+if [[ "$ENABLE_COLLISION_OUTPUT" == "1" ]]; then
+  if [[ " $RUN_ARGS $EXTRA_ARGS " =~ --sumo-config ]]; then
+    echo "Warning: ENABLE_COLLISION_OUTPUT=1 ignored because --sumo-config is already provided in RUN_ARGS/EXTRA_ARGS."
+  else
+    SUMO_BASE="$NS3_DIR/src/automotive/examples/sumo_files_v2v_map"
+    COLLISION_CFG="$OUT_DIR/artifacts/eva-collision.sumo.cfg"
+    cat > "$COLLISION_CFG" <<EOF
+<configuration>
+  <input>
+    <net-file value="$SUMO_BASE/map.net.xml"/>
+    <route-files value="$SUMO_BASE/cars.rou.xml"/>
+    <additional-files value="$SUMO_BASE/rerouter.add.xml"/>
+  </input>
+  <time>
+    <begin value="0"/>
+    <end value="300"/>
+    <step-length value="0.1"/>
+  </time>
+  <processing>
+    <collision.action value="$COLLISION_ACTION"/>
+    <collision.check-junctions value="true"/>
+  </processing>
+  <output>
+    <collision-output value="$COLLISION_OUTPUT_FILE"/>
+  </output>
+</configuration>
+EOF
+    sumo_cfg_arg="--sumo-config=$COLLISION_CFG"
+  fi
+fi
+
+RUN_CMD="v2v-emergencyVehicleAlert-nrv2x $RUN_ARGS --csv-log=$CSV_PREFIX --netstate-dump-file=$NETSTATE_FILE $sumo_cfg_arg"
+
+if [[ -z "$SUMO_PORT" ]]; then
+  SUMO_PORT="$((30000 + (RANDOM % 20000)))"
+fi
+RUN_CMD+=" --sumo-port=$SUMO_PORT"
+
 if [[ -n "$EXTRA_ARGS" ]]; then
   RUN_CMD+=" $EXTRA_ARGS"
 fi
@@ -69,6 +125,8 @@ while true; do
     echo "Scenario failed. See $OUT_DIR/v2v-emergencyVehicleAlert-nrv2x.log"
     exit $rc
   fi
+  SUMO_PORT="$((30000 + (RANDOM % 20000)))"
+  RUN_CMD="$(sed -E "s/--sumo-port=[0-9]+/--sumo-port=$SUMO_PORT/" <<<"$RUN_CMD")"
   attempt=$((attempt + 1))
   sleep 2
 done
@@ -86,6 +144,10 @@ if [[ -f "$NETSTATE_FILE" ]]; then
     --ttc-threshold-s "$RISK_TTC_THRESHOLD"
 else
   echo "Warning: netstate file not found, collision risk analysis skipped: $NETSTATE_FILE"
+fi
+
+if [[ "$ENABLE_COLLISION_OUTPUT" == "1" ]] && [[ -f "$COLLISION_OUTPUT_FILE" ]]; then
+  echo "Collision output: $COLLISION_OUTPUT_FILE"
 fi
 
 if [[ "$PLOT" == "1" ]]; then

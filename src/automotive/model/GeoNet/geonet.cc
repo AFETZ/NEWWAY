@@ -26,6 +26,7 @@
 #include <cmath>
 #include "ns3/ipv4-header.h"
 #include "ns3/DCC.h"
+#include "ns3/btpHeader.h"
 #define SN_MAX 65536
 
 #define IEEE80211_DATA_PKT_HDR_LEN 24
@@ -36,6 +37,8 @@
 namespace ns3 {
 
   NS_LOG_COMPONENT_DEFINE("GeoNet");
+  constexpr uint16_t CAM_PORT = 2001;
+  constexpr uint16_t CPM_PORT = 2009;
 
   TypeId
   GeoNet::GetTypeId (void)
@@ -43,6 +46,18 @@ namespace ns3 {
     static TypeId tid =
         TypeId("ns3::GeoNet")
         .SetParent <Object>()
+        .AddAttribute ("RxDropProbPhyCam",
+                       "Probability to drop received CAM packets before upper layers "
+                       "(PHY/MAC emulation)",
+                       DoubleValue (0.0),
+                       MakeDoubleAccessor (&GeoNet::m_rx_drop_prob_phy_cam),
+                       MakeDoubleChecker<double> (0.0, 1.0))
+        .AddAttribute ("RxDropProbPhyCpm",
+                       "Probability to drop received CPM packets before upper layers "
+                       "(PHY/MAC emulation)",
+                       DoubleValue (0.0),
+                       MakeDoubleAccessor (&GeoNet::m_rx_drop_prob_phy_cpm),
+                       MakeDoubleChecker<double> (0.0, 1.0))
         .AddConstructor <GeoNet>();
     return tid;
   }
@@ -66,6 +81,14 @@ namespace ns3 {
     m_metric_supervisor_ptr = NULL;
 
     m_PRRsupervisor_beacons = true;
+    m_rx_drop_prob_phy_cam = 0.0;
+    m_rx_drop_prob_phy_cpm = 0.0;
+    m_rx_phy_drop_rv = CreateObject<UniformRandomVariable> ();
+    m_rx_phy_drop_rv->SetAttribute ("Min", DoubleValue (0.0));
+    m_rx_phy_drop_rv->SetAttribute ("Max", DoubleValue (1.0));
+    m_cam_dropped_phy = 0;
+    m_cpm_dropped_phy = 0;
+    m_other_dropped_phy = 0;
   }
 
   void
@@ -88,6 +111,10 @@ namespace ns3 {
       }
     // ETSI EN 302 636-4-1 [10.2.2] : the egoPV shall be updated with a minimum freq of th GN constant itsGNminUpdateFrequencyEPV
     m_GNAddress = m_GNAddress.MakeManagedconfiguredAddress (m_GnLocalGnAddr,m_stationtype); //! Initial address config on MANAGED(1) mode ETSI EN 302 636-4-1 [10.2.1.3]
+    if (m_rx_phy_drop_rv != nullptr)
+      {
+        m_rx_phy_drop_rv->SetStream (fixed_stationid);
+      }
     m_event_Beacon.Cancel();
     m_event_Beacon = Simulator::Schedule(MilliSeconds(1),&GeoNet::setBeacon,this); //Should be at start-up but set with a little delay
   }
@@ -114,6 +141,10 @@ namespace ns3 {
   GeoNet::setStationID(unsigned long fixed_stationid)
   {
     m_station_id=fixed_stationid;
+    if (m_rx_phy_drop_rv != nullptr)
+      {
+        m_rx_phy_drop_rv->SetStream (fixed_stationid);
+      }
   }
 
   void
@@ -761,8 +792,84 @@ namespace ns3 {
 
     dataIndication.data = socket->RecvFrom (from);
 
-    uint8_t *buffer;
-    uint32_t dataSize;
+    uint16_t btpDestPort = 0;
+    bool hasBtpDestPort = false;
+    if ((m_rx_drop_prob_phy_cam > 0.0 || m_rx_drop_prob_phy_cpm > 0.0) &&
+        dataIndication.data != nullptr &&
+        dataIndication.data->GetSize () >= 12)
+      {
+        Ptr<Packet> inspectPkt = dataIndication.data->Copy ();
+        GNBasicHeader inspectBasic;
+        GNCommonHeader inspectCommon;
+        inspectPkt->RemoveHeader (inspectBasic, 4);
+        inspectPkt->RemoveHeader (inspectCommon, 8);
+
+        bool isAppPayload = false;
+        if (inspectCommon.GetHeaderType () == TSB && inspectCommon.GetHeaderSubType () == 0)
+          {
+            if (inspectPkt->GetSize () >= 32)
+              {
+                SHBheader inspectShb;
+                inspectPkt->RemoveHeader (inspectShb, 28);
+                isAppPayload = true;
+              }
+          }
+        else if (inspectCommon.GetHeaderType () == GBC)
+          {
+            if (inspectPkt->GetSize () >= 60)
+              {
+                GBCheader inspectGbc;
+                inspectPkt->RemoveHeader (inspectGbc, 56);
+                isAppPayload = true;
+              }
+          }
+
+        if (isAppPayload && inspectPkt->GetSize () >= 4)
+          {
+            btpHeader inspectBtp;
+            inspectPkt->RemoveHeader (inspectBtp, 4);
+            btpDestPort = inspectBtp.GetDestinationPort ();
+            hasBtpDestPort = true;
+          }
+      }
+
+    double rxDropProbPhy = 0.0;
+    if (hasBtpDestPort)
+      {
+        if (btpDestPort == CAM_PORT)
+          {
+            rxDropProbPhy = m_rx_drop_prob_phy_cam;
+          }
+        else if (btpDestPort == CPM_PORT)
+          {
+            rxDropProbPhy = m_rx_drop_prob_phy_cpm;
+          }
+      }
+    if (rxDropProbPhy > 0.0 &&
+        m_rx_phy_drop_rv != nullptr &&
+        m_rx_phy_drop_rv->GetValue () < rxDropProbPhy)
+      {
+        if (btpDestPort == CAM_PORT)
+          {
+            ++m_cam_dropped_phy;
+          }
+        else if (btpDestPort == CPM_PORT)
+          {
+            ++m_cpm_dropped_phy;
+          }
+        else
+          {
+            ++m_other_dropped_phy;
+          }
+        if (m_rx_phy_drop_callback != nullptr)
+          {
+            m_rx_phy_drop_callback (btpDestPort);
+          }
+        return;
+      }
+
+    uint8_t *buffer = nullptr;
+    uint32_t dataSize = 0;
     if(m_metric_supervisor_ptr!=nullptr)
     {
       buffer = new uint8_t[dataIndication.data->GetSize ()];

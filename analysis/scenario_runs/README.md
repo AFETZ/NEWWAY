@@ -14,6 +14,7 @@
 
 - `analysis/scenario_runs/make_plots.py` — построение графиков из `artifacts/`.
 - `analysis/scenario_runs/analyze_netstate_collision_risk.py` — safety-прокси (`min gap`, `min TTC`, risky events) из SUMO `netstate`.
+- `analysis/scenario_runs/compare_incident_baseline_loss.py` — сравнительный baseline/lossy таймлайн (drop ratio, control actions, gap/TTC, collisions).
 - `analysis/scenario_runs/export_results_bundle.py` — дублирование графиков/логов/summary в компактный export-бандл.
 - `scenarios/v2v-emergencyVehicleAlert-nrv2x/run_loss_sweep.sh` — готовый sweep baseline/lossy для сценария с реакцией на экстренное авто.
 

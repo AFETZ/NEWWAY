@@ -1,0 +1,4 @@
+scenario,path
+v2v-emergencyVehicleAlert-nrv2x,figures/v2v-emergencyVehicleAlert-nrv2x/emergency_control_actions.png
+v2v-emergencyVehicleAlert-nrv2x,figures/v2v-emergencyVehicleAlert-nrv2x/emergency_risk_timeseries.png
+v2v-emergencyVehicleAlert-nrv2x,figures/v2v-emergencyVehicleAlert-nrv2x/emergency_drop_vs_control_actions.png

@@ -1,0 +1,10 @@
+
+Total number of CAMs received: 8418
+
+Metric Supervisor statistics for NR-V2X
+Average PRR: 0.890047
+Average latency (ms): 15.8812
+RX packet count (from PRR Supervisor): 8418
+TX packet count (from PRR Supervisor): 556
+
+Simulation time: 8.41337 seconds

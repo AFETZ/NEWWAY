@@ -1,0 +1,10 @@
+scenario,technology,variant,prr,latency_ms,pir_s,throughput_kbps,overlap_ratio,tb_fail_ratio,control_actions,observed_cam_drop_ratio,min_gap_m,min_ttc_s,notes
+cttc-nr-v2x-demo-simple,NR-V2X,default,1.0,,0.100765,16.0,,,,,,,2 UE Mode 2 sanity
+nr-v2x-west-to-east-highway,NR-V2X,default,0.9883333333333333,,0.10153625699266586,15.813333333333336,0.05466666666666667,0.031573217201959713,,,,,KPI from SQLite
+v2v-cam-exchange-sionna-nrv2x,NR-V2X,non-sionna-default,0.946519,11.7862,,,,,,,,,CAM benchmark
+v2v-coexistence-80211p-nrv2x,802.11p,interference-on,0.9203070999999999,0.49182690000000007,,,,,,,,,Per-node averages
+v2v-coexistence-80211p-nrv2x,NR-V2X,interference-on,0.9620608,12.569866999999999,,,,,,,,,Per-node averages
+v2v-emergencyVehicleAlert-nrv2x,NR-V2X,incident_drop_0.0,0.959643,12.3156,,,,,99.0,0.0,6.01,2.353,incident-mode sweep
+v2v-emergencyVehicleAlert-nrv2x,NR-V2X,incident_drop_0.4,0.959382,12.3455,,,,,58.0,0.4058239189715621,6.01,2.345,incident-mode sweep
+v2v-emergencyVehicleAlert-nrv2x,NR-V2X,incident_drop_0.8,0.959371,12.2585,,,,,13.0,0.8021392894166431,6.01,2.402,incident-mode sweep
+v2v-cam-backend-compare,NR-V2X,sionna-unavailable,,,,,,,,,,,tensorflow/sionna/mitsuba missing

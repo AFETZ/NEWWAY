@@ -1,0 +1,17 @@
+time_s,vehicle_id,event_type,source_id,distance_m,heading_diff_deg,lane_before,lane_after,target_speed_mps
+2.05383,veh9,lane0_slowdown,2,8.35104,0.00724887,0,0,3.47
+2.25383,veh9,lane0_slowdown,2,9.56615,0.00724887,0,0,3.47
+2.45383,veh9,lane0_slowdown,2,10.7546,0.00724887,0,0,3.47
+2.65383,veh9,lane0_slowdown,2,11.9247,0.00724887,0,0,3.47
+2.85383,veh9,lane0_slowdown,2,13.0706,0.00724887,0,0,3.47
+3.05383,veh9,lane0_slowdown,2,14.2405,0.00724887,0,0,3.47
+3.25833,veh9,lane0_slowdown,2,15.5201,0.00724887,0,0,3.47
+3.45833,veh9,lane0_slowdown,2,16.9346,0.00724887,0,0,3.47
+3.65833,veh9,lane0_slowdown,2,18.4777,0.00724887,0,0,3.47
+3.85833,veh9,lane0_slowdown,2,20.1424,0.00724887,0,0,3.47
+4.05833,veh9,lane0_slowdown,2,21.9417,0.00724887,0,0,3.47
+4.25833,veh9,lane0_slowdown,2,23.8698,0.00724887,0,0,3.47
+4.35833,veh9,lane0_slowdown,2,24.509,8.20725,0,0,3.47
+4.45833,veh9,lane0_slowdown,2,25.1988,17.9072,0,0,3.47
+4.55108,veh9,lane0_slowdown,2,25.9335,28.1072,0,0,3.47
+4.65108,veh9,lane0_slowdown,2,26.7367,38.1072,0,0,3.47

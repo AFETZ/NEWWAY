@@ -54,6 +54,9 @@ scenarios/v2v-emergencyVehicleAlert-nrv2x/run.sh
 - есть `run_loss_sweep.sh` для baseline/lossy sweep по `--rx-drop-prob-cam`
 - автоматически считается safety-прокси из SUMO netstate (`min gap`, `min TTC`, risky events)
 - доступен incident-mode (`--incident-enable=1`) для кейса "сломавшееся авто + объезд"
+- есть `run_baseline_vs_lossy_visual.sh` для наглядного сравнения baseline/lossy на общей тайм-линии
+- есть `run_rssi_safety_sweep.sh` для исследования зависимости RSSI/PRR от `txPower` и связи с safety-метриками
+- есть `run_sionna_incident_sweep.sh` для terrain-aware incident sweep (Sionna vs non-Sionna)
 
 ## Где результаты
 

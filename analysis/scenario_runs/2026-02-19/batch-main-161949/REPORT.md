@@ -85,6 +85,32 @@
 - First control action time: `3.84 s -> 4.33 s -> 11.93 s` (существенная задержка реакции)
 - `INCIDENT-APPLIED/RELEASED` в логах подтверждают фактическую инъекцию инцидента (`veh2`, окно `12..30 s`)
 
+### 3.3 Почему PRR почти не меняется при большом числе `CAM_DROP_APP`
+
+В текущей постановке `--rx-drop-prob-cam` реализован как **application-level fault injection**:
+- пакет уже принят стеком связи;
+- затем в `emergencyVehicleAlert::receiveCAM()` он может быть отброшен на уровне приложения как `CAM_DROP_APP`.
+
+Из-за этого:
+- метрика `Average PRR` (из `MetricSupervisor`) почти не меняется;
+- но поведенческие метрики (`control_actions`, `first_control_action_s`) ухудшаются резко.
+
+Это ожидаемое поведение модели и полезный результат для ВКР:
+он демонстрирует, что усредненный link/network PRR может скрывать деградацию на уровне принятия решений транспортом.
+
+### 3.4 Baseline vs lossy тайм-лайн (покадровое сравнение)
+
+Собран сравнительный тайм-лайн для `drop_0p0` vs `drop_0p8`:
+- `analysis/scenario_runs/2026-02-19/batch-main-161949/eva-loss-sweep-incident-v2/comparison_drop0p0_vs_0p8/comparison_summary.csv`
+- `analysis/scenario_runs/2026-02-19/batch-main-161949/eva-loss-sweep-incident-v2/comparison_drop0p0_vs_0p8/comparison_timeline.csv`
+- `analysis/scenario_runs/2026-02-19/batch-main-161949/eva-loss-sweep-incident-v2/comparison_drop0p0_vs_0p8/comparison_timeline.png`
+
+По сравнению:
+- `overall_cam_drop_ratio`: `0.000 -> 0.802`
+- `total_control_actions`: `99 -> 13`
+- `first_control_action_s`: `3.84 s -> 11.93 s`
+- `collisions_count`: `0 -> 0` в текущей конфигурации.
+
 ## 4) Что это значит для цели исследования
 
 Цель: оценить влияние потерь сообщений в 5G NR Mode 2 sidelink на поведение подключенного/беспилотного транспорта.
@@ -113,4 +139,3 @@
   - меньшие headway,
   - жесткий lane-blocking инцидент,
   - явные surrogate safety KPI (TTC/PET/DRAC/time-to-lane-change).
-

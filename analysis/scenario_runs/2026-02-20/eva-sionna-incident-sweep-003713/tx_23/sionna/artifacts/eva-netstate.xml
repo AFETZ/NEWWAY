@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-02-20T00:40:16.007137+03:00 by Eclipse SUMO sumo 1.26.0
+<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="src/automotive/examples/sumo_files_v2v_map/map.net.xml"/>
+        <route-files value="src/automotive/examples/sumo_files_v2v_map/cars.rou.xml"/>
+        <additional-files value="src/automotive/examples/sumo_files_v2v_map/rerouter.add.xml"/>
+    </input>
+
+    <output>
+        <netstate-dump value="/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-20/eva-sionna-incident-sweep-003713/tx_23/sionna/artifacts/eva-netstate.xml"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <end value="300"/>
+        <step-length value="0.010000"/>
+    </time>
+
+    <report>
+        <verbose value="false"/>
+        <no-warnings value="true"/>
+        <no-step-log value="true"/>
+    </report>
+
+    <traci_server>
+        <remote-port value="31373"/>
+    </traci_server>
+
+    <random_number>
+        <seed value="10"/>
+    </random_number>
+
+    <gui_only>
+        <quit-on-end value="true"/>
+        <start value="true"/>
+    </gui_only>
+
+</sumoConfiguration>
+-->
+
+<netstate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netstate_file.xsd">
+    <timestep time="0.00"/>
+    <timestep time="0.01"/>
+    <timestep time="0.02"/>
+    <timestep time="0.03"/>
+    <timestep time="0.04"/>
+    <timestep time="0.05"/>
+    <timestep time="0.06"/>
+    <timestep time="0.07"/>
+    <timestep time="0.08"/>
+    <timestep time="0.09"/>
+    <timestep time="0.10">
+        <edge id="ne_to_nw">
+            <lane id="ne_to_nw_0">
+                <vehicle id="veh1" pos="5.10" speed="0.00"/>
+            </lane>
+            <lane id="ne_to_nw_1"/>
+        </edge>
+        <edge id="nw_to_ne">
+            <lane id="nw_to_ne_0">
+                <vehicle id="veh6" pos="5.10" speed="0.00"/>
+            </lane>
+            <lane id="nw_to_ne_1"/>
+        </edge>
+        <edge id="nw_to_sw">
+            <lane id="nw_to_sw_0">
+                <vehicle id="veh2" pos="6.60" speed="0.00"/>
+            </lane>
+            <lane id="nw_to_sw_1"/>
+        </edge>
+        <edge id="se_to_sw">
+            <lane id="se_to_sw_0">
+                <vehicle id="veh3" pos="5.10" speed="0.00"/>
+            </lane>
+            <lane id="se_to_sw_1"/>
+        </edge>
+        <edge id="sw_to_nw">
+            <lane id="sw_to_nw_0">
+                <vehicle id="veh4" pos="5.10" speed="0.00"/>
+            </lane>
+            <lane id="sw_to_nw_1"/>
+        </edge>
+        <edge id="sw_to_se">
+            <lane id="sw_to_se_0">
+                <vehicle id="veh5" pos="5.10" speed="0.00"/>
+            </lane>
+            <lane id="sw_to_se_1"/>
+        </edge>
+    </timestep>
+</netstate>

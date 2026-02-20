@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-02-20T16:40:05.221582+03:00 by Eclipse SUMO sumo 1.26.0
+<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="src/automotive/examples/sumo_files_v2v_map/map.net.xml"/>
+        <route-files value="src/automotive/examples/sumo_files_v2v_map/cars.rou.xml"/>
+        <additional-files value="src/automotive/examples/sumo_files_v2v_map/rerouter.add.xml"/>
+    </input>
+
+    <output>
+        <netstate-dump value="/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-20/eva-sionna-incident-sweep-163933/tx_23/sionna/artifacts/eva-netstate.xml"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <end value="300"/>
+        <step-length value="0.100000"/>
+    </time>
+
+    <report>
+        <verbose value="false"/>
+        <no-warnings value="true"/>
+        <no-step-log value="true"/>
+    </report>
+
+    <traci_server>
+        <remote-port value="40586"/>
+    </traci_server>
+
+    <random_number>
+        <seed value="10"/>
+    </random_number>
+
+    <gui_only>
+        <quit-on-end value="true"/>
+        <start value="true"/>
+    </gui_only>
+
+</sumoConfiguration>
+-->
+
+<netstate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netstate_file.xsd">
+    <timestep time="0.00"/>
+    <timestep time="0.10">
+        <edge id="ne_to_nw">
+            <lane id="ne_to_nw_0">
+                <vehicle id="veh1" pos="5.10" speed="0.00"/>
+            </lane>
+            <lane id="ne_to_nw_1"/>
+        </edge>
+        <edge id="nw_to_ne">
+            <lane id="nw_to_ne_0">
+                <vehicle id="veh6" pos="5.10" speed="0.00"/>
+            </lane>
+            <lane id="nw_to_ne_1"/>
+        </edge>
+        <edge id="nw_to_sw">
+            <lane id="nw_to_sw_0">
+                <vehicle id="veh2" pos="6.60" speed="0.00"/>
+            </lane>
+            <lane id="nw_to_sw_1"/>
+        </edge>
+        <edge id="se_to_sw">
+            <lane id="se_to_sw_0">
+                <vehicle id="veh3" pos="5.10" speed="0.00"/>
+            </lane>
+            <lane id="se_to_sw_1"/>
+        </edge>
+        <edge id="sw_to_nw">
+            <lane id="sw_to_nw_0">
+                <vehicle id="veh4" pos="5.10" speed="0.00"/>
+            </lane>
+            <lane id="sw_to_nw_1"/>
+        </edge>
+        <edge id="sw_to_se">
+            <lane id="sw_to_se_0">
+                <vehicle id="veh5" pos="5.10" speed="0.00"/>
+            </lane>
+            <lane id="sw_to_se_1"/>
+        </edge>
+    </timestep>
+    <timestep time="0.20">
+        <edge id="ne_to_nw">
+            <lane id="ne_to_nw_0">
+                <vehicle id="veh1" pos="5.14" speed="0.38"/>
+            </lane>
+            <lane id="ne_to_nw_1"/>
+        </edge>
+        <edge id="nw_to_ne">
+            <lane id="nw_to_ne_0">
+                <vehicle id="veh6" pos="5.14" speed="0.39"/>
+            </lane>
+            <lane id="nw_to_ne_1"/>
+        </edge>
+        <edge id="nw_to_sw">
+            <lane id="nw_to_sw_0">
+                <vehicle id="veh2" pos="6.64" speed="0.40"/>
+            </lane>
+            <lane id="nw_to_sw_1"/>
+        </edge>
+        <edge id="se_to_sw">
+            <lane id="se_to_sw_0">
+                <vehicle id="veh3" pos="5.14" speed="0.39"/>
+            </lane>
+            <lane id="se_to_sw_1"/>
+        </edge>
+        <edge id="sw_to_nw">
+            <lane id="sw_to_nw_0">
+                <vehicle id="veh4" pos="5.14" speed="0.40"/>
+            </lane>
+            <lane id="sw_to_nw_1"/>
+        </edge>
+        <edge id="sw_to_se">
+            <lane id="sw_to_se_0">
+                <vehicle id="veh5" pos="5.14" speed="0.38"/>
+            </lane>
+            <lane id="sw_to_se_1"/>
+        </edge>
+    </timestep>
+    <timestep time="0.30">
+        <edge id="ne_to_nw">
+            <lane id="ne_to_nw_0">
+                <vehicle id="veh1" pos="5.22" speed="0.77"/>
+            </lane>
+            <lane id="ne_to_nw_1"/>
+        </edge>
+        <edge id="nw_to_ne">
+            <lane id="nw_to_ne_0">
+                <vehicle id="veh6" pos="5.21" speed="0.75"/>
+            </lane>
+            <lane id="nw_to_ne_1"/>
+        </edge>
+        <edge id="nw_to_sw">
+            <lane id="nw_to_sw_0">
+                <vehicle id="veh2" pos="6.72" speed="0.78"/>
+            </lane>
+            <lane id="nw_to_sw_1"/>
+        </edge>
+        <edge id="se_to_sw">
+            <lane id="se_to_sw_0">
+                <vehicle id="veh3" pos="5.21" speed="0.75"/>
+            </lane>
+            <lane id="se_to_sw_1"/>
+        </edge>
+        <edge id="sw_to_nw">
+            <lane id="sw_to_nw_0">
+                <vehicle id="veh4" pos="5.22" speed="0.77"/>
+            </lane>
+            <lane id="sw_to_nw_1"/>
+        </edge>
+        <edge id="sw_to_se">
+            <lane id="sw_to_se_0">
+                <vehicle id="veh5" pos="5.22" speed="0.77"/>
+            </lane>
+            <lane id="sw_to_se_1"/>
+        </edge>
+    </timestep>
+    <timestep time="0.40">
+        <edge id="ne_to_nw">
+            <lane id="ne_to_nw_0">
+                <vehicle id="veh1" pos="5.33" speed="1.17"/>
+            </lane>
+            <lane id="ne_to_nw_1"/>
+        </edge>
+        <edge id="nw_to_ne">
+            <lane id="nw_to_ne_0">
+                <vehicle id="veh6" pos="5.33" speed="1.11"/>
+            </lane>
+            <lane id="nw_to_ne_1"/>
+        </edge>
+        <edge id="nw_to_sw">
+            <lane id="nw_to_sw_0">
+                <vehicle id="veh2" pos="6.83" speed="1.15"/>
+            </lane>
+            <lane id="nw_to_sw_1"/>
+        </edge>
+        <edge id="se_to_sw">
+            <lane id="se_to_sw_0">
+                <vehicle id="veh3" pos="5.32" speed="1.10"/>
+            </lane>
+            <lane id="se_to_sw_1"/>
+        </edge>
+        <edge id="sw_to_nw">
+            <lane id="sw_to_nw_0">
+                <vehicle id="veh4" pos="5.33" speed="1.14"/>
+            </lane>
+            <lane id="sw_to_nw_1"/>
+        </edge>
+        <edge id="sw_to_se">
+            <lane id="sw_to_se_0">
+                <vehicle id="veh5" pos="5.33" speed="1.13"/>
+            </lane>
+            <lane id="sw_to_se_1"/>
+        </edge>
+    </timestep>
+    <timestep time="0.50">
+        <edge id="ne_to_nw">
+            <lane id="ne_to_nw_0">
+                <vehicle id="veh1" pos="5.49" speed="1.53"/>
+            </lane>
+            <lane id="ne_to_nw_1"/>
+        </edge>
+        <edge id="nw_to_ne">
+            <lane id="nw_to_ne_0">
+                <vehicle id="veh6" pos="5.47" speed="1.46"/>
+            </lane>
+            <lane id="nw_to_ne_1"/>
+        </edge>
+        <edge id="nw_to_sw">
+            <lane id="nw_to_sw_0">
+                <vehicle id="veh2" pos="6.99" speed="1.55"/>
+            </lane>
+            <lane id="nw_to_sw_1"/>
+        </edge>
+        <edge id="se_to_sw">
+            <lane id="se_to_sw_0">
+                <vehicle id="veh3" pos="5.47" speed="1.43"/>
+            </lane>
+            <lane id="se_to_sw_1"/>
+        </edge>
+        <edge id="sw_to_nw">
+            <lane id="sw_to_nw_0">
+                <vehicle id="veh4" pos="5.48" speed="1.48"/>
+            </lane>
+            <lane id="sw_to_nw_1"/>
+        </edge>
+        <edge id="sw_to_se">
+            <lane id="sw_to_se_0">
+                <vehicle id="veh5" pos="5.48" speed="1.52"/>
+            </lane>
+            <lane id="sw_to_se_1"/>
+        </edge>
+    </timestep>
+    <timestep time="0.60">
+        <edge id="ne_to_nw">
+            <lane id="ne_to_nw_0">
+                <vehicle id="veh1" pos="5.67" speed="1.87"/>
+            </lane>
+            <lane id="ne_to_nw_1"/>
+        </edge>
+        <edge id="nw_to_ne">
+            <lane id="nw_to_ne_0">
+                <vehicle id="veh6" pos="5.65" speed="1.78"/>
+            </lane>
+            <lane id="nw_to_ne_1"/>
+        </edge>
+        <edge id="nw_to_sw">
+            <lane id="nw_to_sw_0">
+                <vehicle id="veh2" pos="7.18" speed="1.89"/>
+            </lane>
+            <lane id="nw_to_sw_1"/>
+        </edge>
+        <edge id="se_to_sw">
+            <lane id="se_to_sw_0">
+                <vehicle id="veh3" pos="5.64" speed="1.75"/>
+            </lane>
+            <lane id="se_to_sw_1"/>
+        </edge>
+        <edge id="sw_to_nw">
+            <lane id="sw_to_nw_0">
+                <vehicle id="veh4" pos="5.66" speed="1.84"/>
+            </lane>
+            <lane id="sw_to_nw_1"/>
+        </edge>
+        <edge id="sw_to_se">
+            <lane id="sw_to_se_0">
+                <vehicle id="veh5" pos="5.66" speed="1.83"/>
+            </lane>
+            <lane id="sw_to_se_1"/>
+        </edge>
+    </timestep>
+    <timestep time="0.70">
+        <edge id="ne_to_nw">
+            <lane id="ne_to_nw_0">
+                <vehicle id="veh1" pos="5.90" speed="2.22"/>
+            </lane>
+            <lane id="ne_to_nw_1"/>
+        </edge>
+        <edge id="nw_to_ne">
+            <lane id="nw_to_ne_0">
+                <vehicle id="veh6" pos="5.86" speed="2.14"/>
+            </lane>
+            <lane id="nw_to_ne_1"/>
+        </edge>
+        <edge id="nw_to_sw">
+            <lane id="nw_to_sw_0">
+                <vehicle id="veh2" pos="7.40" speed="2.26"/>
+            </lane>
+            <lane id="nw_to_sw_1"/>
+        </edge>
+        <edge id="se_to_sw">
+            <lane id="se_to_sw_0">
+                <vehicle id="veh3" pos="5.85" speed="2.05"/>
+            </lane>
+            <lane id="se_to_sw_1"/>
+        </edge>
+        <edge id="sw_to_nw">
+            <lane id="sw_to_nw_0">
+                <vehicle id="veh4" pos="5.88" speed="2.17"/>
+            </lane>
+            <lane id="sw_to_nw_1"/>
+        </edge>
+        <edge id="sw_to_se">
+            <lane id="sw_to_se_0">
+                <vehicle id="veh5" pos="5.88" speed="2.19"/>
+            </lane>
+            <lane id="sw_to_se_1"/>
+        </edge>
+    </timestep>
+    <timestep time="0.80">
+        <edge id="ne_to_nw">
+            <lane id="ne_to_nw_0">
+                <vehicle id="veh1" pos="6.15" speed="2.52"/>
+            </lane>
+            <lane id="ne_to_nw_1"/>
+        </edge>
+        <edge id="nw_to_ne">
+            <lane id="nw_to_ne_0">
+                <vehicle id="veh6" pos="6.12" speed="2.54"/>
+            </lane>
+            <lane id="nw_to_ne_1"/>
+        </edge>
+        <edge id="nw_to_sw">
+            <lane id="nw_to_sw_0">
+                <vehicle id="veh2" pos="7.67" speed="2.65"/>
+            </lane>
+            <lane id="nw_to_sw_1"/>
+        </edge>
+        <edge id="se_to_sw">
+            <lane id="se_to_sw_0">
+                <vehicle id="veh3" pos="6.08" speed="2.35"/>
+            </lane>
+            <lane id="se_to_sw_1"/>
+        </edge>
+        <edge id="sw_to_nw">
+            <lane id="sw_to_nw_0">
+                <vehicle id="veh4" pos="6.13" speed="2.46"/>
+            </lane>
+            <lane id="sw_to_nw_1"/>
+        </edge>
+        <edge id="sw_to_se">
+            <lane id="sw_to_se_0">
+                <vehicle id="veh5" pos="6.14" speed="2.56"/>
+            </lane>
+            <lane id="sw_to_se_1"/>
+        </edge>
+    </timestep>
+    <timestep time="0.90">
+        <edge id="ne_to_nw">
+            <lane id="ne_to_nw_0">
+                <vehicle id="veh1" pos="6.43" speed="2.80"/>
+            </lane>
+            <lane id="ne_to_nw_1"/>
+        </edge>
+        <edge id="nw_to_ne">
+            <lane id="nw_to_ne_0">
+                <vehicle id="veh6" pos="6.41" speed="2.92"/>
+            </lane>
+            <lane id="nw_to_ne_1"/>
+        </edge>
+        <edge id="nw_to_sw">
+            <lane id="nw_to_sw_0">
+                <vehicle id="veh2" pos="7.97" speed="3.03"/>
+            </lane>
+            <lane id="nw_to_sw_1"/>
+        </edge>
+        <edge id="se_to_sw">
+            <lane id="se_to_sw_0">
+                <vehicle id="veh3" pos="6.35" speed="2.66"/>
+            </lane>
+            <lane id="se_to_sw_1"/>
+        </edge>
+        <edge id="sw_to_nw">
+            <lane id="sw_to_nw_0">
+                <vehicle id="veh4" pos="6.40" speed="2.75"/>
+            </lane>
+            <lane id="sw_to_nw_1"/>
+        </edge>
+        <edge id="sw_to_se">
+            <lane id="sw_to_se_0">
+                <vehicle id="veh5" pos="6.42" speed="2.82"/>
+            </lane>
+            <lane id="sw_to_se_1"/>
+        </edge>
+    </timestep>
+</netstate>

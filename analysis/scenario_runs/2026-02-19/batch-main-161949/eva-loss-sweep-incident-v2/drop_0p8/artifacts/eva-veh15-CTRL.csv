@@ -1,0 +1,3 @@
+time_s,vehicle_id,event_type,source_id,distance_m,heading_diff_deg,lane_before,lane_after,target_speed_mps
+17.2381,veh15,lane1_speedup,2,35.408,0,1,0,20.835
+24.2381,veh15,lane1_speedup,2,17.2084,0,1,0,20.835
