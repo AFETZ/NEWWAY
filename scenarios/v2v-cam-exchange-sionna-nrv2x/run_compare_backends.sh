@@ -7,6 +7,9 @@ SIM_TIME="${SIM_TIME:-20}"
 OUT_BASE="${OUT_BASE:-$ROOT/analysis/scenario_runs/$(date +%F)/cam-sionna-backend-compare-$(date +%H%M%S)}"
 SIONNA_PY="${SIONNA_PY:-$ROOT/.venv/bin/python}"
 SIONNA_GPU="${SIONNA_GPU:-0}"
+EXPORT_RESULTS="${EXPORT_RESULTS:-1}"
+EXPORT_ROOT="${EXPORT_ROOT:-$ROOT/analysis/scenario_runs/chatgpt_exports}"
+EXPORT_INCLUDE_RAW_CSV="${EXPORT_INCLUDE_RAW_CSV:-0}"
 
 NS3_DIR="$("$ROOT/scripts/ensure-ns3-dev.sh" --root "$ROOT" --ns3-dir "$NS3_DIR")"
 SCENE_XML="${SCENE_XML:-$NS3_DIR/src/sionna/scenarios/SionnaCircleScenario/scene.xml}"
@@ -110,7 +113,7 @@ lat = [r["latency_ms"] if r["latency_ms"] is not None else 0.0 for r in rows]
 fig, ax = plt.subplots(1, 2, figsize=(8, 4))
 ax[0].bar(labels, prr, color=["#1f77b4", "#ff7f0e"])
 ax[0].set_ylim(0, 1.05)
-ax[0].set_ylabel("Average PRR")
+ax[0].set_ylabel("Average PRR [-]")
 ax[0].grid(axis="y", alpha=0.3)
 
 ax[1].bar(labels, lat, color=["#1f77b4", "#ff7f0e"])
@@ -127,3 +130,13 @@ PY
 echo "Comparison done:"
 echo "  $COMPARE_CSV"
 echo "  $COMPARE_PNG"
+
+if [[ "$EXPORT_RESULTS" == "1" ]]; then
+  export_args=(--run-dir "$OUT_BASE" --export-root "$EXPORT_ROOT")
+  if [[ "$EXPORT_INCLUDE_RAW_CSV" == "1" ]]; then
+    export_args+=(--include-raw-csv)
+  fi
+  if ! "$SIONNA_PY" "$ROOT/analysis/scenario_runs/export_results_bundle.py" "${export_args[@]}"; then
+    echo "Warning: export bundle generation failed for backend compare"
+  fi
+fi

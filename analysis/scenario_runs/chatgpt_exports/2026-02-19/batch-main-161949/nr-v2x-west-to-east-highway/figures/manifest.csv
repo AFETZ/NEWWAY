@@ -1,0 +1,5 @@
+scenario,path
+nr-v2x-west-to-east-highway,figures/nr-v2x-west-to-east-highway/highway_prr_per_tx.png
+nr-v2x-west-to-east-highway,figures/nr-v2x-west-to-east-highway/highway_pir_vs_distance.png
+nr-v2x-west-to-east-highway,figures/nr-v2x-west-to-east-highway/highway_top_links_throughput.png
+nr-v2x-west-to-east-highway,figures/nr-v2x-west-to-east-highway/highway_overlap_and_tb_fail_ratio.png

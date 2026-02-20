@@ -1,0 +1,3 @@
+scenario,path
+cttc-nr-v2x-demo-simple,figures/cttc-nr-v2x-demo-simple/cttc_prr_over_time.png
+cttc-nr-v2x-demo-simple,figures/cttc-nr-v2x-demo-simple/cttc_pssch_sinr_distribution.png

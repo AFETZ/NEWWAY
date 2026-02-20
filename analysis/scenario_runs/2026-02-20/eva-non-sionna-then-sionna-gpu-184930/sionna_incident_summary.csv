@@ -1,0 +1,3 @@
+tx_power_dbm,backend,avg_prr,avg_latency_ms,control_actions,first_control_action_s,p90_control_action_s,min_gap_m,min_ttc_s,risky_gap_events,risky_ttc_events,run_dir
+23.0,non_sionna,0.0,0.0,0.0,,,,,0.0,0.0,/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-20/eva-non-sionna-then-sionna-gpu-184930/tx_23/non_sionna
+23.0,sionna,0.0,0.0,0.0,,,,,0.0,0.0,/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-20/eva-non-sionna-then-sionna-gpu-184930/tx_23/sionna

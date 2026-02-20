@@ -120,6 +120,16 @@ namespace ns3
            "Probability to drop received CPM messages at the application level",
            DoubleValue (0.0),
            MakeDoubleAccessor (&emergencyVehicleAlert::m_rx_drop_prob_cpm),
+           MakeDoubleChecker<double> (0.0, 1.0))
+        .AddAttribute ("RxDropProbPhyCam",
+           "Probability to drop received CAM messages before upper layers (PHY/MAC emulation)",
+           DoubleValue (0.0),
+           MakeDoubleAccessor (&emergencyVehicleAlert::m_rx_drop_prob_phy_cam),
+           MakeDoubleChecker<double> (0.0, 1.0))
+        .AddAttribute ("RxDropProbPhyCpm",
+           "Probability to drop received CPM messages before upper layers (PHY/MAC emulation)",
+           DoubleValue (0.0),
+           MakeDoubleAccessor (&emergencyVehicleAlert::m_rx_drop_prob_phy_cpm),
            MakeDoubleChecker<double> (0.0, 1.0));
         return tid;
   }
@@ -138,11 +148,15 @@ namespace ns3
     m_cpm_received = 0;
     m_cam_dropped_app = 0;
     m_cpm_dropped_app = 0;
+    m_cam_dropped_phy = 0;
+    m_cpm_dropped_phy = 0;
     m_denm_received = 0;
     m_control_actions = 0;
     m_denm_intertime = 0;
     m_rx_drop_prob_cam = 0.0;
     m_rx_drop_prob_cpm = 0.0;
+    m_rx_drop_prob_phy_cam = 0.0;
+    m_rx_drop_prob_phy_cpm = 0.0;
     m_drop_rv = CreateObject<UniformRandomVariable> ();
     m_drop_rv->SetAttribute ("Min", DoubleValue (0.0));
     m_drop_rv->SetAttribute ("Max", DoubleValue (1.0));
@@ -200,6 +214,10 @@ namespace ns3
     // Create new BTP and GeoNet objects and set them in DENBasicService and CABasicService
     m_btp = CreateObject <btp>();
     m_geoNet = CreateObject <GeoNet>();
+    m_geoNet->SetAttribute ("RxDropProbPhyCam", DoubleValue (m_rx_drop_prob_phy_cam));
+    m_geoNet->SetAttribute ("RxDropProbPhyCpm", DoubleValue (m_rx_drop_prob_phy_cpm));
+    m_geoNet->setRxPhyDropCallback (
+      std::bind (&emergencyVehicleAlert::LogPhyDropEvent, this, std::placeholders::_1));
 
     if(m_metric_supervisor!=nullptr)
     {
@@ -370,13 +388,17 @@ namespace ns3
 
     if (m_print_summary && !m_already_print)
     {
+      m_cam_dropped_phy = static_cast<int> (m_geoNet->GetCamDroppedPhy ());
+      m_cpm_dropped_phy = static_cast<int> (m_geoNet->GetCpmDroppedPhy ());
       std::cout << "INFO-" << m_id
                 << ",CAM-SENT:" << cam_sent
                 << ",CAM-RECEIVED:" << m_cam_received
                 << ",CAM-DROPPED-APP:" << m_cam_dropped_app
+                << ",CAM-DROPPED-PHY:" << m_cam_dropped_phy
                 << ",CPM-SENT: " << cpm_sent
                 << ",CPM-RECEIVED: " << m_cpm_received
                 << ",CPM-DROPPED-APP:" << m_cpm_dropped_app
+                << ",CPM-DROPPED-PHY:" << m_cpm_dropped_phy
                 << ",CONTROL-ACTIONS:" << m_control_actions
                 << std::endl;
       m_already_print=true;
@@ -427,6 +449,45 @@ namespace ns3
                         << "," << laneAfter
                         << "," << speedTarget
                         << std::endl;
+  }
+
+  void
+  emergencyVehicleAlert::LogPhyDropEvent (uint16_t btpDestPort)
+  {
+    if (btpDestPort == 2001)
+      {
+        ++m_cam_dropped_phy;
+      }
+    else if (btpDestPort == 2009)
+      {
+        ++m_cpm_dropped_phy;
+      }
+
+    if (m_csv_name.empty () || !m_csv_ofstream_msg.is_open ())
+      {
+        return;
+      }
+
+    long rx_id = 0;
+    if (m_id.size () > 3)
+      {
+        rx_id = std::stol (m_id.substr (3));
+      }
+
+    if (btpDestPort == 2001)
+      {
+        m_csv_ofstream_msg << m_id << "," << -1 << ",,"
+                           << Simulator::Now ().GetSeconds ()
+                           << "," << 0 << ",CAM_DROP_PHY,"
+                           << -1 << "," << rx_id << "," << -1 << std::endl;
+      }
+    else if (btpDestPort == 2009)
+      {
+        m_csv_ofstream_msg << m_id << "," << -1 << ",,"
+                           << Simulator::Now ().GetSeconds ()
+                           << "," << 0 << ",CPM_DROP_PHY,"
+                           << -1 << "," << rx_id << "," << -1 << std::endl;
+      }
   }
 
   void
@@ -547,7 +608,11 @@ namespace ns3
       }
     m_cpm_received++;
     (void) from;
-    std::cout << "["<< Simulator::Now ().GetSeconds ()<<"] " << m_id <<" received a new CPMv1 from vehicle " << tx_id <<" with "<< asn1cpp::getField(cpm->cpm.cpmParameters.numberOfPerceivedObjects,long)<< " perceived objects." <<std::endl;
+    NS_LOG_INFO ("[" << Simulator::Now ().GetSeconds () << "] " << m_id
+                 << " received a new CPMv1 from vehicle " << tx_id
+                 << " with "
+                 << asn1cpp::getField(cpm->cpm.cpmParameters.numberOfPerceivedObjects,long)
+                 << " perceived objects.");
     //For every PO inside the CPM, if any
     bool POs_ok;
     auto PObjects = asn1cpp::getSeqOpt(cpm->cpm.cpmParameters.perceivedObjectContainer,PerceivedObjectContainer,&POs_ok);
@@ -636,7 +701,7 @@ namespace ns3
     /* This is just a sample dummy receiveDENM function. The user can customize it to parse the content of a DENM when it is received. */
     (void) denm; // Contains the data received from the DENM
     (void) from; // Contains the address from which the DENM has been received
-    std::cout<<"Received a new DENM."<<std::endl;
+    NS_LOG_INFO ("Received a new DENM.");
   }
 
   void
@@ -683,7 +748,9 @@ namespace ns3
         {
           auto POcontainer = asn1cpp::getSeq(wrappedContainer->containerData.choice.PerceivedObjectContainer,PerceivedObjectContainer);
           int PObjects_size = asn1cpp::sequenceof::getSize(POcontainer->perceivedObjects);
-          std::cout << "["<< Simulator::Now ().GetSeconds ()<<"] " << m_id <<" received a new CPMv2 from " << tx_id << " with " << PObjects_size << " perceived objects." << std::endl;
+          NS_LOG_INFO ("[" << Simulator::Now ().GetSeconds () << "] " << m_id
+                       << " received a new CPMv2 from " << tx_id
+                       << " with " << PObjects_size << " perceived objects.");
           for(int j=0; j<PObjects_size;j++)
               {
                LDM::returnedVehicleData_t PO_data;

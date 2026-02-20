@@ -32,6 +32,7 @@
 #include "ns3/lte-module.h"
 #include "ns3/stats-module.h"
 #include "ns3/config-store-module.h"
+#include "ns3/sionna-helper.h"
 #include "ns3/log.h"
 #include "ns3/antenna-module.h"
 #include <iomanip>
@@ -41,6 +42,10 @@
 
 
 #include <unistd.h>
+#include <algorithm>
+#include <functional>
+#include <iostream>
+#include <memory>
 #include "ns3/core-module.h"
 
 
@@ -95,6 +100,7 @@ main (int argc, char *argv[])
   bool realtime = false;
   bool sumo_gui = true;
   double sumo_updates = 0.01;
+  uint16_t sumo_port = 3400;
   std::string csv_name;
   std::string csv_name_cumulative;
   std::string sumo_netstate_file_name;
@@ -104,12 +110,24 @@ main (int argc, char *argv[])
   uint32_t nodeCounter = 0;
 
   double penetrationRate = 0.7;
+  bool sionna = false;
+  std::string server_ip = "";
+  bool local_machine = false;
+  bool sionna_verbose = false;
 
   xmlDocPtr rou_xml_file;
   double m_baseline_prr = 150.0;
   bool m_metric_sup = false;
   double rx_drop_prob_cam = 0.0;
   double rx_drop_prob_cpm = 0.0;
+  double rx_drop_prob_phy_cam = 0.0;
+  double rx_drop_prob_phy_cpm = 0.0;
+  bool incident_enable = false;
+  std::string incident_vehicle_id = "veh2";
+  double incident_time_s = 12.0;
+  double incident_stop_duration_s = 15.0;
+  double incident_recover_max_speed_mps = -1.0;
+  uint32_t incident_retry_max = 20;
 
 
   // Simulation parameters.
@@ -152,6 +170,7 @@ main (int argc, char *argv[])
   cmd.AddValue ("realtime", "Use the realtime scheduler or not", realtime);
   cmd.AddValue ("sumo-gui", "Use SUMO gui or not", sumo_gui);
   cmd.AddValue ("sumo-updates", "SUMO granularity", sumo_updates);
+  cmd.AddValue ("sumo-port", "TraCI TCP port for SUMO", sumo_port);
   cmd.AddValue ("sumo-folder","Position of sumo config files",sumo_folder);
   cmd.AddValue ("mob-trace", "Name of the mobility trace file", mob_trace);
   cmd.AddValue ("sumo-config", "Location and name of SUMO configuration file", sumo_config);
@@ -163,7 +182,25 @@ main (int argc, char *argv[])
   cmd.AddValue ("met-sup","Use the Metric supervisor or not",m_metric_sup);
   cmd.AddValue ("rx-drop-prob-cam", "Application-level probability to drop received CAM packets", rx_drop_prob_cam);
   cmd.AddValue ("rx-drop-prob-cpm", "Application-level probability to drop received CPM packets", rx_drop_prob_cpm);
+  cmd.AddValue ("rx-drop-prob-phy-cam",
+                "PHY/MAC-level probability to drop received CAM packets before upper layers",
+                rx_drop_prob_phy_cam);
+  cmd.AddValue ("rx-drop-prob-phy-cpm",
+                "PHY/MAC-level probability to drop received CPM packets before upper layers",
+                rx_drop_prob_phy_cpm);
   cmd.AddValue ("penetrationRate", "Rate of vehicles equipped with wireless communication devices", penetrationRate);
+  cmd.AddValue ("sionna", "Enable SIONNA usage", sionna);
+  cmd.AddValue ("sionna-server-ip", "SIONNA server IP address", server_ip);
+  cmd.AddValue ("sionna-local-machine", "SIONNA will be executed on local machine", local_machine);
+  cmd.AddValue ("sionna-verbose", "Enable verbose logs in SIONNA helper", sionna_verbose);
+  cmd.AddValue ("incident-enable", "Enable stalled incident vehicle injection", incident_enable);
+  cmd.AddValue ("incident-vehicle-id", "Vehicle ID to force-stop as incident source", incident_vehicle_id);
+  cmd.AddValue ("incident-time-s", "Simulation time [s] when incident stop is injected", incident_time_s);
+  cmd.AddValue ("incident-stop-duration-s", "How long to keep incident vehicle stopped [s]", incident_stop_duration_s);
+  cmd.AddValue ("incident-recover-max-speed-mps",
+                "Recovery max speed [m/s] after incident; negative keeps original speed",
+                incident_recover_max_speed_mps);
+  cmd.AddValue ("incident-retry-max", "Max retries while waiting for incident vehicle to appear", incident_retry_max);
 
   cmd.AddValue ("simTime",
                 "Simulation time in seconds",
@@ -245,6 +282,15 @@ main (int argc, char *argv[])
 
   // Parse the command line
   cmd.Parse (argc, argv);
+
+  SionnaHelper& sionnaHelper = SionnaHelper::GetInstance ();
+  if (sionna)
+    {
+      sionnaHelper.SetSionna (sionna);
+      sionnaHelper.SetServerIp (server_ip);
+      sionnaHelper.SetLocalMachine (local_machine);
+      sionnaHelper.SetVerbose (sionna_verbose);
+    }
 
   if (verbose)
     {
@@ -638,18 +684,22 @@ main (int argc, char *argv[])
 
   /*** 6. Setup Traci and start SUMO ***/
   Ptr<TraciClient> sumoClient = CreateObject<TraciClient> ();
+  if (sionna)
+    {
+      sumoClient->SetSionnaUp ();
+    }
   sumoClient->SetAttribute ("SumoConfigPath", StringValue (sumo_config));
   sumoClient->SetAttribute ("SumoBinaryPath", StringValue (""));    // use system installation of sumo
   sumoClient->SetAttribute ("SynchInterval", TimeValue (Seconds (sumo_updates)));
   sumoClient->SetAttribute ("StartTime", TimeValue (Seconds (0.0)));
   sumoClient->SetAttribute ("SumoGUI", BooleanValue (sumo_gui));
-  sumoClient->SetAttribute ("SumoPort", UintegerValue (3400));
+  sumoClient->SetAttribute ("SumoPort", UintegerValue (sumo_port));
   sumoClient->SetAttribute ("PenetrationRate", DoubleValue (penetrationRate));
   sumoClient->SetAttribute ("SumoLogFile", BooleanValue (false));
   sumoClient->SetAttribute ("SumoStepLog", BooleanValue (false));
   sumoClient->SetAttribute ("SumoSeed", IntegerValue (10));
 
-  std::string sumo_additional_options = "--verbose true";
+  std::string sumo_additional_options = "--verbose false";
 
   if(sumo_netstate_file_name!="")
   {
@@ -657,7 +707,9 @@ main (int argc, char *argv[])
   }
 
   sumoClient->SetAttribute ("SumoAdditionalCmdOptions", StringValue (sumo_additional_options));
-  sumoClient->SetAttribute ("SumoWaitForSocket", TimeValue (Seconds (1.0)));
+  // 1s is occasionally too short on loaded hosts/WSL and causes transient
+  // TraCI "Connection refused" right after SUMO startup.
+  sumoClient->SetAttribute ("SumoWaitForSocket", TimeValue (Seconds (5.0)));
 
   /* Create and setup the web-based vehicle visualizer of ms-van3t */
   vehicleVisualizer vehicleVisObj;
@@ -687,6 +739,8 @@ main (int argc, char *argv[])
   EmergencyVehicleAlertHelper.SetAttribute ("MetricSupervisor", PointerValue (metSup));
   EmergencyVehicleAlertHelper.SetAttribute ("RxDropProbCam", DoubleValue (rx_drop_prob_cam));
   EmergencyVehicleAlertHelper.SetAttribute ("RxDropProbCpm", DoubleValue (rx_drop_prob_cpm));
+  EmergencyVehicleAlertHelper.SetAttribute ("RxDropProbPhyCam", DoubleValue (rx_drop_prob_phy_cam));
+  EmergencyVehicleAlertHelper.SetAttribute ("RxDropProbPhyCpm", DoubleValue (rx_drop_prob_phy_cpm));
 
   /* callback function for node creation */
   int i=0;
@@ -729,6 +783,143 @@ main (int argc, char *argv[])
 
   /* start traci client with given function pointers */
   sumoClient->SumoSetup (setupNewWifiNode, shutdownWifiNode);
+
+  if (incident_enable)
+    {
+      auto incidentAttempts = std::make_shared<uint32_t> (0);
+      auto originalMaxSpeed = std::make_shared<double> (-1.0);
+      std::function<void ()> applyIncident;
+      applyIncident = [&, incidentAttempts, originalMaxSpeed] () mutable
+        {
+          ++(*incidentAttempts);
+          std::vector<std::string> activeVehicles = sumoClient->TraCIAPI::vehicle.getIDList ();
+          bool found = std::find (activeVehicles.begin (), activeVehicles.end (), incident_vehicle_id) != activeVehicles.end ();
+          if (!found)
+            {
+              if (*incidentAttempts <= incident_retry_max)
+                {
+                  NS_LOG_WARN ("Incident vehicle '" << incident_vehicle_id
+                               << "' not present yet; retry " << *incidentAttempts << "/" << incident_retry_max);
+                  Simulator::Schedule (Seconds (1.0), applyIncident);
+                }
+              else
+                {
+                  NS_LOG_ERROR ("Incident injection failed: vehicle '" << incident_vehicle_id << "' never appeared");
+                }
+              return;
+            }
+
+          std::string roadId = sumoClient->TraCIAPI::vehicle.getRoadID (incident_vehicle_id);
+          int laneIdx = sumoClient->TraCIAPI::vehicle.getLaneIndex (incident_vehicle_id);
+          double lanePos = sumoClient->TraCIAPI::vehicle.getLanePosition (incident_vehicle_id);
+          *originalMaxSpeed = sumoClient->TraCIAPI::vehicle.getMaxSpeed (incident_vehicle_id);
+
+          // Force immediate low-speed hold first (works even when setStop is rejected by SUMO).
+          sumoClient->TraCIAPI::vehicle.setMaxSpeed (incident_vehicle_id, 0.1);
+          sumoClient->TraCIAPI::vehicle.setSpeed (incident_vehicle_id, 0.0);
+          sumoClient->TraCIAPI::vehicle.slowDown (incident_vehicle_id, 0.0, 1.0);
+
+          auto holdStopped = std::make_shared<std::function<void (double)>> ();
+          *holdStopped = [&, holdStopped] (double remainingS)
+            {
+              if (remainingS <= 0.0)
+                {
+                  return;
+                }
+              try
+                {
+                  sumoClient->TraCIAPI::vehicle.setMaxSpeed (incident_vehicle_id, 0.1);
+                  sumoClient->TraCIAPI::vehicle.setSpeed (incident_vehicle_id, 0.0);
+                  sumoClient->TraCIAPI::vehicle.slowDown (incident_vehicle_id, 0.0, 0.2);
+                }
+              catch (const std::exception &)
+                {
+                  return;
+                }
+              double next = std::min (0.5, remainingS);
+              Simulator::Schedule (Seconds (next), [holdStopped, remainingS, next] () mutable {
+                (*holdStopped) (remainingS - next);
+              });
+            };
+
+          bool stopApplied = false;
+          if (!roadId.empty () && roadId[0] != ':')
+            {
+              int stopLane = std::max (0, laneIdx);
+              double stopPos = lanePos + 5.0;
+              if (!std::isfinite (stopPos) || stopPos < 1.0)
+                {
+                  stopPos = 1.0;
+                }
+              try
+                {
+                  sumoClient->TraCIAPI::vehicle.setStop (incident_vehicle_id,
+                                                         roadId,
+                                                         stopPos,
+                                                         stopLane,
+                                                         incident_stop_duration_s,
+                                                         0,
+                                                         0.0,
+                                                         -1.0);
+                  stopApplied = true;
+                }
+              catch (const std::exception &e)
+                {
+                  NS_LOG_WARN ("setStop failed for incident vehicle '" << incident_vehicle_id
+                               << "': " << e.what () << ". Falling back to low max-speed hold.");
+                }
+            }
+          (*holdStopped) (incident_stop_duration_s);
+
+          libsumo::TraCIColor incidentColor;
+          incidentColor.r = 230;
+          incidentColor.g = 30;
+          incidentColor.b = 30;
+          incidentColor.a = 255;
+          sumoClient->TraCIAPI::vehicle.setColor (incident_vehicle_id, incidentColor);
+
+          std::cout << "INCIDENT-APPLIED,id=" << incident_vehicle_id
+                    << ",time_s=" << Simulator::Now ().GetSeconds ()
+                    << ",road=" << roadId
+                    << ",lane=" << laneIdx
+                    << ",lane_pos_m=" << lanePos
+                    << ",duration_s=" << incident_stop_duration_s
+                    << ",setStopApplied=" << (stopApplied ? 1 : 0)
+                    << std::endl;
+
+          if (incident_stop_duration_s > 0.0)
+            {
+              Simulator::Schedule (Seconds (incident_stop_duration_s),
+                                   [&, originalMaxSpeed] ()
+                                   {
+                                     double recoverSpeed = incident_recover_max_speed_mps;
+                                     if (recoverSpeed < 0.0)
+                                       {
+                                         recoverSpeed = *originalMaxSpeed;
+                                       }
+                                     if (recoverSpeed > 0.0)
+                                       {
+                                         sumoClient->TraCIAPI::vehicle.setMaxSpeed (incident_vehicle_id, recoverSpeed);
+                                         sumoClient->TraCIAPI::vehicle.setSpeed (incident_vehicle_id, -1.0);
+                                         sumoClient->TraCIAPI::vehicle.slowDown (incident_vehicle_id, recoverSpeed, 2.0);
+                                         std::cout << "INCIDENT-RELEASED,id=" << incident_vehicle_id
+                                                   << ",time_s=" << Simulator::Now ().GetSeconds ()
+                                                   << ",recover_max_speed_mps=" << recoverSpeed
+                                                   << std::endl;
+                                       }
+                                   });
+            }
+        };
+      if (incident_time_s >= simTime)
+        {
+          NS_LOG_WARN ("incident-time-s >= simTime, incident will not trigger: "
+                       << incident_time_s << " >= " << simTime);
+        }
+      else
+        {
+          Simulator::Schedule (Seconds (incident_time_s), applyIncident);
+        }
+    }
 
   /*** 8. Start Simulation ***/
   Simulator::Stop (Seconds(simTime));

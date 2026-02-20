@@ -1,0 +1,3 @@
+case_id,drop_layer,configured_drop_prob,rx_drop_prob_cam,rx_drop_prob_phy_cam,run_dir
+drop_0p0,phy,0.0,0.0,0.0,/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-19/eva-phy-sweep-smoke/drop_0p0
+drop_0p8,phy,0.8,0.0,0.8,/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-19/eva-phy-sweep-smoke/drop_0p8

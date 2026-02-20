@@ -65,7 +65,7 @@ def plot_cttc(run_dir: Path) -> list[Path]:
 
         ax[1].plot(t, prr, label="Cumulative PRR")
         ax[1].set_xlabel("Time [s]")
-        ax[1].set_ylabel("PRR")
+        ax[1].set_ylabel("PRR [-]")
         ax[1].set_ylim(0, 1.05)
         ax[1].grid(alpha=0.3)
         ax[1].legend()
@@ -80,7 +80,7 @@ def plot_cttc(run_dir: Path) -> list[Path]:
 
         fig, ax = plt.subplots(1, 1, figsize=(9, 4))
         ax.hist(sinr_vals, bins=40, alpha=0.8)
-        ax.set_xlabel("Average SINR")
+        ax.set_xlabel("Average SINR [dB]")
         ax.set_ylabel("Count")
         ax.set_title(f"PSSCH SINR distribution (corruption rate={corr_rate:.3f})")
         ax.grid(alpha=0.3)
@@ -111,7 +111,7 @@ def plot_highway(run_dir: Path) -> list[Path]:
         fig, ax = plt.subplots(1, 1, figsize=(8, 4))
         ax.bar(prr["Ip"], prr["avrgPrr"], color="#1f77b4")
         ax.set_ylim(0, 1.05)
-        ax.set_ylabel("Average PRR")
+        ax.set_ylabel("Average PRR [-]")
         ax.set_xlabel("Transmitter IP")
         ax.grid(axis="y", alpha=0.3)
         p = out / "highway_prr_per_tx.png"
@@ -148,7 +148,7 @@ def plot_highway(run_dir: Path) -> list[Path]:
         fig, ax = plt.subplots(1, 1, figsize=(6, 4))
         ax.bar(["PSSCH overlap", "PSSCH TB fail"], [overlap_ratio, tb_fail_ratio], color=["#ff7f0e", "#d62728"])
         ax.set_ylim(0, max(0.1, overlap_ratio, tb_fail_ratio) * 1.4)
-        ax.set_ylabel("Ratio")
+        ax.set_ylabel("Ratio [-]")
         ax.grid(axis="y", alpha=0.3)
         p = out / "highway_overlap_and_tb_fail_ratio.png"
         _save(fig, p)
@@ -191,7 +191,7 @@ def plot_cam_sionna(run_dir: Path) -> list[Path]:
             fig, ax = plt.subplots(1, 1, figsize=(8, 4))
             ax.bar(prr["node_id"].astype(str), prr["prr"].astype(float), color="#1f77b4")
             ax.set_ylim(0, 1.05)
-            ax.set_ylabel("PRR")
+            ax.set_ylabel("PRR [-]")
             ax.set_xlabel("Node ID")
             ax.grid(axis="y", alpha=0.3)
             p = out / "cam_sionna_prr_per_node.png"
@@ -215,7 +215,7 @@ def plot_cam_sionna(run_dir: Path) -> list[Path]:
                 ax[0].plot(x_med, y_med, color="red", linewidth=2, label="Median trend")
                 ax[0].legend()
             ax[0].set_xlabel("Distance [m]")
-            ax[0].set_ylabel("SNR")
+            ax[0].set_ylabel("SNR [dB]")
             ax[0].grid(alpha=0.3)
 
             ax[1].scatter(dist, rssi, s=8, alpha=0.25)
@@ -224,7 +224,7 @@ def plot_cam_sionna(run_dir: Path) -> list[Path]:
                 ax[1].plot(x_med, y_med, color="red", linewidth=2, label="Median trend")
                 ax[1].legend()
             ax[1].set_xlabel("Distance [m]")
-            ax[1].set_ylabel("RSSI")
+            ax[1].set_ylabel("RSSI [dBm]")
             ax[1].grid(alpha=0.3)
 
             p = out / "cam_sionna_phy_vs_distance.png"
@@ -265,7 +265,7 @@ def plot_coexistence(run_dir: Path) -> list[Path]:
             fig, ax = plt.subplots(1, 2, figsize=(10, 4))
             ax[0].bar(["802.11p", "NR-V2X"], [p11["prr"].mean(), pnr["prr"].mean()], color=["#1f77b4", "#ff7f0e"])
             ax[0].set_ylim(0, 1.05)
-            ax[0].set_ylabel("Average PRR")
+            ax[0].set_ylabel("Average PRR [-]")
             ax[0].grid(axis="y", alpha=0.3)
 
             ax[1].bar(
@@ -295,7 +295,7 @@ def plot_coexistence(run_dir: Path) -> list[Path]:
             ax.set_xticklabels(merged["node_id"].astype(int).astype(str))
             ax.set_ylim(0, 1.05)
             ax.set_xlabel("Node ID")
-            ax.set_ylabel("PRR")
+            ax.set_ylabel("PRR [-]")
             ax.grid(axis="y", alpha=0.3)
             ax.legend()
             p = out / "coexistence_prr_per_node.png"
@@ -314,8 +314,8 @@ def plot_coexistence(run_dir: Path) -> list[Path]:
                     x, y = _cdf(sinr.loc[sinr["technology"] == tech, "sinr"].to_list())
                     if len(x):
                         ax.plot(x, y, label=tech)
-                ax.set_xlabel("SINR")
-                ax.set_ylabel("CDF")
+                ax.set_xlabel("SINR [dB]")
+                ax.set_ylabel("CDF [-]")
                 ax.grid(alpha=0.3)
                 ax.legend()
                 p = out / "coexistence_sinr_cdf_by_tech.png"
@@ -375,7 +375,7 @@ def plot_emergency(run_dir: Path) -> list[Path]:
 
                 totals = ctrl.groupby("event_type").size().sort_values(ascending=False)
                 ax[1].bar(totals.index.astype(str), totals.values, color="#1f77b4")
-                ax[1].set_ylabel("Total control actions")
+                ax[1].set_ylabel("Total control actions [count]")
                 ax[1].grid(axis="y", alpha=0.3)
                 for lbl in ax[1].get_xticklabels():
                     lbl.set_rotation(25)
@@ -427,14 +427,14 @@ def plot_emergency(run_dir: Path) -> list[Path]:
                 rows.append(row)
         if rows:
             info = pd.DataFrame(rows)
-            for col in ("cam_received", "cam_dropped_app", "control_actions"):
+            for col in ("cam_received", "cam_dropped_app", "cam_dropped_phy", "control_actions"):
                 if col in info.columns:
                     info[col] = pd.to_numeric(info[col], errors="coerce")
                 else:
                     info[col] = 0.0
-            denom = info["cam_received"] + info["cam_dropped_app"]
+            denom = info["cam_received"] + info["cam_dropped_app"] + info["cam_dropped_phy"]
             info["cam_drop_ratio"] = np.divide(
-                info["cam_dropped_app"],
+                info["cam_dropped_app"] + info["cam_dropped_phy"],
                 denom,
                 out=np.zeros_like(denom, dtype=float),
                 where=denom > 0,
@@ -442,8 +442,8 @@ def plot_emergency(run_dir: Path) -> list[Path]:
 
             fig, ax = plt.subplots(1, 1, figsize=(7, 4))
             ax.scatter(info["cam_drop_ratio"], info["control_actions"], alpha=0.75, s=28)
-            ax.set_xlabel("CAM drop ratio per vehicle")
-            ax.set_ylabel("Control actions per vehicle")
+            ax.set_xlabel("CAM drop ratio per vehicle [-]")
+            ax.set_ylabel("Control actions per vehicle [count]")
             ax.grid(alpha=0.3)
             p = out / "emergency_drop_vs_control_actions.png"
             _save(fig, p)

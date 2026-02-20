@@ -1,0 +1,4 @@
+case_id,rx_drop_prob_cam,run_dir
+drop_0p0,0.0,/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-19/batch-main-161949/eva-loss-sweep-incident-v2/drop_0p0
+drop_0p4,0.4,/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-19/batch-main-161949/eva-loss-sweep-incident-v2/drop_0p4
+drop_0p8,0.8,/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-19/batch-main-161949/eva-loss-sweep-incident-v2/drop_0p8

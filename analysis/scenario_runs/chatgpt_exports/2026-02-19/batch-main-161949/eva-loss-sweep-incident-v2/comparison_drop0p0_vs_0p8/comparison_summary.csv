@@ -1,0 +1,3 @@
+case,run_dir,total_cam_drop_app_events,total_cam_rx_ok_events,overall_cam_drop_ratio,total_control_actions,first_control_action_s,p90_control_action_s,min_gap_m,min_ttc_s,risky_gap_events,risky_ttc_events,collisions_count,avg_prr,avg_latency_ms,incident_time_s,incident_duration_s
+drop0p0,/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-19/batch-main-161949/eva-loss-sweep-incident-v2/drop_0p0,0.0,20472.0,0.0,99.0,3.83683,36.4153,6.01,2.353,0.0,0.0,0.0,0.959643,12.3156,12.0,18.0
+drop0p8,/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-19/batch-main-161949/eva-loss-sweep-incident-v2/drop_0p8,17023.0,4199.0,0.8021392894166431,13.0,11.9283,33.29686,6.01,2.402,0.0,0.0,0.0,0.959371,12.2585,12.0,18.0

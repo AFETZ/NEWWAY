@@ -1,0 +1,14 @@
+.git
+.gitignore
+.vscode
+.cache
+.venv
+.venv_sionna
+.optix-wsl
+.bootstrap-ns3
+ns-3-dev
+analysis/scenario_runs
+analysis/scenario_runs/chatgpt_exports
+docs/_build
+**/__pycache__/
+**/*.pyc

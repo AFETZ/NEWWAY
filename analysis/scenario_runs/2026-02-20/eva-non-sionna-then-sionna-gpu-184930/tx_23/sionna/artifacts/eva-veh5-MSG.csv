@@ -1,0 +1,3 @@
+vehicle_id,msg_seq,tx_t_s,rx_t_s,rx_ok,msg_type,tx_id,rx_id,cam_gdt_ms
+veh5,571,0.571473,,0,CAM,5,,571
+veh5,771,0.771473,,0,CAM,5,,771

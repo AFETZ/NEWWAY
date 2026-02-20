@@ -1,0 +1,20 @@
+services:
+  van3t-gpu:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.gpu
+    image: van3t-gpu:local
+    working_dir: /workspace
+    network_mode: host
+    ipc: host
+    shm_size: "8gb"
+    gpus: all
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    environment:
+      HOME: /tmp/van3t-home
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility,graphics
+    volumes:
+      - ./:/workspace
+    stdin_open: true
+    tty: true

@@ -1,0 +1,6 @@
+time_s,vehicle_id,event_type,source_id,distance_m,heading_diff_deg,lane_before,lane_after,target_speed_mps
+4.20458,veh15,lane0_slowdown,2,30.0626,0.00724887,0,0,6.945
+4.30458,veh15,lane0_slowdown,2,31.0802,5.90725,0,0,6.945
+4.40458,veh15,lane0_slowdown,2,31.993,15.4072,0,0,6.945
+4.49658,veh15,lane0_slowdown,2,33.0671,25.6072,0,0,6.945
+4.59658,veh15,lane0_slowdown,2,34.069,35.8072,0,0,6.945

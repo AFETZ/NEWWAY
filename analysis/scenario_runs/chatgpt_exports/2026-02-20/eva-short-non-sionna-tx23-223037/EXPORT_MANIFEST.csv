@@ -1,0 +1,9 @@
+relative_path,size_bytes
+artifacts/collision_risk/collision_risk_summary.csv,107
+artifacts/collision_risk/collision_risk_timeseries.csv,5107
+artifacts/collision_risk/collision_risk_timeseries.png,82049
+figures/manifest.csv,332
+figures/v2v-emergencyVehicleAlert-nrv2x/emergency_control_actions.png,53993
+figures/v2v-emergencyVehicleAlert-nrv2x/emergency_drop_vs_control_actions.png,27217
+figures/v2v-emergencyVehicleAlert-nrv2x/emergency_risk_timeseries.png,80214
+v2v-emergencyVehicleAlert-nrv2x.log,2545
