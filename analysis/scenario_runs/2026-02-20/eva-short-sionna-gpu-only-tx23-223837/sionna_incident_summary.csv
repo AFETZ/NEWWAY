@@ -1,0 +1,5 @@
+tx_power_dbm,backend,avg_prr,avg_latency_ms,control_actions,first_control_action_s,p90_control_action_s,min_gap_m,min_ttc_s,risky_gap_events,risky_ttc_events,run_dir
+5.0,sionna,0.889197,18.9614,205.0,2.18733,36.35648,6.05,2.92,0.0,0.0,/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-20/eva-short-sionna-gpu-only-tx23-223837/tx_5/sionna
+11.0,sionna,0.931,15.2001,207.0,2.18733,36.3303,6.05,2.92,0.0,0.0,/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-20/eva-short-sionna-gpu-only-tx23-223837/tx_11/sionna
+17.0,sionna,0.943776,14.1921,207.0,2.18733,36.3303,6.05,2.92,0.0,0.0,/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-20/eva-short-sionna-gpu-only-tx23-223837/tx_17/sionna
+23.0,sionna,0.944698,13.0044,207.0,2.18733,36.3303,6.05,2.92,0.0,0.0,/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-02-20/eva-short-sionna-gpu-only-tx23-223837/tx_23/sionna
