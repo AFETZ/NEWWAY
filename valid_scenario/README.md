@@ -64,6 +64,7 @@ SUMO_GUI=0 valid_scenario/run.sh
 `valid_scenario/run.sh` вызывает:
 
 - `analysis/scenario_runs/build_valid_scenario_story_plots.py`
+- `analysis/scenario_runs/build_valid_scenario_intuitive_plots.py`
 
 и строит:
 
@@ -72,6 +73,16 @@ SUMO_GUI=0 valid_scenario/run.sh
 - `ns3_events_per_second.png` — DROP_PHY, no_action и lane-change решения по времени
 - `event_chain_timeline.png` — сводная шкала `incident -> lane change -> collision -> lane change`
 - `event_chain.csv` — та же шкала в табличной форме
+
+## Наглядные графики (CSV-only, проще читать)
+
+Отдельно формируются графики в `artifacts/valid_scenario_intuitive/`:
+
+- `intuitive_prr_summary.csv` — итоговый PRR по каждому автомобилю относительно грузовика (`tx_id=2`)
+- `intuitive_prr_cumulative.png` — PRR по времени (накопительно)
+- `intuitive_packet_raster.png` — по времени: получен/потерян пакет + моменты lane-change + collision
+- `intuitive_truck_speed_observed.png` — какую скорость грузовика реально «видел» каждый автомобиль по принятым CAM
+- `intuitive_key_events.csv` — ключевые времена (`veh3 lane-change`, `collision`, `veh5 lane-change`)
 
 ## Для текста ВКР
 

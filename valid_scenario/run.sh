@@ -55,5 +55,11 @@ STORY_OUT_DIR="${STORY_OUT_DIR:-$OUT_DIR/artifacts/valid_scenario_story}"
   --run-dir "$OUT_DIR" \
   --out-dir "$STORY_OUT_DIR"
 
+INTUITIVE_OUT_DIR="${INTUITIVE_OUT_DIR:-$OUT_DIR/artifacts/valid_scenario_intuitive}"
+"$PY_BIN" "$ROOT/analysis/scenario_runs/build_valid_scenario_intuitive_plots.py" \
+  --run-dir "$OUT_DIR" \
+  --out-dir "$INTUITIVE_OUT_DIR"
+
 echo "VALID_SCENARIO_DONE: $OUT_DIR"
 echo "STORY_PLOTS: $STORY_OUT_DIR"
+echo "INTUITIVE_PLOTS: $INTUITIVE_OUT_DIR"

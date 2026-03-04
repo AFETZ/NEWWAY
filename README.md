@@ -30,6 +30,7 @@ For post-run audits and ID-aware drop/decision timelines, see:
 - `analysis/scenario_runs/analyze_all_logs.py`
 - `analysis/scenario_runs/build_drop_decision_timeline.py`
 - `analysis/scenario_runs/build_valid_scenario_story_plots.py`
+- `analysis/scenario_runs/build_valid_scenario_intuitive_plots.py`
 
 For the fixed thesis-ready bidirectional coupling case (`veh3` lane change, `veh4` lossy collision with `veh2`, `veh5` late lane change + traffic jam retention), use:
 - `valid_scenario/run.sh`

@@ -18,6 +18,7 @@
 - `analysis/scenario_runs/build_drop_decision_timeline.py` — ID-aware timeline по `pkt_uid`: `DROP_PHY -> DECISION` (+ `event_timeline.csv`, `summary.csv`, PNG).
 - `analysis/scenario_runs/build_collision_causality_report.py` — causal audit `DROP/NO_ACTION -> COLLISION` по `eva-collision.xml` + timeline.
 - `analysis/scenario_runs/build_valid_scenario_story_plots.py` — дипломные story-графики для валидированного EVA-кейса (SUMO + ns-3 на одной временной оси).
+- `analysis/scenario_runs/build_valid_scenario_intuitive_plots.py` — «простые» графики строго из CSV (PRR по авто, packet-raster, ключевые события).
 - `analysis/scenario_runs/analyze_all_logs.py` — полный аудит логов по `analysis/scenario_runs/*` в единый `log_audit_summary_<date>.csv` и `LOG_AUDIT_<date>.md`.
 - `analysis/scenario_runs/export_results_bundle.py` — дублирование графиков/логов/summary в компактный export-бандл.
 - `scenarios/v2v-emergencyVehicleAlert-nrv2x/run_loss_sweep.sh` — готовый sweep baseline/lossy для сценария с реакцией на экстренное авто.
@@ -35,7 +36,11 @@
 ./.venv/bin/python analysis/scenario_runs/build_valid_scenario_story_plots.py \
   --run-dir analysis/scenario_runs/<YYYY-MM-DD>/<run_dir>
 
-# 3) Полный аудит логов по всем прогонам
+# 3) Построить интуитивные CSV-only графики по валидированному кейсу
+./.venv/bin/python analysis/scenario_runs/build_valid_scenario_intuitive_plots.py \
+  --run-dir analysis/scenario_runs/<YYYY-MM-DD>/<run_dir>
+
+# 4) Полный аудит логов по всем прогонам
 ./.venv/bin/python analysis/scenario_runs/analyze_all_logs.py \
   --root analysis/scenario_runs \
   --out-dir analysis/scenario_runs \
