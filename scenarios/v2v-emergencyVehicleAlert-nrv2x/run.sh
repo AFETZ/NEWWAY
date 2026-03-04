@@ -96,7 +96,7 @@ run_ns3 build -j "$JOBS" v2v-emergencyVehicleAlert-nrv2x
 
 rm -f "$NETSTATE_FILE"
 rm -f "$COLLISION_OUTPUT_FILE"
-rm -f "${CSV_PREFIX}"-veh*-CAM.csv "${CSV_PREFIX}"-veh*-MSG.csv "${CSV_PREFIX}"-veh*-CTRL.csv 2>/dev/null || true
+rm -f "${CSV_PREFIX}"-veh*-CAM.csv "${CSV_PREFIX}"-veh*-MSG.csv "${CSV_PREFIX}"-veh*-CTRL.csv "${CSV_PREFIX}"-veh*-PROFILE.csv 2>/dev/null || true
 
 sumo_collision_args=""
 if [[ -n "$COLLISION_ACTION" ]]; then

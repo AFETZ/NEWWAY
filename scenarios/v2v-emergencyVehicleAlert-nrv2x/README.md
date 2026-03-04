@@ -17,6 +17,11 @@ NR-V2X Mode 2 сценарий с поведенческой реакцией н
 - `--target-loss-profile-enable=1` + `--target-loss-vehicle-id=vehX`:
   таргетированная деградация связи для одного receiver в рамках того же прогона
   (`--target-loss-rx-drop-prob-*`), чтобы получить сценарий "все объезжают, один не получает и врезается".
+- `--per-vehicle-prr-profile`:
+  multi-vehicle профиль PHY потерь в формате
+  `vehId:rxDropPhyCam[:equivTxPowerDbm[:targetPrr[:rxDropPhyCpm]]]`
+  (несколько записей через `,` или `;`), чтобы в одном прогоне задать разные PRR-классы
+  для `veh3/veh4/veh5` и явно связать `equiv dBm -> PRR -> maneuver/no-maneuver`.
 - `--crash-mode-min-time-s`:
   защита от раннего столкновения в начале прогона; crash-mode активируется только после указанного времени.
 - Логи управления `*-CTRL.csv`:
@@ -49,6 +54,12 @@ scenarios/v2v-emergencyVehicleAlert-nrv2x/run.sh
 
 ```bash
 valid_scenario/run.sh
+```
+
+Sionna + PRR/dBm профили (veh3/veh4/veh5) в этом кейсе включены по умолчанию; для быстрого fallback без Sionna:
+
+```bash
+USE_SIONNA=0 valid_scenario/run.sh
 ```
 
 Пример "один плохой receiver в одной сцене" (SUMO GUI + collision remove + доказуемые drop->decision):
@@ -197,6 +208,7 @@ scenarios/v2v-emergencyVehicleAlert-nrv2x/run_sionna_incident_sweep.sh
   - `*-CAM.csv`
   - `*-MSG.csv`
   - `*-CTRL.csv`
+  - `*-PROFILE.csv` (конфиг PHY/PRR профиля для этого ТС)
 - Safety-прокси:
   - `artifacts/collision_risk/collision_risk_summary.csv`
   - `artifacts/collision_risk/collision_risk_timeseries.csv`

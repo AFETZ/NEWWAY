@@ -6,10 +6,10 @@
 
 В одном прогоне получить причинно-связанную цепочку:
 
-1. `veh3` (без потерь) получает предупреждения и перестраивается в безопасную полосу.
-2. `veh4` (таргетно lossy receiver) получает `DROP_PHY -> drop_decision_no_action` и сталкивается с `veh2`.
+1. `veh3` (профиль `23 dBm`, target `PRR=0.95`) получает предупреждения и перестраивается в безопасную полосу.
+2. `veh4` (профиль `-20 dBm`, target `PRR=0.077`) получает `DROP_PHY -> drop_decision_no_action` и сталкивается с `veh2`.
 3. `veh2` и `veh4` после столкновения **не исчезают** (формируют место ДТП/затор).
-4. `veh5` (без потерь) позже перестраивается, обходя образовавшееся препятствие.
+4. `veh5` (профиль `0 dBm`, target `PRR=0.693`) позже перестраивается, обходя образовавшееся препятствие.
 
 ## Как запустить
 
@@ -25,10 +25,18 @@ Live GUI:
 SUMO_GUI=1 valid_scenario/run.sh
 ```
 
+Примечание для Sionna: `valid_scenario/run.sh` по умолчанию запускает сценарий с `USE_SIONNA=1`, поэтому Sionna server должен быть доступен на `SIONNA_SERVER_IP` (по умолчанию `127.0.0.1`).
+
 Headless:
 
 ```bash
 SUMO_GUI=0 valid_scenario/run.sh
+```
+
+Fallback без Sionna:
+
+```bash
+USE_SIONNA=0 valid_scenario/run.sh
 ```
 
 Куда пишутся результаты по умолчанию:
@@ -39,8 +47,13 @@ SUMO_GUI=0 valid_scenario/run.sh
 
 - `--sumo-config=.../map_incident_threeflow.sumo.cfg`
   - 3 машины позади инцидентного `veh2` в его полосе (`veh3`,`veh4`,`veh5`)
-- `--target-loss-profile-enable=1 --target-loss-vehicle-id=veh4`
-  - только `veh4` получает жесткие PHY потери (`CAM/CPM = 1.0`)
+- `--per-vehicle-prr-profile=...`
+  - задает по машине `rxDropPhyCam + equiv dBm + target PRR`:
+    - `veh3 -> (23 dBm, 0.95)`
+    - `veh4 -> (-20 dBm, 0.077)`
+    - `veh5 -> (0 dBm, 0.693)`
+- `USE_SIONNA=1` + `--sionna=1`
+  - PHY рассчитывается через Sionna; далее применяется per-vehicle профиль потерь на приемнике
 - `--drop-triggered-reaction-enable=0`
   - strict режим: drop-события не вызывают «скрытый» маневр, только `drop_decision_no_action`
 - `--incident-setstop-enable=0`
@@ -57,6 +70,7 @@ SUMO_GUI=0 valid_scenario/run.sh
 - `artifacts/eva-collision.xml` — факты столкновений в SUMO
 - `artifacts/drop_decision_timeline/*` — ID-aware `pkt_uid: DROP_PHY -> DECISION`
 - `artifacts/collision_causality/*` — causal report `loss -> no_action -> collision`
+- `artifacts/eva-veh*-PROFILE.csv` — зафиксированный профиль `dBm/target PRR/drop-prob` по каждому ТС
 - `artifacts/valid_scenario_story/*` — дипломные графики «под капотом»
 
 ## Подкапотные графики (автоматически)
@@ -83,6 +97,9 @@ SUMO_GUI=0 valid_scenario/run.sh
 - `intuitive_packet_raster.png` — по времени: получен/потерян пакет + моменты lane-change + collision
 - `intuitive_truck_speed_observed.png` — какую скорость грузовика реально «видел» каждый автомобиль по принятым CAM
 - `intuitive_key_events.csv` — ключевые времена (`veh3 lane-change`, `collision`, `veh5 lane-change`)
+- `intuitive_dbm_prr_maneuver_chain.csv` — явная цепочка `equiv dBm -> target PRR -> observed PRR -> decision -> collision`
+  (`decision_outcome`: `maneuver_before_collision` / `no_maneuver_before_collision` / `late_maneuver_after_collision`)
+- `intuitive_dbm_prr_maneuver_chain.png` — наглядный график той же цепочки
 
 ## Для текста ВКР
 

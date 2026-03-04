@@ -11,8 +11,10 @@
 В правой полосе движется колонна из четырех транспортных средств: `veh2` (лидирующее, инцидентное), `veh3`, `veh4`, `veh5`.
 
 - В момент `t = 6 s` для `veh2` инициируется инцидент (остановка на полосе).
-- `veh3` и `veh5` имеют нормальную связь и получают предупреждения (CAM/CPM), что приводит к перестроению в безопасную полосу.
-- Для `veh4` включен таргетированный профиль потерь PHY-уровня (`CAM/CPM = 1.0`), поэтому предупреждения систематически теряются.
+- Для `veh3` задается профиль `equiv_tx_power=23 dBm`, `target PRR=0.95`.
+- Для `veh4` задается профиль `equiv_tx_power=-20 dBm`, `target PRR=0.077` (высокая доля `DROP_PHY`).
+- Для `veh5` задается профиль `equiv_tx_power=0 dBm`, `target PRR=0.693`.
+- Профиль передается через `--per-vehicle-prr-profile=...` и применяется на уровне PHY-drop в ns-3 при включенном Sionna (`--sionna=1`).
 - В strict-режиме (`drop-triggered-reaction-enable=0`) потери не порождают обходного «реактивного» маневра: для каждого drop фиксируется `drop_decision_no_action`.
 - Следствием является столкновение `veh4` с `veh2`.
 - Параметры `collision.action=warn` и `collision.stoptime=1000` удерживают столкнувшиеся авто на дороге, формируя устойчивое место ДТП и затор.
@@ -31,6 +33,8 @@
 - `eva-collision.xml`: факт столкновения (время, участники, полоса, скорость).
 - `drop_decision_timeline/event_timeline.csv`: ID-aware цепочка `pkt_uid: DROP_PHY -> DECISION`.
 - `collision_causality/collision_causality.csv`: автоматический causal-audit `loss -> no_action -> collision`.
+- `eva-veh*-PROFILE.csv`: зафиксированные `equiv dBm / target PRR / configured PHY-drop` по каждой машине.
+- `valid_scenario_intuitive/intuitive_dbm_prr_maneuver_chain.csv`: сводная цепочка `dBm -> PRR -> decision -> collision` с итоговым `decision_outcome`.
 - `valid_scenario_story/*.png`: объединенные графики поведения в SUMO и событий в ns-3.
 
 Ключевое преимущество доказательства состоит в связи уровня отдельного пакета (`pkt_uid`) с итоговым транспортным событием.

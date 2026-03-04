@@ -130,6 +130,7 @@ main (int argc, char *argv[])
   double target_loss_rx_drop_prob_cpm = 0.0;
   double target_loss_rx_drop_prob_phy_cam = 1.0;
   double target_loss_rx_drop_prob_phy_cpm = 0.0;
+  std::string per_vehicle_prr_profile = "";
   double cam_reaction_distance_m = 75.0;
   double cam_reaction_heading_deg = 45.0;
   int cam_reaction_target_lane = 0;
@@ -238,6 +239,9 @@ main (int argc, char *argv[])
   cmd.AddValue ("target-loss-rx-drop-prob-phy-cpm",
                 "Per-vehicle PHY-level CPM drop probability override",
                 target_loss_rx_drop_prob_phy_cpm);
+  cmd.AddValue ("per-vehicle-prr-profile",
+                "Comma/semicolon-separated entries: vehId:rxDropPhyCam[:equivTxPowerDbm[:targetPrr[:rxDropPhyCpm]]]",
+                per_vehicle_prr_profile);
   cmd.AddValue ("cam-reaction-distance-m",
                 "Distance threshold [m] for CAM-triggered evasive reaction",
                 cam_reaction_distance_m);
@@ -875,6 +879,7 @@ main (int argc, char *argv[])
   EmergencyVehicleAlertHelper.SetAttribute ("TargetLossRxDropProbCpm", DoubleValue (target_loss_rx_drop_prob_cpm));
   EmergencyVehicleAlertHelper.SetAttribute ("TargetLossRxDropProbPhyCam", DoubleValue (target_loss_rx_drop_prob_phy_cam));
   EmergencyVehicleAlertHelper.SetAttribute ("TargetLossRxDropProbPhyCpm", DoubleValue (target_loss_rx_drop_prob_phy_cpm));
+  EmergencyVehicleAlertHelper.SetAttribute ("PerVehiclePrrProfile", StringValue (per_vehicle_prr_profile));
   EmergencyVehicleAlertHelper.SetAttribute ("ReactionDistanceThreshold", DoubleValue (cam_reaction_distance_m));
   EmergencyVehicleAlertHelper.SetAttribute ("ReactionHeadingThreshold", DoubleValue (cam_reaction_heading_deg));
   EmergencyVehicleAlertHelper.SetAttribute ("ReactionTargetLane", IntegerValue (cam_reaction_target_lane));

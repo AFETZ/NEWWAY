@@ -20,6 +20,7 @@
 #include "ns3/LDM.h"
 #include "ns3/traci-client.h"
 #include <fstream>
+#include <limits>
 namespace ns3 {
 
 class emergencyVehicleAlert : public Application
@@ -126,6 +127,14 @@ class emergencyVehicleAlert : public Application
                               uint64_t packetUid,
                               double distanceMeters,
                               double headingDiffDeg);
+    struct PerVehiclePrrProfile
+    {
+      double rx_drop_prob_phy_cam = 0.0;
+      double rx_drop_prob_phy_cpm = std::numeric_limits<double>::quiet_NaN ();
+      double equiv_tx_power_dbm = std::numeric_limits<double>::quiet_NaN ();
+      double target_prr = std::numeric_limits<double>::quiet_NaN ();
+    };
+    bool TryGetPerVehiclePrrProfile (const std::string& vehicleId, PerVehiclePrrProfile& outProfile) const;
 
 
     /**
@@ -167,6 +176,7 @@ class emergencyVehicleAlert : public Application
     std::ofstream m_csv_ofstream_cam; //!< CSV log stream (CAM), created using m_csv_name
     std::ofstream m_csv_ofstream_msg; //!< CSV log stream (TX/RX events), created using m_csv_name
     std::ofstream m_csv_ofstream_ctrl; //!< CSV log stream (vehicle control events)
+    std::ofstream m_csv_ofstream_profile; //!< CSV log stream (configured per-vehicle PHY/PRR profile)
 
     /* Counters */
     int m_cam_received;
@@ -198,6 +208,10 @@ class emergencyVehicleAlert : public Application
     double m_target_loss_rx_drop_prob_phy_cam;
     double m_target_loss_rx_drop_prob_phy_cpm;
     bool m_target_loss_profile_applied;
+    std::string m_per_vehicle_prr_profile;
+    bool m_per_vehicle_prr_profile_applied;
+    double m_profile_equiv_tx_power_dbm;
+    double m_profile_target_prr;
     Ptr<UniformRandomVariable> m_drop_rv;
     bool m_crash_mode_enable;
     std::string m_crash_mode_vehicle_id;

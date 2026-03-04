@@ -26,7 +26,11 @@
 #include "ns3/socket.h"
 #include "ns3/network-module.h"
 #include "ns3/gn-utils.h"
+#include <algorithm>
+#include <cctype>
 #include <limits>
+#include <sstream>
+#include <vector>
 
 #define DEG_2_RAD(val) ((val)*M_PI/180.0)
 
@@ -38,6 +42,60 @@ namespace ns3
   NS_OBJECT_ENSURE_REGISTERED(emergencyVehicleAlert);
   constexpr uint16_t CAM_PORT = 2001;
   constexpr uint16_t CPM_PORT = 2009;
+
+  namespace
+  {
+    std::string
+    TrimCopy (const std::string& input)
+    {
+      size_t begin = 0;
+      while (begin < input.size () &&
+             std::isspace (static_cast<unsigned char> (input[begin])))
+        {
+          ++begin;
+        }
+      size_t end = input.size ();
+      while (end > begin &&
+             std::isspace (static_cast<unsigned char> (input[end - 1])))
+        {
+          --end;
+        }
+      return input.substr (begin, end - begin);
+    }
+
+    std::vector<std::string>
+    SplitByDelimiter (const std::string& input, char delimiter)
+    {
+      std::vector<std::string> parts;
+      std::stringstream ss (input);
+      std::string item;
+      while (std::getline (ss, item, delimiter))
+        {
+          parts.push_back (item);
+        }
+      return parts;
+    }
+
+    bool
+    TryParseFiniteDouble (const std::string& token, double& valueOut)
+    {
+      try
+        {
+          size_t consumed = 0;
+          const double parsed = std::stod (token, &consumed);
+          if (consumed != token.size () || !std::isfinite (parsed))
+            {
+              return false;
+            }
+          valueOut = parsed;
+          return true;
+        }
+      catch (const std::exception&)
+        {
+          return false;
+        }
+    }
+  } // namespace
 
   // Function to compute the distance between two objects, given their Lon/Lat
   double appUtil_haversineDist(double lat_a, double lon_a, double lat_b, double lon_b) {
@@ -170,6 +228,12 @@ namespace ns3
            DoubleValue (0.0),
            MakeDoubleAccessor (&emergencyVehicleAlert::m_target_loss_rx_drop_prob_phy_cpm),
            MakeDoubleChecker<double> (0.0, 1.0))
+        .AddAttribute ("PerVehiclePrrProfile",
+           "Comma/semicolon-separated per-vehicle PHY profile entries: "
+           "vehId:rxDropPhyCam[:equivTxPowerDbm[:targetPrr[:rxDropPhyCpm]]]",
+           StringValue (std::string ()),
+           MakeStringAccessor (&emergencyVehicleAlert::m_per_vehicle_prr_profile),
+           MakeStringChecker ())
         .AddAttribute ("ReactionDistanceThreshold",
            "Distance threshold [m] to trigger CAM-based evasive action",
            DoubleValue (75.0),
@@ -284,6 +348,10 @@ namespace ns3
     m_target_loss_rx_drop_prob_phy_cam = 1.0;
     m_target_loss_rx_drop_prob_phy_cpm = 0.0;
     m_target_loss_profile_applied = false;
+    m_per_vehicle_prr_profile.clear ();
+    m_per_vehicle_prr_profile_applied = false;
+    m_profile_equiv_tx_power_dbm = std::numeric_limits<double>::quiet_NaN ();
+    m_profile_target_prr = std::numeric_limits<double>::quiet_NaN ();
     m_drop_rv = CreateObject<UniformRandomVariable> ();
     m_drop_rv->SetAttribute ("Min", DoubleValue (0.0));
     m_drop_rv->SetAttribute ("Max", DoubleValue (1.0));
@@ -321,6 +389,80 @@ namespace ns3
     Application::DoDispose ();
   }
 
+  bool
+  emergencyVehicleAlert::TryGetPerVehiclePrrProfile (const std::string& vehicleId,
+                                                     PerVehiclePrrProfile& outProfile) const
+  {
+    outProfile = PerVehiclePrrProfile ();
+    if (vehicleId.empty () || m_per_vehicle_prr_profile.empty ())
+      {
+        return false;
+      }
+
+    std::string normalizedProfiles = m_per_vehicle_prr_profile;
+    std::replace (normalizedProfiles.begin (), normalizedProfiles.end (), ';', ',');
+    const std::vector<std::string> entries = SplitByDelimiter (normalizedProfiles, ',');
+    for (const std::string& rawEntry : entries)
+      {
+        const std::string entry = TrimCopy (rawEntry);
+        if (entry.empty ())
+          {
+            continue;
+          }
+
+        const std::vector<std::string> fields = SplitByDelimiter (entry, ':');
+        if (fields.size () < 2)
+          {
+            NS_LOG_WARN ("Ignoring malformed PerVehiclePrrProfile entry '" << entry << "'");
+            continue;
+          }
+
+        const std::string entryVehicleId = TrimCopy (fields[0]);
+        if (entryVehicleId != vehicleId)
+          {
+            continue;
+          }
+
+        double dropProbCam = 0.0;
+        if (!TryParseFiniteDouble (TrimCopy (fields[1]), dropProbCam))
+          {
+            NS_LOG_WARN ("Invalid CAM PHY drop probability in PerVehiclePrrProfile entry '" << entry << "'");
+            return false;
+          }
+        outProfile.rx_drop_prob_phy_cam = std::min (1.0, std::max (0.0, dropProbCam));
+
+        if (fields.size () >= 3)
+          {
+            double equivDbm = 0.0;
+            if (TryParseFiniteDouble (TrimCopy (fields[2]), equivDbm))
+              {
+                outProfile.equiv_tx_power_dbm = equivDbm;
+              }
+          }
+
+        if (fields.size () >= 4)
+          {
+            double targetPrr = 0.0;
+            if (TryParseFiniteDouble (TrimCopy (fields[3]), targetPrr))
+              {
+                outProfile.target_prr = std::min (1.0, std::max (0.0, targetPrr));
+              }
+          }
+
+        if (fields.size () >= 5)
+          {
+            double dropProbCpm = 0.0;
+            if (TryParseFiniteDouble (TrimCopy (fields[4]), dropProbCpm))
+              {
+                outProfile.rx_drop_prob_phy_cpm = std::min (1.0, std::max (0.0, dropProbCpm));
+              }
+          }
+        return true;
+      }
+
+    return false;
+  }
+
   void
   emergencyVehicleAlert::StartApplication (void)
   {
@@ -342,6 +484,9 @@ namespace ns3
       }
 
     m_target_loss_profile_applied = false;
+    m_per_vehicle_prr_profile_applied = false;
+    m_profile_equiv_tx_power_dbm = std::numeric_limits<double>::quiet_NaN ();
+    m_profile_target_prr = std::numeric_limits<double>::quiet_NaN ();
     if (m_target_loss_profile_enable &&
         !m_target_loss_vehicle_id.empty () &&
         m_id == m_target_loss_vehicle_id)
@@ -357,6 +502,31 @@ namespace ns3
                   << ",rx_drop_prob_phy_cam=" << m_rx_drop_prob_phy_cam
                   << ",rx_drop_prob_phy_cpm=" << m_rx_drop_prob_phy_cpm
                   << std::endl;
+      }
+
+    PerVehiclePrrProfile profileOverride;
+    if (TryGetPerVehiclePrrProfile (m_id, profileOverride))
+      {
+        m_rx_drop_prob_phy_cam = profileOverride.rx_drop_prob_phy_cam;
+        if (std::isfinite (profileOverride.rx_drop_prob_phy_cpm))
+          {
+            m_rx_drop_prob_phy_cpm = profileOverride.rx_drop_prob_phy_cpm;
+          }
+        m_profile_equiv_tx_power_dbm = profileOverride.equiv_tx_power_dbm;
+        m_profile_target_prr = profileOverride.target_prr;
+        m_per_vehicle_prr_profile_applied = true;
+        std::cout << "PER-VEHICLE-PRR-PROFILE,id=" << m_id
+                  << ",rx_drop_prob_phy_cam=" << m_rx_drop_prob_phy_cam
+                  << ",rx_drop_prob_phy_cpm=" << m_rx_drop_prob_phy_cpm;
+        if (std::isfinite (m_profile_equiv_tx_power_dbm))
+          {
+            std::cout << ",equiv_tx_power_dbm=" << m_profile_equiv_tx_power_dbm;
+          }
+        if (std::isfinite (m_profile_target_prr))
+          {
+            std::cout << ",target_prr=" << m_profile_target_prr;
+          }
+        std::cout << std::endl;
       }
 
     VDP* traci_vdp = new VDPTraCI(m_client,m_id);
@@ -442,7 +612,37 @@ namespace ns3
 
     libsumo::TraCIColor connected;
     connected.r=0;connected.g=225;connected.b=255;connected.a=255;
-    if (m_target_loss_profile_applied)
+    if (m_per_vehicle_prr_profile_applied)
+      {
+        if (std::isfinite (m_profile_target_prr))
+          {
+            if (m_profile_target_prr < 0.2)
+              {
+                connected.r = 255;
+                connected.g = 0;
+                connected.b = 255;
+              }
+            else if (m_profile_target_prr < 0.8)
+              {
+                connected.r = 255;
+                connected.g = 165;
+                connected.b = 0;
+              }
+            else
+              {
+                connected.r = 0;
+                connected.g = 225;
+                connected.b = 255;
+              }
+          }
+        else
+          {
+            connected.r = 0;
+            connected.g = 225;
+            connected.b = 255;
+          }
+      }
+    else if (m_target_loss_profile_applied)
       {
         connected.r = 255;
         connected.g = 0;
@@ -522,6 +722,31 @@ namespace ns3
       m_csv_ofstream_msg << "vehicle_id,msg_seq,tx_t_s,rx_t_s,rx_ok,msg_type,tx_id,rx_id,cam_gdt_ms,pkt_uid" << std::endl;
       m_csv_ofstream_ctrl.open (m_csv_name+"-"+m_id+"-CTRL.csv",std::ofstream::trunc);
       m_csv_ofstream_ctrl << "time_s,vehicle_id,event_type,source_id,msg_seq,pkt_uid,distance_m,heading_diff_deg,lane_before,lane_after,target_speed_mps" << std::endl;
+      m_csv_ofstream_profile.open (m_csv_name+"-"+m_id+"-PROFILE.csv",std::ofstream::trunc);
+      m_csv_ofstream_profile
+        << "vehicle_id,profile_source,rx_drop_prob_phy_cam,rx_drop_prob_phy_cpm,equiv_tx_power_dbm,target_prr,expected_prr_if_only_profile"
+        << std::endl;
+      std::string profileSource = "global_defaults";
+      if (m_per_vehicle_prr_profile_applied)
+        {
+          profileSource = "per_vehicle_prr_profile";
+        }
+      else if (m_target_loss_profile_applied)
+        {
+          profileSource = "target_loss_profile";
+        }
+      m_csv_ofstream_profile << m_id << "," << profileSource << ","
+                             << m_rx_drop_prob_phy_cam << "," << m_rx_drop_prob_phy_cpm << ",";
+      if (std::isfinite (m_profile_equiv_tx_power_dbm))
+        {
+          m_csv_ofstream_profile << m_profile_equiv_tx_power_dbm;
+        }
+      m_csv_ofstream_profile << ",";
+      if (std::isfinite (m_profile_target_prr))
+        {
+          m_csv_ofstream_profile << m_profile_target_prr;
+        }
+      m_csv_ofstream_profile << "," << (1.0 - m_rx_drop_prob_phy_cam) << std::endl;
     }
   }
 
@@ -546,6 +771,10 @@ namespace ns3
       if (m_csv_ofstream_ctrl.is_open ())
         {
           m_csv_ofstream_ctrl.close ();
+        }
+      if (m_csv_ofstream_profile.is_open ())
+        {
+          m_csv_ofstream_profile.close ();
         }
     }
 
