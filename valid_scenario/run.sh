@@ -31,6 +31,11 @@ COLLISION_ACTION="${COLLISION_ACTION:-warn}"
 COLLISION_STOPTIME_S="${COLLISION_STOPTIME_S:-1000}"
 COLLISION_CAUSALITY="${COLLISION_CAUSALITY:-1}"
 COLLISION_CAUSALITY_FOCUS_VEHICLE="${COLLISION_CAUSALITY_FOCUS_VEHICLE:-veh4}"
+CRASH_MODE_ENABLE="${CRASH_MODE_ENABLE:-auto}"
+CRASH_MODE_NO_ACTION_THRESHOLD="${CRASH_MODE_NO_ACTION_THRESHOLD:-10}"
+CRASH_MODE_FORCE_SPEED_MPS="${CRASH_MODE_FORCE_SPEED_MPS:-30}"
+CRASH_MODE_DURATION_S="${CRASH_MODE_DURATION_S:-6}"
+CRASH_MODE_MIN_TIME_S="${CRASH_MODE_MIN_TIME_S:-6}"
 
 SIONNA_ARGS=""
 if [[ "$USE_SIONNA" == "1" ]]; then
@@ -43,6 +48,22 @@ else
   SIONNA_ARGS="--sionna=0"
 fi
 
+if [[ "$CRASH_MODE_ENABLE" == "auto" ]]; then
+  if awk "BEGIN { exit !(${VEH4_TARGET_PRR} < 0.2) }"; then
+    CRASH_MODE_ENABLE="1"
+  else
+    CRASH_MODE_ENABLE="0"
+  fi
+fi
+
+CRASH_MODE_ARGS=""
+if [[ "$CRASH_MODE_ENABLE" == "1" ]]; then
+  CRASH_MODE_ARGS="--crash-mode-enable=1 --crash-mode-vehicle-id=veh4 --crash-mode-no-action-threshold=${CRASH_MODE_NO_ACTION_THRESHOLD} \
+--crash-mode-force-speed-mps=${CRASH_MODE_FORCE_SPEED_MPS} --crash-mode-duration-s=${CRASH_MODE_DURATION_S} --crash-mode-min-time-s=${CRASH_MODE_MIN_TIME_S}"
+else
+  CRASH_MODE_ARGS="--crash-mode-enable=0"
+fi
+
 BASE_RUN_ARGS="--sumo-gui=${SUMO_GUI} --sim-time=${SIM_TIME} --met-sup=1 --penetrationRate=1 \
 --txPower=${TX_POWER_DBM} ${SIONNA_ARGS} \
 --sumo-config=src/automotive/examples/sumo_files_v2v_map/map_incident_threeflow.sumo.cfg \
@@ -53,8 +74,7 @@ BASE_RUN_ARGS="--sumo-gui=${SUMO_GUI} --sim-time=${SIM_TIME} --met-sup=1 --penet
 --target-loss-profile-enable=0 --target-loss-vehicle-id=veh4 \
 --target-loss-rx-drop-prob-phy-cam=0.0 --target-loss-rx-drop-prob-phy-cpm=0.0 \
 --per-vehicle-prr-profile=${PER_VEHICLE_PRR_PROFILE} \
---crash-mode-enable=1 --crash-mode-vehicle-id=veh4 --crash-mode-no-action-threshold=10 \
---crash-mode-force-speed-mps=30 --crash-mode-duration-s=6 --crash-mode-min-time-s=6"
+${CRASH_MODE_ARGS}"
 
 EXTRA_RUN_ARGS="${EXTRA_RUN_ARGS:-}"
 RUN_ARGS_FINAL="$BASE_RUN_ARGS"
@@ -91,6 +111,7 @@ INTUITIVE_OUT_DIR="${INTUITIVE_OUT_DIR:-$OUT_DIR/artifacts/valid_scenario_intuit
 
 echo "VALID_SCENARIO_DONE: $OUT_DIR"
 echo "SIONNA_MODE: $USE_SIONNA (server=${SIONNA_SERVER_IP}, local_machine=${SIONNA_LOCAL_MACHINE})"
+echo "CRASH_MODE_ENABLE: $CRASH_MODE_ENABLE"
 echo "PER_VEHICLE_PRR_PROFILE: $PER_VEHICLE_PRR_PROFILE"
 echo "STORY_PLOTS: $STORY_OUT_DIR"
 echo "INTUITIVE_PLOTS: $INTUITIVE_OUT_DIR"

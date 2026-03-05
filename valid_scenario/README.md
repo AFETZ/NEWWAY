@@ -56,6 +56,9 @@ USE_SIONNA=0 valid_scenario/run.sh
   - PHY рассчитывается через Sionna; далее применяется per-vehicle профиль потерь на приемнике
 - `--drop-triggered-reaction-enable=0`
   - strict режим: drop-события не вызывают «скрытый» маневр, только `drop_decision_no_action`
+- `CRASH_MODE_ENABLE=auto` (по умолчанию в `valid_scenario/run.sh`)
+  - для низкого `veh4 target PRR` (`<0.2`) crash-mode включается (демонстрация столкновения);
+  - для высокого `veh4 target PRR` crash-mode автоматически отключается, чтобы не получать искусственные поздние столкновения.
 - `--incident-setstop-enable=0`
   - инцидент удерживается на месте без `setStop`-сдвига вперед по маршруту
 - `--reaction-force-lane-change-enable=1`
