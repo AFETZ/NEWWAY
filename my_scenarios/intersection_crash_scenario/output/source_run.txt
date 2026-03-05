@@ -1,0 +1,2 @@
+source_run=/root/NEWWAY_runs/2026-03-05/intersection_conflict_crash_eqm25
+scenario=valid_intersection_scenario/run.sh

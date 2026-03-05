@@ -1,0 +1,2 @@
+vehicles_scanned,total_drop_events,matched_decision_events,strict_match_ratio,reaction_events,no_action_events,missing_decision_events,lane_change_events,median_decision_delay_s,p95_decision_delay_s
+3,787,787,1.0,0,787,0,0,0.0,0.0

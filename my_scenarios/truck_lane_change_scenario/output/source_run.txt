@@ -1,0 +1,2 @@
+source_run=/root/NEWWAY_runs/2026-03-05/valid_scenario_smoke_lowprr_safeflow_sionna_002111
+scenario=valid_scenario/run.sh
