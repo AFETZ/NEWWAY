@@ -1,0 +1,57 @@
+<routes>
+  <!-- Deterministic priority conflict on junction 'w':
+       veh2 goes straight (major), veh3 turns from minor approach. -->
+  <route id="r_major" edges="s1_to_w w_to_n1 n1_to_c1"/>
+  <route id="r_minor" edges="c1_to_w w_to_s1 s1_to_c1"/>
+  <route id="r_third" edges="n1_to_w w_to_s1 s1_to_c1"/>
+
+  <!-- Emergency sender (major flow) -->
+  <vType id="EmergencyMajor"
+         vClass="emergency"
+         guiShape="truck"
+         length="12.0"
+         width="2.6"
+         accel="3.5"
+         decel="6.0"
+         emergencyDecel="8.0"
+         sigma="0.0"
+         tau="0.8"
+         minGap="1.2"
+         maxSpeed="18.0"/>
+
+  <!-- Passenger vehicle that should yield on good PRR -->
+  <vType id="YieldMinor"
+         accel="3.0"
+         decel="5.0"
+         emergencyDecel="7.0"
+         sigma="0.0"
+         tau="0.9"
+         minGap="1.2"
+         maxSpeed="18.0"/>
+
+  <!-- Same ETA to junction 'w' from different incoming edges -->
+  <vehicle id="veh2"
+           type="EmergencyMajor"
+           route="r_major"
+           depart="0.2"
+           departLane="0"
+           departPos="80"
+           departSpeed="16"/>
+
+  <vehicle id="veh3"
+           type="YieldMinor"
+           route="r_minor"
+           depart="0.2"
+           departLane="0"
+           departPos="10"
+           departSpeed="16"/>
+
+  <!-- Third approach (connected, no losses): approaches from top, then turns at s1 -->
+  <vehicle id="veh4"
+           type="YieldMinor"
+           route="r_third"
+           depart="0.2"
+           departLane="0"
+           departPos="35"
+           departSpeed="15"/>
+</routes>
