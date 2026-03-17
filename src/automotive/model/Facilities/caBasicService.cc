@@ -390,9 +390,12 @@ namespace ns3
       vehicleData_t vehdata;
       LDM::LDM_error_t db_retval;
       bool lowFreq_ok;
+      LDM::returnedVehicleData_t retveh;
+      const uint64_t stationId = asn1cpp::getField(decodedCAM->header.stationId,uint64_t);
+      const bool hadExistingTrack = (m_LDM->lookup(stationId, retveh) == LDM::LDM_OK);
       vehdata.detected = false;
       vehdata.stationType = asn1cpp::getField(decodedCAM->cam.camParameters.basicContainer.stationType,long);
-      vehdata.stationID = asn1cpp::getField(decodedCAM->header.stationId,uint64_t);
+      vehdata.stationID = stationId;
       vehdata.lat = asn1cpp::getField(decodedCAM->cam.camParameters.basicContainer.referencePosition.latitude,double)/(double)DOT_ONE_MICRO;
       vehdata.lon = asn1cpp::getField(decodedCAM->cam.camParameters.basicContainer.referencePosition.longitude,double)/(double)DOT_ONE_MICRO;
       vehdata.elevation = asn1cpp::getField(decodedCAM->cam.camParameters.basicContainer.referencePosition.altitude.altitudeValue,double)/(double)CENTI;
@@ -412,14 +415,34 @@ namespace ns3
       }
       else
       {
-          LDM::returnedVehicleData_t retveh;
-
-         if(m_LDM->lookup(vehdata.stationID,retveh) == LDM::LDM_OK){
+         if(hadExistingTrack){
              vehdata.exteriorLights = retveh.vehData.exteriorLights;
          }
          else{
              vehdata.exteriorLights = OptionalDataItem<uint8_t>(false);
          }
+      }
+
+      if (hadExistingTrack && retveh.vehData.detected)
+      {
+          vehdata.detected = true;
+          vehdata.ID = retveh.vehData.ID;
+          vehdata.xDistance = retveh.vehData.xDistance;
+          vehdata.yDistance = retveh.vehData.yDistance;
+          vehdata.xSpeed = retveh.vehData.xSpeed;
+          vehdata.ySpeed = retveh.vehData.ySpeed;
+          vehdata.longitudinalAcceleration = retveh.vehData.longitudinalAcceleration;
+          vehdata.confidence = retveh.vehData.confidence;
+          vehdata.angle = retveh.vehData.angle;
+          vehdata.lastCPMincluded = retveh.vehData.lastCPMincluded;
+          vehdata.xDistAbs = retveh.vehData.xDistAbs;
+          vehdata.yDistAbs = retveh.vehData.yDistAbs;
+          vehdata.xSpeedAbs = retveh.vehData.xSpeedAbs;
+          vehdata.ySpeedAbs = retveh.vehData.ySpeedAbs;
+          vehdata.xAccAbs = retveh.vehData.xAccAbs;
+          vehdata.yAccAbs = retveh.vehData.yAccAbs;
+          vehdata.associatedCVs = retveh.vehData.associatedCVs;
+          vehdata.perceivedBy = retveh.vehData.perceivedBy;
       }
 
       db_retval=m_LDM->insert(vehdata);

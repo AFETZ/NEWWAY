@@ -1,0 +1,6 @@
+time_s,vehicle_id,event_type,source_id,msg_seq,pkt_uid,distance_m,heading_diff_deg,lane_before,lane_after,target_speed_mps
+18.7756,veh16,cpm_reaction,13,18768,18446744073709551615,13.2275,-1,1,0,24.99
+22.8938,veh16,cpm_reaction,1,22883,18446744073709551615,9.42566,-1,1,0,24.99
+36.0608,veh16,cpm_reaction,5,36059,18446744073709551615,21.9846,-1,1,0,24.99
+36.5608,veh16,cpm_reaction,5,36559,18446744073709551615,12.1344,-1,0,0,8.33
+37.0793,veh16,cpm_reaction,5,37059,18446744073709551615,9.96928,-1,0,0,8.33

@@ -60,7 +60,7 @@ SIONNA_ARGS=""
 if [[ "$USE_SIONNA" == "1" ]]; then
   SIONNA_ARGS="--sionna=1 --sionna-local-machine=${SIONNA_LOCAL_MACHINE} --sionna-server-ip=${SIONNA_SERVER_IP} --sionna-verbose=${SIONNA_VERBOSE}"
   if [[ "$CHECK_SIONNA_LISTENER" == "1" ]]; then
-    if ! ss -lunH 2>/dev/null | awk '{print $5}' | grep -Fq ":${SIONNA_PORT}"; then
+    if ! ss -lunH 2>/dev/null | awk '{print $4}' | grep -Fq ":${SIONNA_PORT}"; then
       echo "Warning: USE_SIONNA=1 but no UDP listener detected on ${SIONNA_SERVER_IP}:${SIONNA_PORT}."
       echo "         Start Sionna server first (or set USE_SIONNA=0 for non-Sionna run)."
     fi

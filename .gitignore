@@ -165,6 +165,9 @@ gitignorer.sh
 /cmake-cache/
 /.bootstrap-ns3/
 /.venv/
+/.venv_sionna/
+/.cache/
+/.optix-wsl/
 
 # CLion files
 .idea/

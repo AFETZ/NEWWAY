@@ -1,0 +1,4 @@
+messageId,camId,timestamp,latitude,longitude,heading,speed,acceleration
+2,8,28879,45.0532,7.65734,270,27.57,-1.9
+2,4,29349,45.0531,7.65589,270,33,0
+2,7,29601,45.0532,7.65684,270,25.14,-1.9

@@ -1,0 +1,4 @@
+vehicle_id,cam_total_from_truck,cam_received,cam_dropped,final_prr,first_cam_event_s,first_lane_change_s
+veh3,56,56,0,1.0000,2.13683,7.14358
+veh4,56,0,56,0.0000,2.13683,
+veh5,56,56,0,1.0000,2.13683,10.13410

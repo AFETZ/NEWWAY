@@ -25,7 +25,7 @@ SIONNA_RT_MAX_PATHS_PER_SRC="${SIONNA_RT_MAX_PATHS_PER_SRC:-256}"
 SIONNA_PORT="${SIONNA_PORT:-8103}"
 KILL_EXISTING_SIONNA="${KILL_EXISTING_SIONNA:-1}"
 
-if ss -lunH 2>/dev/null | awk '{print $5}' | grep -Eq "127\\.0\\.0\\.1:${SIONNA_PORT}$|0\\.0\\.0\\.0:${SIONNA_PORT}$|\\*:${SIONNA_PORT}$"; then
+if ss -lunH 2>/dev/null | awk '{print $4}' | grep -Eq "127\\.0\\.0\\.1:${SIONNA_PORT}$|0\\.0\\.0\\.0:${SIONNA_PORT}$|\\[::1\\]:${SIONNA_PORT}$|\\*:${SIONNA_PORT}$"; then
   if [[ "$KILL_EXISTING_SIONNA" == "1" ]]; then
     echo "Port ${SIONNA_PORT} is busy. Stopping previous sionna_v1_server_script.py ..."
     pkill -f sionna_v1_server_script.py || true

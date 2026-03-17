@@ -1,0 +1,53 @@
+<routes>
+  <!-- Fixed priority conflict on junction 'w'. -->
+  <route id="r_major" edges="s1_to_w w_to_n1 n1_to_c1"/>
+  <route id="r_minor" edges="c1_to_w w_to_s1 s1_to_c1"/>
+
+  <vType id="EmergencyMajor"
+         vClass="emergency"
+         guiShape="truck"
+         length="12.0"
+         width="2.6"
+         accel="3.2"
+         decel="6.0"
+         emergencyDecel="8.5"
+         sigma="0.0"
+         tau="0.8"
+         minGap="1.5"
+         maxSpeed="18.0"
+         speedDev="0.0"/>
+
+  <!-- Adverse minor-stream driver: deterministic non-yielding baseline unless warned early. -->
+  <vType id="DistractedMinor"
+         vClass="passenger"
+         guiShape="passenger"
+         length="4.6"
+         width="1.8"
+         accel="2.6"
+         decel="5.5"
+         emergencyDecel="8.0"
+         sigma="0.0"
+         tau="0.9"
+         minGap="1.2"
+         maxSpeed="16.5"
+         speedDev="0.0"
+         jmIgnoreFoeProb="1.0"
+         jmIgnoreFoeSpeed="30.0"
+         jmTimegapMinor="0.1"/>
+
+  <vehicle id="veh2"
+           type="EmergencyMajor"
+           route="r_major"
+           depart="0.2"
+           departLane="0"
+           departPos="80"
+           departSpeed="16.5"/>
+
+  <vehicle id="veh3"
+           type="DistractedMinor"
+           route="r_minor"
+           depart="0.2"
+           departLane="0"
+           departPos="42"
+           departSpeed="16.0"/>
+</routes>

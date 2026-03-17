@@ -10,6 +10,8 @@ USE_SIONNA="${USE_SIONNA:-1}"
 SIONNA_LOCAL_MACHINE="${SIONNA_LOCAL_MACHINE:-1}"
 SIONNA_SERVER_IP="${SIONNA_SERVER_IP:-127.0.0.1}"
 SIONNA_VERBOSE="${SIONNA_VERBOSE:-0}"
+SIONNA_PORT="${SIONNA_PORT:-8103}"
+CHECK_SIONNA_LISTENER="${CHECK_SIONNA_LISTENER:-0}"
 TX_POWER_DBM="${TX_POWER_DBM:-23}"
 
 VEH3_EQ_DBM="${VEH3_EQ_DBM:-23}"
@@ -40,9 +42,11 @@ CRASH_MODE_MIN_TIME_S="${CRASH_MODE_MIN_TIME_S:-6}"
 SIONNA_ARGS=""
 if [[ "$USE_SIONNA" == "1" ]]; then
   SIONNA_ARGS="--sionna=1 --sionna-local-machine=${SIONNA_LOCAL_MACHINE} --sionna-server-ip=${SIONNA_SERVER_IP} --sionna-verbose=${SIONNA_VERBOSE}"
-  if ! ss -lunH 2>/dev/null | awk '{print $5}' | grep -Eq "${SIONNA_SERVER_IP}:${SIONNA_PORT:-8103}$|0\\.0\\.0\\.0:${SIONNA_PORT:-8103}$|\\*:${SIONNA_PORT:-8103}$"; then
-    echo "Warning: USE_SIONNA=1 but no UDP listener detected on ${SIONNA_SERVER_IP}:${SIONNA_PORT:-8103}."
-    echo "         Start Sionna server first (or set USE_SIONNA=0 for non-Sionna run)."
+  if [[ "$CHECK_SIONNA_LISTENER" == "1" ]]; then
+    if ! ss -lunH 2>/dev/null | awk '{print $4}' | grep -Fq ":${SIONNA_PORT}"; then
+      echo "Warning: USE_SIONNA=1 but no UDP listener detected on ${SIONNA_SERVER_IP}:${SIONNA_PORT}."
+      echo "         Start Sionna server first (or set USE_SIONNA=0 for non-Sionna run)."
+    fi
   fi
 else
   SIONNA_ARGS="--sionna=0"

@@ -1,0 +1,1229 @@
+{
+  "references": [
+    {
+      "paragraph_index": 153,
+      "number": 1,
+      "text": "Global status report on road safety 2018. Geneva, 2018."
+    },
+    {
+      "paragraph_index": 154,
+      "number": 2,
+      "text": "Chen S. et al. The global macroeconomic burden of road injuries: estimates and projections for 166 countries // Lancet Planet. Heal. Elsevier B.V., 2019. Vol. 3, № 9. P. e390–e398."
+    },
+    {
+      "paragraph_index": 155,
+      "number": 3,
+      "text": "Sustainable Urban Mobility in the EU: No substantial improvement is possible without Member States’ commitment. 2020."
+    },
+    {
+      "paragraph_index": 156,
+      "number": 4,
+      "text": "Bazaz A. et al. Summary for urban policymakers – what the IPCC special report on 1.5C means for cities. 2018. № December. 1–30 p."
+    },
+    {
+      "paragraph_index": 157,
+      "number": 5,
+      "text": "Kim S.W. et al. The impact of cooperative perception on decision making and planning of autonomous vehicles // IEEE Intell. Transp. Syst. Mag. Institute of Electrical and Electronics Engineers, 2015. Vol. 7, № 3. P. 39–50."
+    },
+    {
+      "paragraph_index": 158,
+      "number": 6,
+      "text": "Fagnant D.J., Kockelman K. Preparing a nation for autonomous vehicles: opportunities, barriers and policy recommendations // Transp. Res. Part A Policy Pract. Pergamon, 2015. Vol. 77. P. 167–181."
+    },
+    {
+      "paragraph_index": 159,
+      "number": 7,
+      "text": "Papadoulis A., Quddus M., Imprialou M. Evaluating the safety impact of connected and autonomous vehicles on motorways // Accid. Anal. Prev. Pergamon, 2019. Vol. 124. P. 12–22."
+    },
+    {
+      "paragraph_index": 160,
+      "number": 8,
+      "text": "Talebpour A., Mahmassani H.S. Influence of connected and autonomous vehicles on traffic flow stability and throughput // Transp. Res. Part C Emerg. Technol. Elsevier Ltd, 2016. Vol. 71. P. 143–163."
+    },
+    {
+      "paragraph_index": 161,
+      "number": 9,
+      "text": "Qu X. et al. Jointly dampening traffic oscillations and improving energy consumption with electric, connected and automated vehicles: a reinforcement learning based approach // Appl. Energy. Elsevier, 2020. Vol. 257. P. 114030."
+    },
+    {
+      "paragraph_index": 162,
+      "number": 10,
+      "text": "Patella S.M. et al. Carbon footprint of autonomous vehicles at the urban mobility system level: a traffic simulation-based approach // Transp. Res. Part D Transp. Environ. Pergamon, 2019. Vol. 74. P. 189–200."
+    },
+    {
+      "paragraph_index": 163,
+      "number": 11,
+      "text": "U.S. DOT Advances Deployment Of Connected Vehicle Technology To Prevent Hundreds Of Thousands Of Crashes | US Department of Transportation [Electronic resource]. 2016. URL: https://www.transportation.gov/briefing-room/us-dot-advances-deployment-connected-vehicle-technology-prevent-hundreds-thousands (accessed: 13.05.2021)."
+    },
+    {
+      "paragraph_index": 164,
+      "number": 12,
+      "text": "Taiebat M. et al. A review on energy, environmental, and sustainability implications of connected and automated vehicles // Environ. Sci. Technol. American Chemical Society, 2018. Vol. 52, № 20. P. 11449–11465."
+    },
+    {
+      "paragraph_index": 165,
+      "number": 13,
+      "text": "Ersal T. et al. Connected and automated road vehicles: state of the art and future challenges // Veh. Syst. Dyn. 2020. Vol. 58, № 5. P. 672–704."
+    },
+    {
+      "paragraph_index": 166,
+      "number": 14,
+      "text": "Soteropoulos A., Berger M., Ciari F. Impacts of automated vehicles on travel behaviour and land use: an international review of modelling studies // Transp. Rev. Routledge, 2019. Vol. 39, № 1. P. 29–49."
+    },
+    {
+      "paragraph_index": 167,
+      "number": 15,
+      "text": "Archer J., Kosonen I. The Potential of Micro-Simulation Modeling in Relation to Traffic Safety Assessment // ESS. Hamburg, 2000."
+    },
+    {
+      "paragraph_index": 168,
+      "number": 16,
+      "text": "Raju N., Farah H. Evolution of Traffic Microsimulation and Its Use for Modeling Connected and Automated Vehicles // J. Adv. Transp. Hindawi Limited, 2021. Vol. 2021, № Article ID 2444363. P. 29."
+    },
+    {
+      "paragraph_index": 169,
+      "number": 17,
+      "text": "Weber J.S., Neves M., Ferreto T. VANET simulators: an updated review // J. Brazilian Comput. Soc. Springer Science and Business Media Deutschland GmbH, 2021. Vol. 27, № 1. P. 1–31."
+    },
+    {
+      "paragraph_index": 170,
+      "number": 18,
+      "text": "Alghodhaifi H., Lakshmanan S. Autonomous vehicle evaluation: a comprehensive survey on modeling and simulation approaches // IEEE Access. Institute of Electrical and Electronics Engineers Inc., 2021. Vol. 9. P. 151531–151566."
+    },
+    {
+      "paragraph_index": 171,
+      "number": 19,
+      "text": "Lu N. et al. Connected Vehicles: Solutions and Challenges // IEEE Internet Things J. Institute of Electrical and Electronics Engineers Inc., 2014. Vol. 1, № 4. P. 289–299."
+    },
+    {
+      "paragraph_index": 172,
+      "number": 20,
+      "text": "Anda J. et al. VGrid: Vehicular adhoc networking and computing grid for intelligent traffic control // IEEE Vehicular Technology Conference. Stockholm: IEEE, 2005. Vol. 61, № 5. P. 2905–2909."
+    },
+    {
+      "paragraph_index": 173,
+      "number": 21,
+      "text": "Olaverri-Monreal C. et al. The see-through system: A VANET-enabled assistant for overtaking maneuvers // IEEE Intelligent Vehicles Symposium, Proceedings. La Jolla: IEEE, 2010. P. 123–128."
+    },
+    {
+      "paragraph_index": 174,
+      "number": 22,
+      "text": "Bai F., Krishnamachari B. Exploiting the wisdom of the crowd: localized, distributed information-centric VANETs // IEEE Commun. Mag. 2010. Vol. 48, № 5. P. 138–146."
+    },
+    {
+      "paragraph_index": 175,
+      "number": 23,
+      "text": "ASTM E2213 - 03(2018) Standard Specification for Telecommunications and Information Exchange Between Roadside and Vehicle Systems — 5-GHz Band Dedicated Short-Range Communications (DSRC), Medium Access Control (MAC), and Physical Layer (PHY) Specifications [Electronic resource]. URL: https://www.astm.org/Standards/E2213.htm (accessed: 10.05.2021)."
+    },
+    {
+      "paragraph_index": 176,
+      "number": 24,
+      "text": "Jiang D., Delgrossi L. IEEE 802.11p: Towards an International Standard for Wireless Access in Vehicular Environments // IEEE Vehicular Technology Conference. Singapore: IEEE, 2008. P. 2036–2040."
+    },
+    {
+      "paragraph_index": 177,
+      "number": 25,
+      "text": "Yin J. et al. Performance evaluation of safety applications over DSRC vehicular ad hoc networks // VANET - Proceedings of the First ACM International Workshop on Vehicular Ad Hoc Networks. Association for Computing Machinery (ACM), 2004. P. 1–9."
+    },
+    {
+      "paragraph_index": 178,
+      "number": 26,
+      "text": "Taliwal V. et al. Empirical determination of channel characteristics for DSRC vehicle-to-vehicle communication // VANET - Proceedings of the First ACM International Workshop on Vehicular Ad Hoc Networks. Association for Computing Machinery, 2004. P. 88."
+    },
+    {
+      "paragraph_index": 179,
+      "number": 27,
+      "text": "Bai F., Stancil D.D., Krishnan H. Toward understanding characteristics of Dedicated Short Range Communications (DSRC) from a perspective of vehicular network engineers // Proceedings of the Annual International Conference on Mobile Computing and Networking, MOBICOM. Association for Computing Machinery, 2010. P. 329–340."
+    },
+    {
+      "paragraph_index": 180,
+      "number": 28,
+      "text": "Wu X. et al. Vehicular Communications Using DSRC: Challenges, Enhancements, and Evolution // IEEE J. Sel. Areas Commun. 2013. Vol. 31, № 9. P. 399–408."
+    },
+    {
+      "paragraph_index": 181,
+      "number": 29,
+      "text": "Jiang T. et al. Channel Modeling and Inter-Carrier Interference Analysis for V2V Communication Systems in Frequency-Dispersive Channels // Mob. Networks Appl. Springer, 2010. Vol. 15. P. 4–12."
+    },
+    {
+      "paragraph_index": 182,
+      "number": 30,
+      "text": "Yu F., Biswas S. Self-Configuring TDMA Protocols for Enhancing Vehicle Safety With DSRC Based Vehicle-to-Vehicle Communications // IEEE J. Sel. Areas Commun. 2007. Vol. 25, № 8. P. 1526–1537."
+    },
+    {
+      "paragraph_index": 183,
+      "number": 31,
+      "text": "Lu N. et al. A Dedicated Multi-Channel MAC Protocol Design for VANET with Adaptive Broadcasting // IEEE Wireless Communications and Networking Conference, WCNC. Sydney: IEEE, 2010."
+    },
+    {
+      "paragraph_index": 184,
+      "number": 32,
+      "text": "Omar H.A., Zhuang W., Li L. VeMAC: A TDMA-based MAC protocol for reliable broadcast in VANETs // IEEE Trans. Mob. Comput. 2012. Vol. 12, № 9. P. 1724–1736."
+    },
+    {
+      "paragraph_index": 185,
+      "number": 33,
+      "text": "Bharati S., Zhuang W. CAH-MAC: Cooperative ADHOC MAC for Vehicular Networks // IEEE J. Sel. Areas Commun. 2013. Vol. 31, № 9. P. 470–479."
+    },
+    {
+      "paragraph_index": 186,
+      "number": 34,
+      "text": "Kenney J.B. Dedicated short-range communications (DSRC) standards in the United States // Proc. IEEE. Institute of Electrical and Electronics Engineers Inc., 2011. Vol. 99, № 7. P. 1162–1182."
+    },
+    {
+      "paragraph_index": 187,
+      "number": 35,
+      "text": "Goldental A., Kanter I. A minority of self-organizing autonomous vehicles significantly increase freeway traffic flow // J. Phys. A Math. Theor. IOP Publishing Ltd, 2020. Vol. 53, № 41. P. 1–11."
+    },
+    {
+      "paragraph_index": 188,
+      "number": 36,
+      "text": "He S. et al. Freeway Traffic Speed Estimation of Mixed Traffic Using Data from Connected and Autonomous Vehicles with a Low Penetration Rate // J. Adv. Transp. Hindawi Limited, 2020. Vol. 2020. P. 1–13."
+    },
+    {
+      "paragraph_index": 189,
+      "number": 37,
+      "text": "Ding J. et al. Penetration effect of connected and automated vehicles on cooperative on‐ramp merging // IET Intell. Transp. Syst. Institution of Engineering and Technology, 2020. Vol. 14, № 1. P. 56–64."
+    },
+    {
+      "paragraph_index": 190,
+      "number": 38,
+      "text": "Boban M., Vinhoza T.T. V. Modeling and Simulation of Vehicular Networks: towards Realistic and Efficient Models // Mobile Ad-Hoc Networks: Applications. IntechOpen, 2011."
+    },
+    {
+      "paragraph_index": 191,
+      "number": 39,
+      "text": "Dhar S. et al. An Overview of V2V Communication Channel Modeling // International Journal of Computer Applications®. IJCA, 2011. P. 1–8."
+    },
+    {
+      "paragraph_index": 192,
+      "number": 40,
+      "text": "Collins J. et al. A review of physics simulators for robotic applications // IEEE Access. Institute of Electrical and Electronics Engineers Inc., 2021. Vol. 9. P. 51416–51431."
+    },
+    {
+      "paragraph_index": 193,
+      "number": 41,
+      "text": "Mullakkal-Babu F.A. et al. A Hybrid Submicroscopic-Microscopic Traffic Flow Simulation Framework // IEEE Trans. Intell. Transp. Syst. Institute of Electrical and Electronics Engineers Inc., 2021. Vol. 22, № 6. P. 3430–3443."
+    },
+    {
+      "paragraph_index": 194,
+      "number": 42,
+      "text": "Li G. et al. Connected Vehicle Channels: On the Consideration of Electromagnetic Scattering From Local Scatterers // IEEE Trans. Veh. Technol. Institute of Electrical and Electronics Engineers Inc., 2018. Vol. 67, № 9. P. 7910–7923."
+    },
+    {
+      "paragraph_index": 195,
+      "number": 43,
+      "text": "Boban M. et al. Impact of Vehicles as Obstacles in Vehicular Ad Hoc Networks // IEEE J. Sel. Areas Commun. 2010. Vol. 29, № 1. P. 15–28."
+    },
+    {
+      "paragraph_index": 196,
+      "number": 44,
+      "text": "Mecklenbraüker C.F. et al. Vehicular Channel Characterization and Its Implications for Wireless System Design and Performance // Proc. IEEE. Institute of Electrical and Electronics Engineers Inc., 2011. Vol. 99, № 7. P. 1189–1212."
+    },
+    {
+      "paragraph_index": 197,
+      "number": 45,
+      "text": "Cassidy W.G. et al. Interference modelling and SNR threshold study for use in vehicular safety messaging simulation // 2012 26th Biennial Symposium on Communications, QBSC 2012. Kingston: IEEE, 2012. P. 52–55."
+    },
+    {
+      "paragraph_index": 198,
+      "number": 46,
+      "text": "Wang T.H. et al. V2VNet: Vehicle-to-Vehicle Communication for Joint Perception and Prediction // Lecture Notes in Computer Science (including subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics). Springer Science and Business Media Deutschland GmbH, 2020. Vol. 12347 LNCS. P. 605–621."
+    },
+    {
+      "paragraph_index": 199,
+      "number": 47,
+      "text": "Di Felice M. et al. Smart radios for smart vehicles: Cognitive vehicular networks // IEEE Veh. Technol. Mag. 2012. Vol. 7, № 2. P. 26–33."
+    },
+    {
+      "paragraph_index": 200,
+      "number": 48,
+      "text": "Cheng N. et al. Opportunistic Spectrum Access for CR-VANETs: A Game-Theoretic Approach // IEEE Trans. Veh. Technol. Institute of Electrical and Electronics Engineers Inc., 2013. Vol. 63, № 1. P. 237–251."
+    },
+    {
+      "paragraph_index": 201,
+      "number": 49,
+      "text": "Hassan M.I., Vu H.L., Sakurai T. Performance Analysis of the IEEE 802.11 MAC Protocol for DSRC Safety Applications // IEEE Trans. Veh. Technol. 2011. Vol. 60, № 8. P. 3882–3896."
+    },
+    {
+      "paragraph_index": 202,
+      "number": 50,
+      "text": "Parsons J.D. The Mobile Radio Propagation Channel // The Mobile Radio Propagation Channel. 2nd ed. Wiley, 2001."
+    },
+    {
+      "paragraph_index": 203,
+      "number": 51,
+      "text": "Kaur P. et al. A survey on simulators for testing self-driving cars // Proceedings - 2021 4th International Conference on Connected and Autonomous Driving, MetroCAD 2021. Detroit, MI: Institute of Electrical and Electronics Engineers Inc., 2021. P. 62–70."
+    },
+    {
+      "paragraph_index": 204,
+      "number": 52,
+      "text": "Nguyen J. et al. An overview of agent-based traffic simulators // Transp. Res. Interdiscip. Perspect. Elsevier, 2021. Vol. 12. P. 100486."
+    },
+    {
+      "paragraph_index": 205,
+      "number": 53,
+      "text": "Harri J., Filali F., Bonnet C. Mobility models for vehicular ad hoc networks: a survey and taxonomy // IEEE Commun. Surv. Tutorials. 2009. Vol. 11, № 4. P. 19–41."
+    },
+    {
+      "paragraph_index": 206,
+      "number": 54,
+      "text": "Akhtar N., Ergen S.C., Ozkasap O. Vehicle mobility and communication channel models for realistic and efficient highway VANET simulation // IEEE Trans. Veh. Technol. Institute of Electrical and Electronics Engineers Inc., 2015. Vol. 64, № 1. P. 248–262."
+    },
+    {
+      "paragraph_index": 207,
+      "number": 55,
+      "text": "Rodriguez-Corbo F.A. et al. Propagation Models in Vehicular Communications // IEEE Access. Institute of Electrical and Electronics Engineers Inc., 2021. Vol. 9. P. 15902–15913."
+    },
+    {
+      "paragraph_index": 208,
+      "number": 56,
+      "text": "Wang C.X. et al. A survey of 5g channel measurements and models // IEEE Commun. Surv. Tutorials. Institute of Electrical and Electronics Engineers Inc., 2018. Vol. 20, № 4. P. 3142–3168."
+    },
+    {
+      "paragraph_index": 209,
+      "number": 57,
+      "text": "Behrisch M. et al. SUMO - Simulation of Urban MObility: An Overview // Proceedings of SIMUL 2011, The Third International Conference on Advances in System Simulation. Barcelona: ThinkMind, 2011. P. 1–6."
+    },
+    {
+      "paragraph_index": 210,
+      "number": 58,
+      "text": "NVIDIA DRIVE Sim | NVIDIA Developer [Electronic resource]. URL: https://developer.nvidia.com/drive/simulation (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 211,
+      "number": 59,
+      "text": "51Sim-One Cloud [Electronic resource]. URL: https://simone.51aes.com/login (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 212,
+      "number": 60,
+      "text": "Apollo [Electronic resource]. URL: https://developer.apollo.auto/gamesim.html (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 213,
+      "number": 61,
+      "text": "Waymo - ROBOTS: Your Guide to the World of Robotics [Electronic resource]. URL: https://robots.ieee.org/robots/waymo/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 214,
+      "number": 62,
+      "text": "VTD - Enabling safety validation in autonomous driving and ADAS system simulation [Electronic resource]. URL: https://vires.mscsoftware.com/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 215,
+      "number": 63,
+      "text": "Foretellix - Automated driving systems testing tools for simulations [Electronic resource]. URL: https://www.foretellix.com/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 216,
+      "number": 64,
+      "text": "Cognata | Autonomous and ADAS Vehicles Simulation [Electronic resource]. URL: https://www.cognata.com/simulation/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 217,
+      "number": 65,
+      "text": "PanoSim—面向汽车自动驾驶技术与产品研发的一体化仿真与测试平台 [Electronic resource]. URL: https://www.panosim.com/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 218,
+      "number": 66,
+      "text": "Huawei Octopus Tools - Huawei [Electronic resource]. URL: https://support.huawei.com/enterprise/en/intelligent-automotive-solution/octopus-pid-250809323/tool (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 219,
+      "number": 67,
+      "text": "Home - dSPACE [Electronic resource]. URL: https://www.dspace.com/en/pub/home.cfm (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 220,
+      "number": 68,
+      "text": "RTMaps — Intempora [Electronic resource]. URL: https://intempora.com/products/rtmaps/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 221,
+      "number": 69,
+      "text": "Driving Simulation and SILAB [Electronic resource]. URL: https://wivw.de/en/silab (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 222,
+      "number": 70,
+      "text": "Mechanical Simulation [Electronic resource]. URL: https://www.carsim.com/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 223,
+      "number": 71,
+      "text": "Automotive Simulation • Driving Simulation • Autonomous Driving • rFpro [Electronic resource]. URL: https://rfpro.com/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 224,
+      "number": 72,
+      "text": "DYNA4 | Virtual Test Driving | Vector [Electronic resource]. URL: https://www.vector.com/int/en/products/products-a-z/software/dyna4/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 225,
+      "number": 73,
+      "text": "Simulation C-V2X [Electronic resource]. URL: https://www.iis.fraunhofer.de/en/ff/kom/mobile-kom/simulation.html (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 226,
+      "number": 74,
+      "text": "Mechatronics Simulation | Unity [Electronic resource]. URL: https://unity.com/features/unity-systemgraph (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 227,
+      "number": 75,
+      "text": "BeamNG.tech [Electronic resource]. URL: https://beamng.tech/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 228,
+      "number": 76,
+      "text": "PreScan Applications | TASS International [Electronic resource]. URL: https://tass.plm.automation.siemens.com/node/310 (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 229,
+      "number": 77,
+      "text": "Ansys Inc. Ansys VRXPERIENCE. 2020."
+    },
+    {
+      "paragraph_index": 230,
+      "number": 78,
+      "text": "ADAS & Autonomous Vehicle Simulation Software | Ansys [Electronic resource]. URL: https://www.ansys.com/products/av-simulation (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 231,
+      "number": 79,
+      "text": "AVSimulation | AVS : Automotive simulation software and solutions [Electronic resource]. URL: https://www.avsimulation.com/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 232,
+      "number": 80,
+      "text": "ADAS and AV simulation and development | Applied Intuition [Electronic resource]. URL: https://www.appliedintuition.com/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 233,
+      "number": 81,
+      "text": "Driving Simulator | VI-grade [Electronic resource]. URL: https://www.vi-grade.com/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 234,
+      "number": 82,
+      "text": "monoDrive: Autonomous Vehicle Simulation [Electronic resource]. URL: https://www.monodrive.io/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 235,
+      "number": 83,
+      "text": "Truevision.ai - Simulation For Self-Driving Cars [Electronic resource]. URL: https://www.truevision.ai/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 236,
+      "number": 84,
+      "text": "Robotics-Simulator – 4D-Virtualiz [Electronic resource]. URL: https://www.4d-virtualiz.com/en/robotics-simulator/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 237,
+      "number": 85,
+      "text": "腾讯发布新一代虚拟仿真平台TAD Sim 2.0 - 腾讯云开发者社区-腾讯云 [Electronic resource]. URL: https://cloud.tencent.com/developer/news/649103 (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 238,
+      "number": 86,
+      "text": "Virtual Systems & Sontrols Simulation Software [Electronic resource]. URL: https://www.esi-group.com/products/prosivic (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 239,
+      "number": 87,
+      "text": "A leading specialist in automotive test systems | AB Dynamics [Electronic resource]. URL: https://www.abdynamics.com/ (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 240,
+      "number": 88,
+      "text": "DYNACAR: advanced research full electric vehicle [Electronic resource]. URL: https://dynacar.es/en/tecnalia-research-innovation.php (accessed: 08.03.2023)."
+    },
+    {
+      "paragraph_index": 241,
+      "number": 89,
+      "text": "Hurl B., Czarnecki K., Waslander S. Precise synthetic image and LiDAR (PreSIL) dataset for autonomous vehicle perception // IEEE Intelligent Vehicles Symposium, Proceedings. Paris: Institute of Electrical and Electronics Engineers Inc., 2019. Vol. 2019-June. P. 2522–2529."
+    },
+    {
+      "paragraph_index": 242,
+      "number": 90,
+      "text": "Niemirepo T. et al. Open-source CiThruS simulation environment for real-time 360-degree traffic imaging // 2019 IEEE International Conference on Connected Vehicles and Expo (ICCVE). Graz: IEEE, 2019. P. 1–5."
+    },
+    {
+      "paragraph_index": 243,
+      "number": 91,
+      "text": "Galazka E., Niemirepo T.T., Vanne J. CiThruS2: open-source photorealistic 3D framework for driving and traffic simulation in real time // 2021 IEEE International Intelligent Transportation Systems Conference (ITSC). Indianapolis, IN: IEEE, 2021. P. 3284–3291."
+    },
+    {
+      "paragraph_index": 244,
+      "number": 92,
+      "text": "Song R. et al. Weather effects on obstacle detection for autonomous car // VEHITS 2020 - Proceedings of the 6th International Conference on Vehicle Technology and Intelligent Transport Systems. SciTePress, 2020. P. 331–341."
+    },
+    {
+      "paragraph_index": 245,
+      "number": 93,
+      "text": "Dubs A. et al. A photo-realistic simulation and test platform for autonomous vehicles research // Proceedings of the 7th North American International Conference on Industrial Engineering and Operations Management. Orlando, FL, 2022. P. 1–11."
+    },
+    {
+      "paragraph_index": 246,
+      "number": 94,
+      "text": "Lamotte O. et al. Submicroscopic and physics simulation of autonomous and intelligent vehicles in virtual reality // Proceedings - 2nd International Conference on Advances in System Simulation, SIMUL 2010. Nice: IEEE, 2010. P. 28–33."
+    },
+    {
+      "paragraph_index": 247,
+      "number": 95,
+      "text": "Guériau M., Dafflon B., Gechter F. VIPS: a simulator for platoon system evaluation // Simul. Model. Pract. Theory. Elsevier, 2017. Vol. 77. P. 157–176."
+    },
+    {
+      "paragraph_index": 248,
+      "number": 96,
+      "text": "Dosovitskiy A. et al. CARLA: An Open Urban Driving Simulator // 1st Conference on Robot Learning (CoRL 2017). Mountain View: PMLR, 2017. P. 1–16."
+    },
+    {
+      "paragraph_index": 249,
+      "number": 97,
+      "text": "Rong G. et al. LGSVL Simulator: A High Fidelity Simulator for Autonomous Driving // 2020 IEEE 23rd International Conference on Intelligent Transportation Systems, ITSC 2020. Rhodes: Institute of Electrical and Electronics Engineers Inc., 2020."
+    },
+    {
+      "paragraph_index": 250,
+      "number": 98,
+      "text": "Shah S. et al. AirSim: High-Fidelity Visual and Physical Simulation for Autonomous Vehicles // Springer Proceedings in Advanced Robotics. Springer Science and Business Media B.V., 2018. Vol. 5. P. 621–635."
+    },
+    {
+      "paragraph_index": 251,
+      "number": 99,
+      "text": "Koenig N., Howard A. Design and use paradigms for Gazebo, an open-source multi-robot simulator // 2004 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). Sendai: IEEE, 2004. Vol. 3. P. 2149–2154."
+    },
+    {
+      "paragraph_index": 252,
+      "number": 100,
+      "text": "Michel O. Webots: Symbiosis between virtual and real mobile robots // Lecture Notes in Computer Science (including subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics). Springer Verlag, 1998. Vol. 1434. P. 254–263."
+    },
+    {
+      "paragraph_index": 253,
+      "number": 101,
+      "text": "Mazhar H. et al. CHRONO: A parallel multi-physics library for rigid-body, flexible-body, and fluid dynamics // Mech. Sci. Copernicus GmbH, 2013. Vol. 4, № 1. P. 49–64."
+    },
+    {
+      "paragraph_index": 254,
+      "number": 102,
+      "text": "Xu R. et al. OpenCDA: An Open Cooperative Driving Automation Framework Integrated with Co-Simulation // IEEE Conference on Intelligent Transportation Systems, Proceedings, ITSC. Indianapolis: IEEE, 2021. Vol. 2021-September. P. 1155–1162."
+    },
+    {
+      "paragraph_index": 255,
+      "number": 103,
+      "text": "Cai P. et al. SUMMIT: a simulator for urban driving in massive mixed traffic // Proceedings - IEEE International Conference on Robotics and Automation. Institute of Electrical and Electronics Engineers Inc., 2019. P. 4023–4029."
+    },
+    {
+      "paragraph_index": 256,
+      "number": 104,
+      "text": "Osinski B. et al. Simulation-based reinforcement learning for real-world autonomous driving // Proceedings - IEEE International Conference on Robotics and Automation. Paris: Institute of Electrical and Electronics Engineers Inc., 2020. P. 6411–6418."
+    },
+    {
+      "paragraph_index": 257,
+      "number": 105,
+      "text": "Pilz C. et al. Development of a scenario simulation platform to support autonomous driving verification // 2019 8th IEEE International Conference on Connected Vehicles and Expo, ICCVE 2019 - Proceedings. Graz: Institute of Electrical and Electronics Engineers Inc., 2019. P. 1–7."
+    },
+    {
+      "paragraph_index": 258,
+      "number": 106,
+      "text": "Seymour J., Ho D.T.C., Luu Q.H. An empirical testing of autonomous vehicle simulator system for urban driving // Proceedings - 3rd IEEE International Conference on Artificial Intelligence Testing, AITest 2021. Oxford: Institute of Electrical and Electronics Engineers Inc., 2021. P. 111–117."
+    },
+    {
+      "paragraph_index": 259,
+      "number": 107,
+      "text": "Piazzoni A. et al. ViSTA: a framework for virtual scenario-based testing of autonomous vehicles // Proceedings - 3rd IEEE International Conference on Artificial Intelligence Testing, AITest 2021. Oxford: Institute of Electrical and Electronics Engineers Inc., 2021. P. 143–150."
+    },
+    {
+      "paragraph_index": 260,
+      "number": 108,
+      "text": "Wang S.-H., Tu C.-H., Juang J.-C. Automatic traffic modelling for creating digital twins to facilitate autonomous vehicle development // Conn. Sci. Taylor & Francis, 2021. Vol. 34, № 1. P. 1018–1037."
+    },
+    {
+      "paragraph_index": 261,
+      "number": 109,
+      "text": "Wang S.H. et al. Autonomous vehicle simulation for Asia urban areas with a perspective from education // Proceedings - 2020 International Computer Symposium, ICS 2020. Tainan: Institute of Electrical and Electronics Engineers Inc., 2020. P. 454–458."
+    },
+    {
+      "paragraph_index": 262,
+      "number": 110,
+      "text": "Kim J.H. et al. A study on an enhanced autonomous driving simulation model based on reinforcement learning using a collision prevention model // Electronics. Multidisciplinary Digital Publishing Institute, 2021. Vol. 10, № 18. P. 2271."
+    },
+    {
+      "paragraph_index": 263,
+      "number": 111,
+      "text": "Zayas R.M. et al. A digital smart city for emerging mobility systems // 2022 IEEE 2nd International Conference on Digital Twins and Parallel Intelligence, DTPI 2022. Boston, MA: Institute of Electrical and Electronics Engineers Inc., 2022. P. 1–6."
+    },
+    {
+      "paragraph_index": 264,
+      "number": 112,
+      "text": "Yao S. et al. Autonomous-driving vehicle test technology based on virtual reality // J. Eng. The Institution of Engineering and Technology, 2018. Vol. 2018, № 16. P. 1768–1771."
+    },
+    {
+      "paragraph_index": 265,
+      "number": 113,
+      "text": "Solutions for Virtual Test Driving | IPG Automotive [Electronic resource]. URL: https://ipg-automotive.com/en/ (accessed: 28.02.2023)."
+    },
+    {
+      "paragraph_index": 266,
+      "number": 114,
+      "text": "Aparow V.R. et al. A comprehensive simulation platform for testing autonomous vehicles in 3D virtual environment // 2019 IEEE 5th International Conference on Mechatronics System and Robots (ICMSR). Singapore: IEEE, 2019. P. 115–119."
+    },
+    {
+      "paragraph_index": 267,
+      "number": 115,
+      "text": "Riegl P., Gaull A., Beitelschmidt M. A tool chain for generating critical traffic situations for testing vehicle safety functions // 2019 IEEE International Conference on Vehicular Electronics and Safety, ICVES 2019. Cairo: Institute of Electrical and Electronics Engineers Inc., 2019. P. 1–6."
+    },
+    {
+      "paragraph_index": 268,
+      "number": 116,
+      "text": "Open Sim-One [Electronic resource]. URL: https://gitee.com/OpenSimOne (accessed: 28.02.2023)."
+    },
+    {
+      "paragraph_index": 269,
+      "number": 117,
+      "text": "Zhao X. et al. End-to-end autonomous driving decision model joined by attention mechanism and spatiotemporal features // IET Intell. Transp. Syst. The Institution of Engineering and Technology, 2021. Vol. 15, № 9. P. 1119–1130."
+    },
+    {
+      "paragraph_index": 270,
+      "number": 118,
+      "text": "Math R. et al. OpenDS: a new open-source driving simulator for research // Automotive meets Electronics 2013. Dortmund: VDE VERLAG GmbH, 2013. P. 1–2."
+    },
+    {
+      "paragraph_index": 271,
+      "number": 119,
+      "text": "Moniri M.M. et al. Incorporating the driver’s focus of attention into automotive applications in real traffic and in simulator setups // Proceedings - 12th International Conference on Intelligent Environments, IE 2016. London: Institute of Electrical and Electronics Engineers Inc., 2016. P. 198–201."
+    },
+    {
+      "paragraph_index": 272,
+      "number": 120,
+      "text": "Muscholl N. et al. SIMP3: social interaction-based multi-pedestrian path prediction by self-driving cars // 2020 IEEE Symposium Series on Computational Intelligence, SSCI 2020. Canberra, ACT: Institute of Electrical and Electronics Engineers Inc., 2020. P. 2731–2738."
+    },
+    {
+      "paragraph_index": 273,
+      "number": 121,
+      "text": "Wang S. et al. Oneiros-OpenDS: an interactive and extensible toolkit for agile and automated developments of complicated driving scenes // Lecture Notes in Computer Science (including subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics). Springer Science and Business Media Deutschland GmbH, 2022. Vol. 13335 LNCS. P. 88–107."
+    },
+    {
+      "paragraph_index": 274,
+      "number": 122,
+      "text": "Li Q. et al. MetaDrive: composing diverse driving scenarios for generalizable reinforcement learning // IEEE Trans. Pattern Anal. Mach. Intell. IEEE Computer Society, 2022. Vol. 45, № 3. P. 3461–3475."
+    },
+    {
+      "paragraph_index": 275,
+      "number": 123,
+      "text": "Li Q. et al. Improving the generalization of end-to-end driving through procedural generation. 2020."
+    },
+    {
+      "paragraph_index": 276,
+      "number": 124,
+      "text": "GitHub - udacity/self-driving-car-sim: A self-driving car simulator built with Unity [Electronic resource]. URL: https://github.com/udacity/self-driving-car-sim (accessed: 28.02.2023)."
+    },
+    {
+      "paragraph_index": 277,
+      "number": 125,
+      "text": "Holen M., Knausgård K.M., Goodwin M. Development of a simulator for prototyping reinforcement learning-based autonomous cars // Informatics 2022, Vol. 9, Page 33. Multidisciplinary Digital Publishing Institute, 2022. Vol. 9, № 2. P. 33."
+    },
+    {
+      "paragraph_index": 278,
+      "number": 126,
+      "text": "Chen Y. et al. Learning on-road visual control for self-driving vehicles with auxiliary tasks // Proceedings - 2019 IEEE Winter Conference on Applications of Computer Vision, WACV 2019. Waikoloa, HI: Institute of Electrical and Electronics Engineers Inc., 2019. P. 331–338."
+    },
+    {
+      "paragraph_index": 279,
+      "number": 127,
+      "text": "Wymann B. et al. TORCS: the open racing car simulator. 2015. P. 1–5."
+    },
+    {
+      "paragraph_index": 280,
+      "number": 128,
+      "text": "Santara A. et al. MADRaS : multi agent driving simulator // J. Artif. Intell. Res. AI Access Foundation, 2021. Vol. 70. P. 1517–1555."
+    },
+    {
+      "paragraph_index": 281,
+      "number": 129,
+      "text": "Li D. et al. Reinforcement learning and deep learning based lateral control for autonomous driving [application notes] // IEEE Comput. Intell. Mag. Institute of Electrical and Electronics Engineers Inc., 2019. Vol. 14, № 2. P. 83–98."
+    },
+    {
+      "paragraph_index": 282,
+      "number": 130,
+      "text": "Chen S., Leng Y., Labi S. A deep learning algorithm for simulating autonomous driving considering prior knowledge and temporal information // Comput. Civ. Infrastruct. Eng. John Wiley & Sons, Ltd, 2020. Vol. 35, № 4. P. 305–321."
+    },
+    {
+      "paragraph_index": 283,
+      "number": 131,
+      "text": "MAVS | CAVS [Electronic resource]. URL: https://www.cavs.msstate.edu/capabilities/mavs.php (accessed: 28.02.2023)."
+    },
+    {
+      "paragraph_index": 284,
+      "number": 132,
+      "text": "Goodin C. et al. Predicting the influence of rain on LIDAR in ADAS // Electronics. Multidisciplinary Digital Publishing Institute, 2019. Vol. 8, № 1. P. 89."
+    },
+    {
+      "paragraph_index": 285,
+      "number": 133,
+      "text": "Taves J. et al. SynChrono: a scalable, physics-based simulation platform for testing groups of autonomous vehicles and/or robots // IEEE International Conference on Intelligent Robots and Systems. Las Vegas, NV: Institute of Electrical and Electronics Engineers Inc., 2020. P. 2251–2256."
+    },
+    {
+      "paragraph_index": 286,
+      "number": 134,
+      "text": "Benatti S. et al. End-to-end learning for off-road terrain navigation using the Chrono open-source simulation platform // Multibody Syst. Dyn. Springer Science and Business Media B.V., 2022. Vol. 54, № 4. P. 399–414."
+    },
+    {
+      "paragraph_index": 287,
+      "number": 135,
+      "text": "Garzon M., Spalanzani A. An hybrid simulation tool for autonomous cars in very high traffic scenarios // 2018 15th International Conference on Control, Automation, Robotics and Vision, ICARCV 2018. Singapore: Institute of Electrical and Electronics Engineers Inc., 2018. P. 803–808."
+    },
+    {
+      "paragraph_index": 288,
+      "number": 136,
+      "text": "Abdelhamed A., Tewolde G., Kwon J. Simulation framework for development and testing of autonomous vehicles // IEMTRONICS 2020 - International IOT, Electronics and Mechatronics Conference, Proceedings. Vancouver, BC: Institute of Electrical and Electronics Engineers Inc., 2020. P. 1–6."
+    },
+    {
+      "paragraph_index": 289,
+      "number": 137,
+      "text": "Tuncali C.E. et al. Simulation-based adversarial test generation for autonomous vehicles with machine learning components // IEEE Intelligent Vehicles Symposium, Proceedings. Changshu: Institute of Electrical and Electronics Engineers Inc., 2018. Vol. 2018-June. P. 1555–1562."
+    },
+    {
+      "paragraph_index": 290,
+      "number": 138,
+      "text": "Tuncali C.E. et al. Requirements-driven test generation for autonomous vehicles with machine learning components // IEEE Trans. Intell. Veh. 2020. Vol. 5, № 2. P. 265–280."
+    },
+    {
+      "paragraph_index": 291,
+      "number": 139,
+      "text": "Castaño F. et al. Self-tuning method for increased obstacle detection reliability based on internet of things LiDAR sensor models // Sensors 2018, Vol. 18, Page 1508. Multidisciplinary Digital Publishing Institute, 2018. Vol. 18, № 5. P. 1508."
+    },
+    {
+      "paragraph_index": 292,
+      "number": 140,
+      "text": "Abilkassov S. et al. Facilitating autonomous vehicle research and development using robot simulators on the example of a KAMAZ NEO truck // 2020 IEEE 23rd International Conference on Intelligent Transportation Systems, ITSC 2020. Rhodes: Institute of Electrical and Electronics Engineers Inc., 2020. P. 1–8."
+    },
+    {
+      "paragraph_index": 293,
+      "number": 141,
+      "text": "Rohmer E., Singh S.P.N., Freese M. V-REP: a versatile and scalable robot simulation framework // IEEE Int. Conf. Intell. Robot. Syst. 2013. P. 1321–1326."
+    },
+    {
+      "paragraph_index": 294,
+      "number": 142,
+      "text": "Freese M. et al. Virtual robot experimentation platform V-REP: a versatile 3D robot simulator // Lecture Notes in Computer Science (including subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics). Springer, Berlin, Heidelberg, 2010. Vol. 6472 LNAI. P. 51–62."
+    },
+    {
+      "paragraph_index": 295,
+      "number": 143,
+      "text": "Im G. et al. V-Rep simulator for autonomous vehicle research in parking lot environment // The Korean Society of Automotive Engineers Annual Autumn Conference. 2018. P. 689–692."
+    },
+    {
+      "paragraph_index": 296,
+      "number": 144,
+      "text": "GitHub - tawnkramer/gym-donkeycar: OpenAI gym environment for donkeycar simulator [Electronic resource]. URL: https://github.com/tawnkramer/gym-donkeycar (accessed: 28.02.2023)."
+    },
+    {
+      "paragraph_index": 297,
+      "number": 145,
+      "text": "Zhou H. et al. Deep reinforcement learning for autonomous driving by transferring visual features // Proceedings - International Conference on Pattern Recognition. Milan: Institute of Electrical and Electronics Engineers Inc., 2020. P. 4436–4441."
+    },
+    {
+      "paragraph_index": 298,
+      "number": 146,
+      "text": "Stocco A., Pulfer B., Tonella P. Mind the gap! A study on the transferability of virtual vs physical-world testing of autonomous driving systems // IEEE Trans. Softw. Eng. Institute of Electrical and Electronics Engineers Inc., 2022. P. 1–13."
+    },
+    {
+      "paragraph_index": 299,
+      "number": 147,
+      "text": "Chevalier-Boisvert M. et al. Duckietown Environments for OpenAI Gym [Electronic resource]. 2018. URL: https://github.com/duckietown/gym-duckietown (accessed: 28.02.2023)."
+    },
+    {
+      "paragraph_index": 300,
+      "number": 148,
+      "text": "Echeverria G. et al. Modular open robots simulation engine: MORSE // Proceedings - IEEE International Conference on Robotics and Automation. Shanghai: IEEE, 2011. P. 46–51."
+    },
+    {
+      "paragraph_index": 301,
+      "number": 149,
+      "text": "Carpin S. et al. USARSim: a robot simulator for research and education // Proceedings - IEEE International Conference on Robotics and Automation. Rome, 2007. P. 1400–1405."
+    },
+    {
+      "paragraph_index": 302,
+      "number": 150,
+      "text": "Pereira J.L.F., Rossetti R.J.F. An integrated architecture for autonomous vehicles simulation // Proceedings of the ACM Symposium on Applied Computing. ACM, 2012. P. 286–292."
+    },
+    {
+      "paragraph_index": 303,
+      "number": 151,
+      "text": "Amini A. et al. VISTA 2.0: an open, data-driven simulator for multimodal sensing and policy learning for autonomous vehicles // Proc. - IEEE Int. Conf. Robot. Autom. Institute of Electrical and Electronics Engineers Inc., 2021. P. 2419–2426."
+    },
+    {
+      "paragraph_index": 304,
+      "number": 152,
+      "text": "Amini A. et al. Learning robust control policies for end-to-end autonomous driving from data-driven simulation // IEEE Robot. Autom. Lett. Institute of Electrical and Electronics Engineers Inc., 2020. Vol. 5, № 2. P. 1143–1150."
+    },
+    {
+      "paragraph_index": 305,
+      "number": 153,
+      "text": "Best A. et al. AutonoVi-Sim: autonomous vehicle simulation platform with weather, sensing, and traffic control // IEEE Computer Society Conference on Computer Vision and Pattern Recognition Workshops. Salt Lake City, UT: IEEE Computer Society, 2018. Vol. 2018-June. P. 1161–1169."
+    },
+    {
+      "paragraph_index": 306,
+      "number": 154,
+      "text": "Ur Rehman Khan A., Bilal S.M., Othman M. A performance comparison of open source network simulators for wireless networks // Proceedings - 2012 IEEE International Conference on Control System, Computing and Engineering, ICCSCE 2012. Penang: IEEE Computer Society, 2012. P. 34–38."
+    },
+    {
+      "paragraph_index": 307,
+      "number": 155,
+      "text": "Sommer C. et al. Veins: The open source vehicular network simulation framework // EAI/Springer Innovations in Communication and Computing. Springer Science and Business Media Deutschland GmbH, 2019. P. 215–252."
+    },
+    {
+      "paragraph_index": 308,
+      "number": 156,
+      "text": "Mészáros L., Varga A., Kirsche M. INET framework // EAI/Springer Innovations in Communication and Computing. Springer Science and Business Media Deutschland GmbH, 2019. P. 55–106."
+    },
+    {
+      "paragraph_index": 309,
+      "number": 157,
+      "text": "Virdis A., Stea G., Nardini G. SimuLTE - A modular system-level simulator for LTE/LTE-A networks based on OMNeT+ // SIMULTECH 2014 - Proceedings of the 4th International Conference on Simulation and Modeling Methodologies, Technologies and Applications. Vienna: SciTePress, 2014. Vol. 2014-January."
+    },
+    {
+      "paragraph_index": 310,
+      "number": 158,
+      "text": "Nardini G. et al. SiMu5G–An OMNeT++ library for end-to-end performance evaluation of 5G networks // IEEE Access. Institute of Electrical and Electronics Engineers Inc., 2020. Vol. 8. P. 181176–181191."
+    },
+    {
+      "paragraph_index": 311,
+      "number": 159,
+      "text": "Segata M. et al. Plexe: a platooning extension for Veins // IEEE Vehicular Networking Conference, VNC. Paderborn: IEEE Computer Society, 2015. Vol. 2015-January, № January. P. 53–60."
+    },
+    {
+      "paragraph_index": 312,
+      "number": 160,
+      "text": "Segata M. et al. Multi-technology cooperative driving: an analysis based on PLEXE // IEEE Trans. Mob. Comput. Institute of Electrical and Electronics Engineers (IEEE), 2022. P. 15."
+    },
+    {
+      "paragraph_index": 313,
+      "number": 161,
+      "text": "Riebl R. et al. Artery: Extending Veins for VANET applications // 2015 International Conference on Models and Technologies for Intelligent Transportation Systems (MT-ITS). Budapest: IEEE, 2015. P. 450–456."
+    },
+    {
+      "paragraph_index": 314,
+      "number": 162,
+      "text": "McCarthy B., O’Driscoll A. OpenCV2X mode 4: a simulation extension for cellular vehicular communication networks // IEEE International Workshop on Computer Aided Modeling and Design of Communication Links and Networks, CAMAD. Limassol: Institute of Electrical and Electronics Engineers Inc., 2019. Vol. 2019-September. P. 1–6."
+    },
+    {
+      "paragraph_index": 315,
+      "number": 163,
+      "text": "Mccarthy B. et al. OpenCV2X: modelling of the V2X cellular sidelink and performance evaluation for aperiodic traffic // (unpublished). 2021. P. 1–18."
+    },
+    {
+      "paragraph_index": 316,
+      "number": 164,
+      "text": "Hegde A., Festag A. Artery-C: an OMNeT++ based discrete event simulation framework for cellular V2X // MSWiM 2020 - Proceedings of the 23rd International ACM Conference on Modeling, Analysis and Simulation of Wireless and Mobile Systems. Association for Computing Machinery, Inc, 2020. P. 47–51."
+    },
+    {
+      "paragraph_index": 317,
+      "number": 165,
+      "text": "Malinverno M. et al. A multi-stack simulation framework for vehicular applications testing // DIVANet 2020 - Proceedings of the 10th ACM Symposium on Design and Analysis of Intelligent Vehicular Networks and Applications. Association for Computing Machinery, Inc, 2020. P. 17–24."
+    },
+    {
+      "paragraph_index": 318,
+      "number": 166,
+      "text": "Rose D.M. et al. SiMoNe - simulator for mobile networks: system-level simulations in the context of realistic scenarios // IEEE Vehicular Technology Conference. Glasgow: Institute of Electrical and Electronics Engineers Inc., 2015. Vol. 2015. P. 1–7."
+    },
+    {
+      "paragraph_index": 319,
+      "number": 167,
+      "text": "Jornod G. et al. Sidelink technologies comparison for highway high-density platoon emergency braking // Proceedings of 2018 16th International Conference on Intelligent Transport System Telecommunications, ITST 2018. Lisboa: Institute of Electrical and Electronics Engineers Inc., 2018. P. 1–7."
+    },
+    {
+      "paragraph_index": 320,
+      "number": 168,
+      "text": "Mir Z.H. et al. A top–down approach for building realistic reference scenarios and simulation framework for LTE C-V2X communications // Ad Hoc Networks. Elsevier, 2023. Vol. 138. P. 103004."
+    },
+    {
+      "paragraph_index": 321,
+      "number": 169,
+      "text": "Todisco V. et al. Performance analysis of sidelink 5G-V2X mode 2 through an open-source simulator // IEEE Access. Institute of Electrical and Electronics Engineers Inc., 2021. Vol. 9. P. 145648–145661."
+    },
+    {
+      "paragraph_index": 322,
+      "number": 170,
+      "text": "Matolak D.W. Channel Modeling for Vehicle-To-Vehicle Communications // IEEE Commun. Mag. 2008. Vol. 46, № 5. P. 76–83."
+    },
+    {
+      "paragraph_index": 323,
+      "number": 171,
+      "text": "Molisch A.F. et al. Propagation aspects of vehicle-to-vehicle communications - an overview // RWS 2009 IEEE Radio and Wireless Symposium, Proceedings. San Diego: IEEE, 2009. P. 179–182."
+    },
+    {
+      "paragraph_index": 324,
+      "number": 172,
+      "text": "Jensen M.A., Wallace J.W. A review of antennas and propagation for MIMO wireless communications // IEEE Trans. Antennas Propag. 2004. Vol. 52, № 11. P. 2810–2824."
+    },
+    {
+      "paragraph_index": 325,
+      "number": 173,
+      "text": "Waldschmidt C., Schulteis S., Wiesbeck W. Complete RF system model for analysis of compact MIMO arrays // IEEE Trans. Veh. Technol. 2004. Vol. 53, № 3. P. 579–586."
+    },
+    {
+      "paragraph_index": 326,
+      "number": 174,
+      "text": "Fugen T. et al. Capability of 3-D Ray Tracing for Defining Parameter Sets for the Specification of Future Mobile Communications Systems // IEEE Trans. Antennas Propag. 2006. Vol. 54, № 11. P. 3125–3137."
+    },
+    {
+      "paragraph_index": 327,
+      "number": 175,
+      "text": "Iskander M.F., Yun Z. Propagation prediction models for wireless communication systems // IEEE Trans. Microw. Theory Tech. 2002. Vol. 50, № 3. P. 662–673."
+    },
+    {
+      "paragraph_index": 328,
+      "number": 176,
+      "text": "McNamara D.A., Pistorius C.W.I., Malherbe J.A.G. Introduction to the Uniform Geometrical Theory of Diffraction // undefined. Artech House, 1990."
+    },
+    {
+      "paragraph_index": 329,
+      "number": 177,
+      "text": "Radio Coverage Planning with Altair WinProp [Electronic resource]. URL: https://web.altair.com/winprop-telecom (accessed: 11.05.2021)."
+    },
+    {
+      "paragraph_index": 330,
+      "number": 178,
+      "text": "Electromagnetic Simulation Software & EM Modeling - Remcom [Electronic resource]. URL: https://www.remcom.com/ (accessed: 11.05.2021)."
+    },
+    {
+      "paragraph_index": 331,
+      "number": 179,
+      "text": "Stepanyants V., Romanov A. An object-oriented approach to a structured description of machine perception and traffic participant interactions in traffic scenarios // 2022 IEEE 7th International Conference on Intelligent Transportation Engineering (ICITE). Beijing: IEEE, 2022. P. 7."
+    },
+    {
+      "paragraph_index": 332,
+      "number": 180,
+      "text": "Boban M., Barros J., Tonguz O.K. Geometry-based vehicle-to-vehicle channel modeling for large-scale simulation // IEEE Trans. Veh. Technol. Institute of Electrical and Electronics Engineers Inc., 2014. Vol. 63, № 9. P. 4146–4164."
+    },
+    {
+      "paragraph_index": 333,
+      "number": 181,
+      "text": "Hameed Mir Z., Filali F. Large-scale simulations and performance evaluation of connected cars - a V2V communication perspective // Simul. Model. Pract. Theory. Elsevier, 2017. Vol. 73. P. 55–71."
+    },
+    {
+      "paragraph_index": 334,
+      "number": 182,
+      "text": "Aygun B. et al. Geometry-based propagation modeling and simulation of vehicle-to-infrastructure links // IEEE Vehicular Technology Conference. Nanjing: Institute of Electrical and Electronics Engineers Inc., 2016. Vol. 2016-July. P. 1–5."
+    },
+    {
+      "paragraph_index": 335,
+      "number": 183,
+      "text": "Maurer J. et al. A new inter-vehicle communications (IVC) channel model // IEEE Veh. Technol. Conf. 2004. Vol. 60, № 1. P. 9–13."
+    },
+    {
+      "paragraph_index": 336,
+      "number": 184,
+      "text": "Maurer J., Schäfer T.M., Wiesbeck W. A realistic description of the environment for inter-vehicle wave propagation modelling // IEEE Vehicular Technology Conference. Atlantic City: IEEE, 2001. Vol. 3, № 54ND. P. 1437–1441."
+    },
+    {
+      "paragraph_index": 337,
+      "number": 185,
+      "text": "Reichardt L. et al. Virtual Drive: A Complete V2X Communication and Radar System Simulator for Optimization of Multiple Antenna Systems // Proc. IEEE. Institute of Electrical and Electronics Engineers Inc., 2011. Vol. 99, № 7. P. 1295–1310."
+    },
+    {
+      "paragraph_index": 338,
+      "number": 186,
+      "text": "Kornek D. et al. Effects of Antenna Characteristics and Placements on a Vehicle-to-Vehicle Channel Scenario // 2010 IEEE International Conference on Communications Workshops, ICC 2010. Cape Town: IEEE, 2010."
+    },
+    {
+      "paragraph_index": 339,
+      "number": 187,
+      "text": "Schumacher H., Schack M., Kürner T. Coupling of simulators for the investigation of car-to-X communication aspects // 2009 IEEE Asia-Pacific Services Computing Conference, APSCC 2009. Singapore: IEEE, 2009. P. 58–63."
+    },
+    {
+      "paragraph_index": 340,
+      "number": 188,
+      "text": "Acosta-Marum G., Ingram M.A. Six time- and frequency- selective empirical channel models for vehicular wireless LANs // IEEE Veh. Technol. Mag. IEEE, 2007. Vol. 2, № 4. P. 4–11."
+    },
+    {
+      "paragraph_index": 341,
+      "number": 189,
+      "text": "Jakes W.C. Microwave mobile communications // Microwave Mobile Communications. Wiley-IEEE Press, 1994."
+    },
+    {
+      "paragraph_index": 342,
+      "number": 190,
+      "text": "Paier A. et al. Characterization of Vehicle-to-Vehicle Radio Channels from Measurements at 5.2 GHz // Wirel. Pers. Commun. Springer, 2009. Vol. 50. P. 19–32."
+    },
+    {
+      "paragraph_index": 343,
+      "number": 191,
+      "text": "Egea-Lopez E. et al. Opal: an open source ray-tracing propagation simulator for electromagnetic characterization // PLoS One. Public Library of Science, 2021. Vol. 16, № 11. P. e0260060."
+    },
+    {
+      "paragraph_index": 344,
+      "number": 192,
+      "text": "Granda F. et al. Deterministic propagation modeling for intelligent vehicle communication in smart cities // Sensors. Multidisciplinary Digital Publishing Institute, 2018. Vol. 18, № 7. P. 2133."
+    },
+    {
+      "paragraph_index": 345,
+      "number": 193,
+      "text": "Rodríguez-Corbo F.A. et al. Deterministic 3D ray-launching millimeter wave channel characterization for vehicular communications in urban environments // Sensors. Multidisciplinary Digital Publishing Institute, 2020. Vol. 20, № 18. P. 5284."
+    },
+    {
+      "paragraph_index": 346,
+      "number": 194,
+      "text": "Dokur O., Katkoori S. Three connected V2V applications based on DSRC basic safety messages // ICCVE 2022 - IEEE International Conference on Connected Vehicles and Expo. Lakeland, FL: Institute of Electrical and Electronics Engineers Inc., 2022. P. 1–6."
+    },
+    {
+      "paragraph_index": 347,
+      "number": 195,
+      "text": "Arizala A., Zubizarreta A., Pérez J. A complete framework for a behavioral planner with automated vehicles: a car-sharing fleet relocation approach // Sensors. Multidisciplinary Digital Publishing Institute, 2022. Vol. 22, № 22. P. 8640."
+    },
+    {
+      "paragraph_index": 348,
+      "number": 196,
+      "text": "Barbi M. et al. Simulation-based digital twin for 5G connected automated and autonomous vehicles // 2022 Joint European Conference on Networks and Communications and 6G Summit, EuCNC/6G Summit 2022. Grenoble: Institute of Electrical and Electronics Engineers Inc., 2022. P. 273–278."
+    },
+    {
+      "paragraph_index": 349,
+      "number": 197,
+      "text": "Chen X. et al. Deep-learning-based intelligent intervehicle distance control for 6G-enabled cooperative autonomous driving // IEEE Internet Things J. Institute of Electrical and Electronics Engineers Inc., 2021. Vol. 8, № 20. P. 15180–15190."
+    },
+    {
+      "paragraph_index": 350,
+      "number": 198,
+      "text": "Ali A., Garcia G., Martinet P. The flatbed platoon towing model for safe and dense platooning on highways // IEEE Intell. Transp. Syst. Mag. Institute of Electrical and Electronics Engineers, 2015. Vol. 7, № 1. P. 58–68."
+    },
+    {
+      "paragraph_index": 351,
+      "number": 199,
+      "text": "Karoui O. et al. Dual mode for vehicular platoon safety: simulation and formal verification // Inf. Sci. (Ny). Elsevier, 2017. Vol. 402. P. 216–232."
+    },
+    {
+      "paragraph_index": 352,
+      "number": 200,
+      "text": "Karoui O. et al. Performance evaluation of vehicular platoons using Webots // IET Intell. Transp. Syst. The Institution of Engineering and Technology, 2017. Vol. 11, № 8. P. 441–449."
+    },
+    {
+      "paragraph_index": 353,
+      "number": 201,
+      "text": "Llatser I., Festag A., Fettweis G. Vehicular communication performance in convoys of automated vehicles // 2016 IEEE International Conference on Communications, ICC 2016. Kuala Lumpur: Institute of Electrical and Electronics Engineers Inc., 2016. P. 1–6."
+    },
+    {
+      "paragraph_index": 354,
+      "number": 202,
+      "text": "Wang Z. et al. Cooperative ramp merging system: agent-based modeling and simulation using game engine // SAE Int. J. Connect. Autom. Veh. SAE International, 2019. Vol. 2, № 2. P. 115–128."
+    },
+    {
+      "paragraph_index": 355,
+      "number": 203,
+      "text": "AutoCastSim [Electronic resource]. URL: https://github.com/hangqiu/AutoCastSim (accessed: 06.02.2023)."
+    },
+    {
+      "paragraph_index": 356,
+      "number": 204,
+      "text": "Mutsch F. TalkyCars: A Distributed Software Platform for Cooperative Perception among Connected Autonomous Vehicles based on Celluar-V2X Communication. Karlsruhe Institute of Technology, 2020."
+    },
+    {
+      "paragraph_index": 357,
+      "number": 205,
+      "text": "Wang S. et al. Federated deep learning meets autonomous vehicle perception: design and verification // IEEE Netw. Institute of Electrical and Electronics Engineers Inc., 2022. P. 1–10."
+    },
+    {
+      "paragraph_index": 358,
+      "number": 206,
+      "text": "Palanisamy P. Multi-agent connected autonomous driving using deep reinforcement learning // Proceedings of the International Joint Conference on Neural Networks. Glasgow: Institute of Electrical and Electronics Engineers Inc., 2020. P. 1–7."
+    },
+    {
+      "paragraph_index": 359,
+      "number": 207,
+      "text": "Ambrosin M. et al. Object-level perception sharing among connected vehicles // 2019 IEEE Intelligent Transportation Systems Conference, ITSC 2019. Auckland: Institute of Electrical and Electronics Engineers Inc., 2019. P. 1566–1573."
+    },
+    {
+      "paragraph_index": 360,
+      "number": 208,
+      "text": "Lee T.K. et al. Building a V2X simulation framework for future autonomous driving // 2019 20th Asia-Pacific Network Operations and Management Symposium: Management in a Cyber-Physical World, APNOMS 2019. Matsue: Institute of Electrical and Electronics Engineers Inc., 2019. P. 1–6."
+    },
+    {
+      "paragraph_index": 361,
+      "number": 209,
+      "text": "Lee T.K. et al. Effect of packet loss and delay on V2X data fusion // APNOMS 2020 - 2020 21st Asia-Pacific Network Operations and Management Symposium: Towards Service and Networking Intelligence for Humanity. Daegu: Institute of Electrical and Electronics Engineers Inc., 2020. P. 302–305."
+    },
+    {
+      "paragraph_index": 362,
+      "number": 210,
+      "text": "Liu X. et al. MISO- V: misbehavior detection for collective perception services in vehicular communications // IEEE Intelligent Vehicles Symposium, Proceedings. Nagoya: Institute of Electrical and Electronics Engineers Inc., 2021. Vol. 2021-July. P. 369–376."
+    },
+    {
+      "paragraph_index": 363,
+      "number": 211,
+      "text": "Cui J. et al. Coopernaut: end-to-end driving with cooperative perception for networked vehicles // Proceedings of the IEEE Computer Society Conference on Computer Vision and Pattern Recognition. New Orleans, LA: IEEE Computer Society, 2022. Vol. 2022-June. P. 17231–17241."
+    },
+    {
+      "paragraph_index": 364,
+      "number": 212,
+      "text": "Boehme M. et al. TalkyCars: a distributed software platform for cooperative perception // IEEE Intelligent Vehicles Symposium, Proceedings. Las Vegas, NV: Institute of Electrical and Electronics Engineers Inc., 2020. P. 701–707."
+    },
+    {
+      "paragraph_index": 365,
+      "number": 213,
+      "text": "Bai Z. et al. Cyber mobility mirror for enabling cooperative driving automation in mixed traffic: a co-simulation platform // IEEE Intell. Transp. Syst. Mag. Institute of Electrical and Electronics Engineers Inc., 2022. P. 2–15."
+    },
+    {
+      "paragraph_index": 366,
+      "number": 214,
+      "text": "Hawlader F., Frank R. Towards a framework to evaluate cooperative perception for connected vehicles // IEEE Vehicular Networking Conference, VNC. Ulm: IEEE Computer Society, 2021. Vol. 2021-November. P. 36–39."
+    },
+    {
+      "paragraph_index": 367,
+      "number": 215,
+      "text": "Zhang Z. et al. Spatial-temporal-aware safe multi-agent reinforcement learning of connected autonomous vehicles in challenging scenarios // 2023 IEEE International Conference on Robotics and Automation (ICRA 2023). IEEE, 2022. P. 1–5."
+    },
+    {
+      "paragraph_index": 368,
+      "number": 216,
+      "text": "Wu D. Vehicle-road cooperative simulation and 3D visualization system. 2022. P. 1–8."
+    },
+    {
+      "paragraph_index": 369,
+      "number": 217,
+      "text": "Schiegg F.A. et al. A novel simulation framework for the design and testing of advanced driver assistance systems // 2019 IEEE 90th Vehicular Technology Conference (VTC2019-Fall). Honolulu, HI: IEEE, 2019. P. 1–6."
+    },
+    {
+      "paragraph_index": 370,
+      "number": 218,
+      "text": "Yuan Y. et al. RACE: reinforced cooperative autonomous vehicle collision avoidance // IEEE Trans. Veh. Technol. Institute of Electrical and Electronics Engineers Inc., 2020. Vol. 69, № 9. P. 9279–9291."
+    },
+    {
+      "paragraph_index": 371,
+      "number": 219,
+      "text": "Zhang E., Masoud N. V2XSim: a V2X simulator for connected and automated vehicle environment simulation // 2020 IEEE 23rd International Conference on Intelligent Transportation Systems, ITSC 2020. Rhodes: Institute of Electrical and Electronics Engineers Inc., 2020. P. 1–6."
+    },
+    {
+      "paragraph_index": 372,
+      "number": 220,
+      "text": "CARMASimulation [Electronic resource]. URL: https://github.com/usdot-fhwa-stol/carma-simulation (accessed: 06.02.2023)."
+    },
+    {
+      "paragraph_index": 373,
+      "number": 221,
+      "text": "Chen H. et al. A cooperative perception environment for traffic operations and control. 2022. P. 1–19."
+    },
+    {
+      "paragraph_index": 374,
+      "number": 222,
+      "text": "Cui D. et al. Extensible Co-Simulation Framework for Supporting Cooperative Driving Automation Research // https://doi.org/10.1177/03611981221121263. SAGE PublicationsSage CA: Los Angeles, CA, 2022. P. 036119812211212."
+    },
+    {
+      "paragraph_index": 375,
+      "number": 223,
+      "text": "Masuda H. et al. Feature-based Vehicle Identification Framework for Optimization of Collective Perception Messages in Vehicular Networks // IEEE Trans. Veh. Technol. Institute of Electrical and Electronics Engineers Inc., 2022. P. 1–11."
+    },
+    {
+      "paragraph_index": 376,
+      "number": 224,
+      "text": "Anagnostopoulos C. et al. Open-Source Integrated Simulation Framework for Cooperative Autonomous Vehicles // 2022 11th Mediterranean Conference on Embedded Computing, MECO 2022. Budva: Institute of Electrical and Electronics Engineers Inc., 2022."
+    },
+    {
+      "paragraph_index": 377,
+      "number": 225,
+      "text": "Llagostera Brugarola E. V2X communications performance analysis using open-source simulators. Barcelona: Universitat Politècnica de Catalunya, 2021. 1–63 p."
+    },
+    {
+      "paragraph_index": 378,
+      "number": 226,
+      "text": "Aoki S., Higuchi T., Altintas O. Cooperative perception with deep reinforcement learning for connected vehicles // IEEE Intelligent Vehicles Symposium, Proceedings. Las Vegas, NV: Institute of Electrical and Electronics Engineers Inc., 2020. P. 328–334."
+    },
+    {
+      "paragraph_index": 379,
+      "number": 227,
+      "text": "Cantas M.R., Guvenc L. Customized co-simulation environment for autonomous driving algorithm development and evaluation // SAE Technical Papers. SAE International, 2021. № 2021. 1–7 p."
+    },
+    {
+      "paragraph_index": 380,
+      "number": 228,
+      "text": "Shi Y. et al. An integrated traffic and vehicle co-simulation testing framework for connected and autonomous vehicles // IEEE Intell. Transp. Syst. Mag. Institute of Electrical and Electronics Engineers Inc., 2022. Vol. 14, № 6. P. 26–40."
+    },
+    {
+      "paragraph_index": 381,
+      "number": 229,
+      "text": "Xu H., Liu X. Perception synergy optimization with deep reinforcement learning for cooperative perception in C-V2V scenarios // Veh. Commun. Elsevier, 2022. Vol. 38. P. 100536."
+    },
+    {
+      "paragraph_index": 382,
+      "number": 230,
+      "text": "Abdo A., Wu G., Abu-Ghazaleh N. Cyber-security oriented co-simulation platform for connected and autonomous driving. 2022. P. 1–8."
+    },
+    {
+      "paragraph_index": 383,
+      "number": 231,
+      "text": "Selvaraj D.C. et al. A full-fledge simulation framework for the assessment of connected cars // Transp. Res. Procedia. Elsevier, 2021. Vol. 52. P. 315–322."
+    },
+    {
+      "paragraph_index": 384,
+      "number": 232,
+      "text": "Vieira B. et al. COPADRIVe - a realistic simulation framework for cooperative autonomous driving applications // 2019 8th IEEE International Conference on Connected Vehicles and Expo, ICCVE 2019 - Proceedings. Graz: Institute of Electrical and Electronics Engineers Inc., 2019. P. 1–6."
+    },
+    {
+      "paragraph_index": 385,
+      "number": 233,
+      "text": "Acharya S. et al. CORNET: a co-simulation middleware for robot networks // 2020 International Conference on COMmunication Systems and NETworkS, COMSNETS 2020. Bengaluru: Institute of Electrical and Electronics Engineers Inc., 2020. P. 245–251."
+    },
+    {
+      "paragraph_index": 386,
+      "number": 234,
+      "text": "Acharya S. et al. CORNET 2.0: a co-simulation middleware for robot networks // 2022 14th International Conference on COMmunication Systems and NETworkS, COMSNETS 2022. Bangalore: Institute of Electrical and Electronics Engineers Inc., 2022. P. 684–690."
+    },
+    {
+      "paragraph_index": 387,
+      "number": 235,
+      "text": "Llatser I. et al. Simulation of cooperative automated driving by bidirectional coupling of vehicle and network simulators // IEEE Intelligent Vehicles Symposium, Proceedings. Los Angeles, CA: Institute of Electrical and Electronics Engineers Inc., 2017. P. 1881–1886."
+    },
+    {
+      "paragraph_index": 388,
+      "number": 236,
+      "text": "Jia D. et al. Integrated simulation platform for conventional, connected and automated driving: a design from cyber–physical systems perspective // Transp. Res. Part C Emerg. Technol. Pergamon, 2021. Vol. 124. P. 102984."
+    },
+    {
+      "paragraph_index": 389,
+      "number": 237,
+      "text": "Hussein A. et al. 3DCoAutoSim: simulator for cooperative ADAS and automated vehicles // IEEE Conference on Intelligent Transportation Systems, Proceedings, ITSC. Maui, HI: Institute of Electrical and Electronics Engineers Inc., 2018. Vol. 2018-November. P. 3014–3019."
+    },
+    {
+      "paragraph_index": 390,
+      "number": 238,
+      "text": "Zhao X. et al. Development of a cyber-physical-system perspective based simulation platform for optimizing connected automated vehicles dedicated lanes // Expert Syst. Appl. Pergamon, 2023. Vol. 213. P. 118972."
+    },
+    {
+      "paragraph_index": 391,
+      "number": 239,
+      "text": "Egea-Lopez E. et al. Vehicular networks simulation with realistic physics // IEEE Access. Institute of Electrical and Electronics Engineers Inc., 2019. Vol. 7. P. 44021–44036."
+    },
+    {
+      "paragraph_index": 392,
+      "number": 240,
+      "text": "Xu R. et al. OPV2V: An Open Benchmark Dataset and Fusion Pipeline for Perception with Vehicle-to-Vehicle Communication // Proceedings - IEEE International Conference on Robotics and Automation. Philadelphia, PA: Institute of Electrical and Electronics Engineers Inc., 2022. P. 2583–2589."
+    },
+    {
+      "paragraph_index": 393,
+      "number": 241,
+      "text": "Li Y. et al. V2X-Sim: Multi-Agent Collaborative Perception Dataset and Benchmark for Autonomous Driving // IEEE Robot. Autom. Lett. Institute of Electrical and Electronics Engineers Inc., 2022. Vol. 7, № 4. P. 10914–10921."
+    },
+    {
+      "paragraph_index": 394,
+      "number": 242,
+      "text": "OpenCOOD [Electronic resource]. URL: https://github.com/DerrickXuNu/OpenCOOD (accessed: 07.02.2023)."
+    },
+    {
+      "paragraph_index": 395,
+      "number": 243,
+      "text": "CoPerception [Electronic resource]. URL: https://github.com/coperception/coperception/tree/88dbf94dacc1b590541c6b746f2cd306d76cc1c5 (accessed: 07.02.2023)."
+    },
+    {
+      "paragraph_index": 396,
+      "number": 244,
+      "text": "Hu Y. et al. Where2comm: communication-efficient collaborative perception via spatial confidence maps // NeurIPS 2022. 2022. P. 1–24."
+    },
+    {
+      "paragraph_index": 397,
+      "number": 245,
+      "text": "Lei Z. et al. Latency-Aware Collaborative Perception // European Conference on Computer Vision 2022. Springer, Cham, 2022. P. 316–332ЕЩЁ ОДИН СПИСОК[1] Wang, J., Topilin, I., Feofilova, A., Shao, M., Wang, Y. Cooperative Intelligent Transport Systems: The Impact of C-V2X Communication Technologies on Road Safety and Traffic Efficiency // Sensors. — 2025. — Vol. 25, no. 7. — P. 2132."
+    }
+  ]
+}

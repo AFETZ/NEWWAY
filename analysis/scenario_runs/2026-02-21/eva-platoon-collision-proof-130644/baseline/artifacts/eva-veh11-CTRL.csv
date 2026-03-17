@@ -1,0 +1,8 @@
+time_s,vehicle_id,event_type,source_id,distance_m,heading_diff_deg,lane_before,lane_after,target_speed_mps
+28.6816,veh11,cam_reaction,2,53.1666,111.666,1,1,2.4
+29.6816,veh11,cam_reaction,2,59.6052,111.666,1,1,2.4
+30.6728,veh11,cam_reaction,2,61.8361,111.666,1,1,2.4
+31.6891,veh11,cam_reaction,2,63.8032,111.666,1,1,2.4
+32.6878,veh11,cam_reaction,2,65.7894,111.666,1,1,2.4
+33.6911,veh11,cam_reaction,2,67.7628,111.24,1,1,2.4
+34.6911,veh11,cam_reaction,2,69.3027,101.35,1,1,2.4

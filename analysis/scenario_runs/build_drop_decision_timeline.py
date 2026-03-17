@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 
 
-DROP_TYPES = {"CAM_DROP_PHY", "CPM_DROP_PHY", "OTHER_DROP_PHY"}
+DROP_TYPES = {"CAM_DROP_PHY", "CAM_DROP_PHY_INFERRED", "CPM_DROP_PHY", "OTHER_DROP_PHY"}
 REACTION_TYPES = {"cam_drop_reaction", "cpm_drop_reaction"}
 
 

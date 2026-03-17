@@ -1,0 +1,2 @@
+time_s,vehicle_id,event_type,source_id,msg_seq,pkt_uid,distance_m,heading_diff_deg,lane_before,lane_after,target_speed_mps
+31.3838,veh9,cpm_reaction,8,31375,18446744073709551615,0.352797,-1,0,1,51

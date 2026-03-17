@@ -43,16 +43,115 @@
 
 #include <unistd.h>
 #include <algorithm>
+#include <cctype>
 #include <cmath>
+#include <cstdint>
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <sstream>
+#include <string>
+#include <unordered_map>
+#include <vector>
 #include "ns3/core-module.h"
 
 
 using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE("v2v-nrv2x");
+
+namespace
+{
+
+std::string
+TrimCopy (const std::string& input)
+{
+  size_t begin = 0;
+  while (begin < input.size () && std::isspace (static_cast<unsigned char> (input[begin])))
+    {
+      ++begin;
+    }
+  size_t end = input.size ();
+  while (end > begin && std::isspace (static_cast<unsigned char> (input[end - 1])))
+    {
+      --end;
+    }
+  return input.substr (begin, end - begin);
+}
+
+std::vector<std::string>
+SplitByDelim (const std::string& input, char delim)
+{
+  std::vector<std::string> out;
+  std::stringstream ss (input);
+  std::string item;
+  while (std::getline (ss, item, delim))
+    {
+      out.push_back (item);
+    }
+  return out;
+}
+
+bool
+TryParseFiniteDouble (const std::string& token, double& out)
+{
+  try
+    {
+      size_t consumed = 0;
+      const double parsed = std::stod (token, &consumed);
+      if (consumed != token.size () || !std::isfinite (parsed))
+        {
+          return false;
+        }
+      out = parsed;
+      return true;
+    }
+  catch (const std::exception&)
+    {
+      return false;
+    }
+}
+
+std::unordered_map<std::string, double>
+ParsePerVehicleEquivalentDbm (const std::string& profile)
+{
+  std::unordered_map<std::string, double> out;
+  if (profile.empty ())
+    {
+      return out;
+    }
+
+  std::string normalized = profile;
+  std::replace (normalized.begin (), normalized.end (), ';', ',');
+  for (const std::string& rawEntry : SplitByDelim (normalized, ','))
+    {
+      const std::string entry = TrimCopy (rawEntry);
+      if (entry.empty ())
+        {
+          continue;
+        }
+      const std::vector<std::string> fields = SplitByDelim (entry, ':');
+      if (fields.size () < 3)
+        {
+          continue;
+        }
+      const std::string vehicleId = TrimCopy (fields[0]);
+      if (vehicleId.empty ())
+        {
+          continue;
+        }
+      const std::string equivDbmToken = TrimCopy (fields[2]);
+      double equivDbm = 0.0;
+      if (!TryParseFiniteDouble (equivDbmToken, equivDbm))
+        {
+          continue;
+        }
+      out[vehicleId] = equivDbm;
+    }
+  return out;
+}
+
+} // namespace
 
 /**
  * \brief Get sidelink bitmap from string
@@ -111,6 +210,7 @@ main (int argc, char *argv[])
   uint32_t nodeCounter = 0;
 
   double penetrationRate = 0.7;
+  bool send_cam = true;
   bool sionna = false;
   std::string server_ip = "";
   bool local_machine = false;
@@ -131,6 +231,11 @@ main (int argc, char *argv[])
   double target_loss_rx_drop_prob_phy_cam = 1.0;
   double target_loss_rx_drop_prob_phy_cpm = 0.0;
   std::string per_vehicle_prr_profile = "";
+  bool cam_silence_drop_inference_enable = false;
+  int64_t cam_silence_focus_tx_id = 2;
+  double cam_silence_expected_period_ms = 600.0;
+  double cam_silence_timeout_s = 0.95;
+  double cam_silence_bootstrap_time_s = 2.2;
   double cam_reaction_distance_m = 75.0;
   double cam_reaction_heading_deg = 45.0;
   int cam_reaction_target_lane = 0;
@@ -139,6 +244,12 @@ main (int argc, char *argv[])
   double cam_reaction_action_duration_s = 3.0;
   double cpm_reaction_distance_m = 60.0;
   double cpm_reaction_ttc_s = 3.0;
+  bool sensor_reaction_enable = false;
+  double sensor_reaction_distance_m = 20.0;
+  double sensor_reaction_ttc_s = 1.5;
+  double sensor_reaction_period_ms = 100.0;
+  double sensor_range_m = 50.0;
+  std::string sensor_reaction_focus_vehicle_id = "";
   double reaction_action_cooldown_s = 0.5;
   bool reaction_force_lane_change_enable = false;
   bool crash_mode_enable = false;
@@ -242,6 +353,21 @@ main (int argc, char *argv[])
   cmd.AddValue ("per-vehicle-prr-profile",
                 "Comma/semicolon-separated entries: vehId:rxDropPhyCam[:equivTxPowerDbm[:targetPrr[:rxDropPhyCpm]]]",
                 per_vehicle_prr_profile);
+  cmd.AddValue ("cam-silence-drop-inference-enable",
+                "Infer CAM drops from receive silence/sequence gaps (for PHY-only coupling runs)",
+                cam_silence_drop_inference_enable);
+  cmd.AddValue ("cam-silence-focus-tx-id",
+                "StationId whose CAM stream drives silence-based drop inference",
+                cam_silence_focus_tx_id);
+  cmd.AddValue ("cam-silence-expected-period-ms",
+                "Expected CAM periodicity [ms] used by silence-based drop inference",
+                cam_silence_expected_period_ms);
+  cmd.AddValue ("cam-silence-timeout-s",
+                "Timeout [s] with no CAM before inferring a drop event",
+                cam_silence_timeout_s);
+  cmd.AddValue ("cam-silence-bootstrap-time-s",
+                "Do not infer CAM drops before this simulation time [s]",
+                cam_silence_bootstrap_time_s);
   cmd.AddValue ("cam-reaction-distance-m",
                 "Distance threshold [m] for CAM-triggered evasive reaction",
                 cam_reaction_distance_m);
@@ -266,6 +392,24 @@ main (int argc, char *argv[])
   cmd.AddValue ("cpm-reaction-ttc-s",
                 "TTC threshold [s] to trigger CPM-based evasive control",
                 cpm_reaction_ttc_s);
+  cmd.AddValue ("sensor-reaction-enable",
+                "Enable local sensor-based evasive reaction from locally detected objects",
+                sensor_reaction_enable);
+  cmd.AddValue ("sensor-reaction-distance-m",
+                "Distance threshold [m] for local sensor-based evasive reaction",
+                sensor_reaction_distance_m);
+  cmd.AddValue ("sensor-reaction-ttc-s",
+                "TTC threshold [s] for local sensor-based evasive reaction",
+                sensor_reaction_ttc_s);
+  cmd.AddValue ("sensor-reaction-period-ms",
+                "Polling period [ms] for local sensor hazard checks",
+                sensor_reaction_period_ms);
+  cmd.AddValue ("sensor-range-m",
+                "Local SUMO sensor range [m]",
+                sensor_range_m);
+  cmd.AddValue ("sensor-reaction-focus-vehicle-id",
+                "Optional vehicle id filter for local sensor reaction (e.g., veh2)",
+                sensor_reaction_focus_vehicle_id);
   cmd.AddValue ("reaction-action-cooldown-s",
                 "Minimum interval [s] between consecutive evasive control actions",
                 reaction_action_cooldown_s);
@@ -291,6 +435,7 @@ main (int argc, char *argv[])
                 "Do not activate crash-test mode before this simulation time [s]",
                 crash_mode_min_time_s);
   cmd.AddValue ("penetrationRate", "Rate of vehicles equipped with wireless communication devices", penetrationRate);
+  cmd.AddValue ("send-cam", "Turn on or off CAM dissemination for this scenario", send_cam);
   cmd.AddValue ("sionna", "Enable SIONNA usage", sionna);
   cmd.AddValue ("sionna-server-ip", "SIONNA server IP address", server_ip);
   cmd.AddValue ("sionna-local-machine", "SIONNA will be executed on local machine", local_machine);
@@ -399,6 +544,9 @@ main (int argc, char *argv[])
 
   // Parse the command line
   cmd.Parse (argc, argv);
+
+  const std::unordered_map<std::string, double> perVehicleEquivalentDbm =
+    ParsePerVehicleEquivalentDbm (per_vehicle_prr_profile);
 
   SionnaHelper& sionnaHelper = SionnaHelper::GetInstance ();
   if (sionna)
@@ -868,6 +1016,7 @@ main (int argc, char *argv[])
   EmergencyVehicleAlertHelper.SetAttribute ("CSV", StringValue(csv_name));
   EmergencyVehicleAlertHelper.SetAttribute ("Model", StringValue ("nrv2x"));
   EmergencyVehicleAlertHelper.SetAttribute ("MetricSupervisor", PointerValue (metSup));
+  EmergencyVehicleAlertHelper.SetAttribute ("SendCAM", BooleanValue (send_cam));
   EmergencyVehicleAlertHelper.SetAttribute ("RxDropProbCam", DoubleValue (rx_drop_prob_cam));
   EmergencyVehicleAlertHelper.SetAttribute ("RxDropProbCpm", DoubleValue (rx_drop_prob_cpm));
   EmergencyVehicleAlertHelper.SetAttribute ("RxDropProbPhyCam", DoubleValue (rx_drop_prob_phy_cam));
@@ -880,6 +1029,11 @@ main (int argc, char *argv[])
   EmergencyVehicleAlertHelper.SetAttribute ("TargetLossRxDropProbPhyCam", DoubleValue (target_loss_rx_drop_prob_phy_cam));
   EmergencyVehicleAlertHelper.SetAttribute ("TargetLossRxDropProbPhyCpm", DoubleValue (target_loss_rx_drop_prob_phy_cpm));
   EmergencyVehicleAlertHelper.SetAttribute ("PerVehiclePrrProfile", StringValue (per_vehicle_prr_profile));
+  EmergencyVehicleAlertHelper.SetAttribute ("CamSilenceDropInferenceEnable", BooleanValue (cam_silence_drop_inference_enable));
+  EmergencyVehicleAlertHelper.SetAttribute ("CamSilenceFocusTxId", IntegerValue (cam_silence_focus_tx_id));
+  EmergencyVehicleAlertHelper.SetAttribute ("CamSilenceExpectedPeriodMs", DoubleValue (cam_silence_expected_period_ms));
+  EmergencyVehicleAlertHelper.SetAttribute ("CamSilenceTimeoutS", DoubleValue (cam_silence_timeout_s));
+  EmergencyVehicleAlertHelper.SetAttribute ("CamSilenceBootstrapTimeS", DoubleValue (cam_silence_bootstrap_time_s));
   EmergencyVehicleAlertHelper.SetAttribute ("ReactionDistanceThreshold", DoubleValue (cam_reaction_distance_m));
   EmergencyVehicleAlertHelper.SetAttribute ("ReactionHeadingThreshold", DoubleValue (cam_reaction_heading_deg));
   EmergencyVehicleAlertHelper.SetAttribute ("ReactionTargetLane", IntegerValue (cam_reaction_target_lane));
@@ -888,6 +1042,12 @@ main (int argc, char *argv[])
   EmergencyVehicleAlertHelper.SetAttribute ("ReactionActionDurationS", DoubleValue (cam_reaction_action_duration_s));
   EmergencyVehicleAlertHelper.SetAttribute ("CpmReactionDistanceThreshold", DoubleValue (cpm_reaction_distance_m));
   EmergencyVehicleAlertHelper.SetAttribute ("CpmReactionTtcThresholdS", DoubleValue (cpm_reaction_ttc_s));
+  EmergencyVehicleAlertHelper.SetAttribute ("SensorReactionEnable", BooleanValue (sensor_reaction_enable));
+  EmergencyVehicleAlertHelper.SetAttribute ("SensorReactionDistanceThresholdM", DoubleValue (sensor_reaction_distance_m));
+  EmergencyVehicleAlertHelper.SetAttribute ("SensorReactionTtcThresholdS", DoubleValue (sensor_reaction_ttc_s));
+  EmergencyVehicleAlertHelper.SetAttribute ("SensorReactionPeriodMs", DoubleValue (sensor_reaction_period_ms));
+  EmergencyVehicleAlertHelper.SetAttribute ("SensorRangeM", DoubleValue (sensor_range_m));
+  EmergencyVehicleAlertHelper.SetAttribute ("SensorReactionFocusVehicleId", StringValue (sensor_reaction_focus_vehicle_id));
   EmergencyVehicleAlertHelper.SetAttribute ("ReactionActionCooldownS", DoubleValue (reaction_action_cooldown_s));
   EmergencyVehicleAlertHelper.SetAttribute ("ReactionForceLaneChangeEnable", BooleanValue (reaction_force_lane_change_enable));
   EmergencyVehicleAlertHelper.SetAttribute ("CrashModeEnable", BooleanValue (crash_mode_enable));
@@ -901,11 +1061,43 @@ main (int argc, char *argv[])
   int i=0;
   STARTUP_FCN setupNewWifiNode = [&] (std::string vehicleID,TraciClient::StationTypeTraCI_t stationType) -> Ptr<Node>
     {
+      (void) stationType;
       if (nodeCounter >= allSlUesContainer.GetN())
         NS_FATAL_ERROR("Node Pool empty!: " << nodeCounter << " nodes created.");
 
       Ptr<Node> includedNode = allSlUesContainer.Get(nodeCounter);
       ++nodeCounter; // increment counter for next node
+
+      auto eqIt = perVehicleEquivalentDbm.find (vehicleID);
+      if (eqIt != perVehicleEquivalentDbm.end ())
+        {
+          Ptr<NrUeNetDevice> nrUeDev = nullptr;
+          for (uint32_t devIdx = 0; devIdx < includedNode->GetNDevices (); ++devIdx)
+            {
+              nrUeDev = DynamicCast<NrUeNetDevice> (includedNode->GetDevice (devIdx));
+              if (nrUeDev != nullptr)
+                {
+                  break;
+                }
+            }
+
+          if (nrUeDev != nullptr)
+            {
+              Ptr<NrUePhy> uePhy = nrUeDev->GetPhy (0);
+              if (uePhy != nullptr)
+                {
+                  const double baseNoiseFigureDb = uePhy->GetNoiseFigure ();
+                  const double noisePenaltyDb = txPower - eqIt->second;
+                  const double newNoiseFigureDb = std::max (0.0, baseNoiseFigureDb + noisePenaltyDb);
+                  uePhy->SetNoiseFigure (newNoiseFigureDb);
+                  std::cout << "PER-VEHICLE-EQUIV-DBM-APPLIED,id=" << vehicleID
+                            << ",equiv_tx_power_dbm=" << eqIt->second
+                            << ",base_noise_figure_db=" << baseNoiseFigureDb
+                            << ",new_noise_figure_db=" << newNoiseFigureDb
+                            << std::endl;
+                }
+            }
+        }
 
       /* Install Application */
       EmergencyVehicleAlertHelper.SetAttribute ("IpAddr", Ipv4AddressValue(groupAddress4));

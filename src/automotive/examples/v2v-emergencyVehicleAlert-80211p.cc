@@ -64,6 +64,8 @@ main (int argc, char *argv[])
   std::string csv_name;
   std::string csv_name_cumulative;
   std::string sumo_netstate_file_name;
+  uint16_t sumo_port = 3400;
+  double sumo_wait_for_socket_s = 5.0;
   int txPower=30;
   double penetrationRate = 0.7;
 
@@ -96,6 +98,8 @@ main (int argc, char *argv[])
   cmd.AddValue ("send-cam", "Turn on or off the transmission of CAMs, thus turning on or off the whole V2X application",send_cam);
   cmd.AddValue ("csv-log-cumulative", "Name of the CSV log file for the cumulative (average) PRR and latency data", csv_name_cumulative);
   cmd.AddValue ("netstate-dump-file", "Name of the SUMO netstate-dump file containing the vehicle-related information throughout the whole simulation", sumo_netstate_file_name);
+  cmd.AddValue ("sumo-port", "TraCI port used to connect to SUMO", sumo_port);
+  cmd.AddValue ("sumo-wait-for-socket-s", "Wait time [s] before first TraCI connect attempt", sumo_wait_for_socket_s);
   cmd.AddValue ("baseline", "Baseline for PRR calculation", m_baseline_prr);
   cmd.AddValue ("met-sup","Use the Metric supervisor or not",m_metric_sup);
   cmd.AddValue ("penetrationRate", "Rate of vehicles equipped with wireless communication devices", penetrationRate);
@@ -212,7 +216,7 @@ main (int argc, char *argv[])
   sumoClient->SetAttribute ("SynchInterval", TimeValue (Seconds (sumo_updates)));
   sumoClient->SetAttribute ("StartTime", TimeValue (Seconds (0.0)));
   sumoClient->SetAttribute ("SumoGUI", BooleanValue (sumo_gui));
-  sumoClient->SetAttribute ("SumoPort", UintegerValue (3400));
+  sumoClient->SetAttribute ("SumoPort", UintegerValue (sumo_port));
   sumoClient->SetAttribute ("PenetrationRate", DoubleValue (penetrationRate));
   sumoClient->SetAttribute ("SumoLogFile", BooleanValue (false));
   sumoClient->SetAttribute ("SumoStepLog", BooleanValue (false));
@@ -226,7 +230,7 @@ main (int argc, char *argv[])
   }
 
   sumoClient->SetAttribute ("SumoAdditionalCmdOptions", StringValue (sumo_additional_options));
-  sumoClient->SetAttribute ("SumoWaitForSocket", TimeValue (Seconds (1.0)));
+  sumoClient->SetAttribute ("SumoWaitForSocket", TimeValue (Seconds (std::max (0.1, sumo_wait_for_socket_s))));
 
   /* Create and setup the web-based vehicle visualizer of ms-van3t */
   vehicleVisualizer vehicleVisObj;

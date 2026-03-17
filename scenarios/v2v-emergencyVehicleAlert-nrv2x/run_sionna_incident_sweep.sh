@@ -162,7 +162,7 @@ start_sionna_server() {
   local waited=0
   while [[ "$waited" -lt "$SIONNA_SERVER_READY_TIMEOUT" ]]; do
     # With redirected logs, stdout can be buffered; socket bind is a reliable readiness signal.
-    if ss -lunH 2>/dev/null | awk '{print $5}' | grep -Eq "127\\.0\\.0\\.1:${SIONNA_PORT}$|0\\.0\\.0\\.0:${SIONNA_PORT}$|\\*:${SIONNA_PORT}$"; then
+    if ss -lunH 2>/dev/null | awk '{print $4}' | grep -Eq "127\\.0\\.0\\.1:${SIONNA_PORT}$|0\\.0\\.0\\.0:${SIONNA_PORT}$|\\[::1\\]:${SIONNA_PORT}$|\\*:${SIONNA_PORT}$"; then
       return 0
     fi
     if grep -q "Setup complete." "$OUT_BASE/sionna_server.log"; then

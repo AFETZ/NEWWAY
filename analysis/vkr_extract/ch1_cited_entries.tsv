@@ -1,0 +1,116 @@
+1	Global status report on road safety 2018. Geneva, 2018.
+2	Chen S. et al. The global macroeconomic burden of road injuries: estimates and projections for 166 countries // Lancet Planet. Heal. Elsevier B.V., 2019. Vol. 3, № 9. P. e390–e398.
+3	Sustainable Urban Mobility in the EU: No substantial improvement is possible without Member States’ commitment. 2020.
+4	Bazaz A. et al. Summary for urban policymakers – what the IPCC special report on 1.5C means for cities. 2018. № December. 1–30 p.
+5	Kim S.W. et al. The impact of cooperative perception on decision making and planning of autonomous vehicles // IEEE Intell. Transp. Syst. Mag. Institute of Electrical and Electronics Engineers, 2015. Vol. 7, № 3. P. 39–50.
+7	Papadoulis A., Quddus M., Imprialou M. Evaluating the safety impact of connected and autonomous vehicles on motorways // Accid. Anal. Prev. Pergamon, 2019. Vol. 124. P. 12–22.
+8	Talebpour A., Mahmassani H.S. Influence of connected and autonomous vehicles on traffic flow stability and throughput // Transp. Res. Part C Emerg. Technol. Elsevier Ltd, 2016. Vol. 71. P. 143–163.
+13	Ersal T. et al. Connected and automated road vehicles: state of the art and future challenges // Veh. Syst. Dyn. 2020. Vol. 58, № 5. P. 672–704.
+16	Raju N., Farah H. Evolution of Traffic Microsimulation and Its Use for Modeling Connected and Automated Vehicles // J. Adv. Transp. Hindawi Limited, 2021. Vol. 2021, № Article ID 2444363. P. 29.
+17	Weber J.S., Neves M., Ferreto T. VANET simulators: an updated review // J. Brazilian Comput. Soc. Springer Science and Business Media Deutschland GmbH, 2021. Vol. 27, № 1. P. 1–31.
+18	Alghodhaifi H., Lakshmanan S. Autonomous vehicle evaluation: a comprehensive survey on modeling and simulation approaches // IEEE Access. Institute of Electrical and Electronics Engineers Inc., 2021. Vol. 9. P. 151531–151566.
+19	Lu N. et al. Connected Vehicles: Solutions and Challenges // IEEE Internet Things J. Institute of Electrical and Electronics Engineers Inc., 2014. Vol. 1, № 4. P. 289–299.
+20	Anda J. et al. VGrid: Vehicular adhoc networking and computing grid for intelligent traffic control // IEEE Vehicular Technology Conference. Stockholm: IEEE, 2005. Vol. 61, № 5. P. 2905–2909.
+21	Olaverri-Monreal C. et al. The see-through system: A VANET-enabled assistant for overtaking maneuvers // IEEE Intelligent Vehicles Symposium, Proceedings. La Jolla: IEEE, 2010. P. 123–128.
+22	Bai F., Krishnamachari B. Exploiting the wisdom of the crowd: localized, distributed information-centric VANETs // IEEE Commun. Mag. 2010. Vol. 48, № 5. P. 138–146.
+26	Taliwal V. et al. Empirical determination of channel characteristics for DSRC vehicle-to-vehicle communication // VANET - Proceedings of the First ACM International Workshop on Vehicular Ad Hoc Networks. Association for Computing Machinery, 2004. P. 88.
+27	Bai F., Stancil D.D., Krishnan H. Toward understanding characteristics of Dedicated Short Range Communications (DSRC) from a perspective of vehicular network engineers // Proceedings of the Annual International Conference on Mobile Computing and Networking, MOBICOM. Association for Computing Machinery, 2010. P. 329–340.
+28	Wu X. et al. Vehicular Communications Using DSRC: Challenges, Enhancements, and Evolution // IEEE J. Sel. Areas Commun. 2013. Vol. 31, № 9. P. 399–408.
+29	Jiang T. et al. Channel Modeling and Inter-Carrier Interference Analysis for V2V Communication Systems in Frequency-Dispersive Channels // Mob. Networks Appl. Springer, 2010. Vol. 15. P. 4–12.
+30	Yu F., Biswas S. Self-Configuring TDMA Protocols for Enhancing Vehicle Safety With DSRC Based Vehicle-to-Vehicle Communications // IEEE J. Sel. Areas Commun. 2007. Vol. 25, № 8. P. 1526–1537.
+31	Lu N. et al. A Dedicated Multi-Channel MAC Protocol Design for VANET with Adaptive Broadcasting // IEEE Wireless Communications and Networking Conference, WCNC. Sydney: IEEE, 2010.
+32	Omar H.A., Zhuang W., Li L. VeMAC: A TDMA-based MAC protocol for reliable broadcast in VANETs // IEEE Trans. Mob. Comput. 2012. Vol. 12, № 9. P. 1724–1736.
+33	Bharati S., Zhuang W. CAH-MAC: Cooperative ADHOC MAC for Vehicular Networks // IEEE J. Sel. Areas Commun. 2013. Vol. 31, № 9. P. 470–479.
+34	Kenney J.B. Dedicated short-range communications (DSRC) standards in the United States // Proc. IEEE. Institute of Electrical and Electronics Engineers Inc., 2011. Vol. 99, № 7. P. 1162–1182.
+35	Goldental A., Kanter I. A minority of self-organizing autonomous vehicles significantly increase freeway traffic flow // J. Phys. A Math. Theor. IOP Publishing Ltd, 2020. Vol. 53, № 41. P. 1–11.
+36	He S. et al. Freeway Traffic Speed Estimation of Mixed Traffic Using Data from Connected and Autonomous Vehicles with a Low Penetration Rate // J. Adv. Transp. Hindawi Limited, 2020. Vol. 2020. P. 1–13.
+37	Ding J. et al. Penetration effect of connected and automated vehicles on cooperative on‐ramp merging // IET Intell. Transp. Syst. Institution of Engineering and Technology, 2020. Vol. 14, № 1. P. 56–64.
+38	Boban M., Vinhoza T.T. V. Modeling and Simulation of Vehicular Networks: towards Realistic and Efficient Models // Mobile Ad-Hoc Networks: Applications. IntechOpen, 2011.
+39	Dhar S. et al. An Overview of V2V Communication Channel Modeling // International Journal of Computer Applications®. IJCA, 2011. P. 1–8.
+40	Collins J. et al. A review of physics simulators for robotic applications // IEEE Access. Institute of Electrical and Electronics Engineers Inc., 2021. Vol. 9. P. 51416–51431.
+41	Mullakkal-Babu F.A. et al. A Hybrid Submicroscopic-Microscopic Traffic Flow Simulation Framework // IEEE Trans. Intell. Transp. Syst. Institute of Electrical and Electronics Engineers Inc., 2021. Vol. 22, № 6. P. 3430–3443.
+42	Li G. et al. Connected Vehicle Channels: On the Consideration of Electromagnetic Scattering From Local Scatterers // IEEE Trans. Veh. Technol. Institute of Electrical and Electronics Engineers Inc., 2018. Vol. 67, № 9. P. 7910–7923.
+43	Boban M. et al. Impact of Vehicles as Obstacles in Vehicular Ad Hoc Networks // IEEE J. Sel. Areas Commun. 2010. Vol. 29, № 1. P. 15–28.
+44	Mecklenbraüker C.F. et al. Vehicular Channel Characterization and Its Implications for Wireless System Design and Performance // Proc. IEEE. Institute of Electrical and Electronics Engineers Inc., 2011. Vol. 99, № 7. P. 1189–1212.
+45	Cassidy W.G. et al. Interference modelling and SNR threshold study for use in vehicular safety messaging simulation // 2012 26th Biennial Symposium on Communications, QBSC 2012. Kingston: IEEE, 2012. P. 52–55.
+46	Wang T.H. et al. V2VNet: Vehicle-to-Vehicle Communication for Joint Perception and Prediction // Lecture Notes in Computer Science (including subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics). Springer Science and Business Media Deutschland GmbH, 2020. Vol. 12347 LNCS. P. 605–621.
+47	Di Felice M. et al. Smart radios for smart vehicles: Cognitive vehicular networks // IEEE Veh. Technol. Mag. 2012. Vol. 7, № 2. P. 26–33.
+48	Cheng N. et al. Opportunistic Spectrum Access for CR-VANETs: A Game-Theoretic Approach // IEEE Trans. Veh. Technol. Institute of Electrical and Electronics Engineers Inc., 2013. Vol. 63, № 1. P. 237–251.
+49	Hassan M.I., Vu H.L., Sakurai T. Performance Analysis of the IEEE 802.11 MAC Protocol for DSRC Safety Applications // IEEE Trans. Veh. Technol. 2011. Vol. 60, № 8. P. 3882–3896.
+51	Kaur P. et al. A survey on simulators for testing self-driving cars // Proceedings - 2021 4th International Conference on Connected and Autonomous Driving, MetroCAD 2021. Detroit, MI: Institute of Electrical and Electronics Engineers Inc., 2021. P. 62–70.
+52	Nguyen J. et al. An overview of agent-based traffic simulators // Transp. Res. Interdiscip. Perspect. Elsevier, 2021. Vol. 12. P. 100486.
+53	Harri J., Filali F., Bonnet C. Mobility models for vehicular ad hoc networks: a survey and taxonomy // IEEE Commun. Surv. Tutorials. 2009. Vol. 11, № 4. P. 19–41.
+54	Akhtar N., Ergen S.C., Ozkasap O. Vehicle mobility and communication channel models for realistic and efficient highway VANET simulation // IEEE Trans. Veh. Technol. Institute of Electrical and Electronics Engineers Inc., 2015. Vol. 64, № 1. P. 248–262.
+55	Rodriguez-Corbo F.A. et al. Propagation Models in Vehicular Communications // IEEE Access. Institute of Electrical and Electronics Engineers Inc., 2021. Vol. 9. P. 15902–15913.
+56	Wang C.X. et al. A survey of 5g channel measurements and models // IEEE Commun. Surv. Tutorials. Institute of Electrical and Electronics Engineers Inc., 2018. Vol. 20, № 4. P. 3142–3168.
+57	Behrisch M. et al. SUMO - Simulation of Urban MObility: An Overview // Proceedings of SIMUL 2011, The Third International Conference on Advances in System Simulation. Barcelona: ThinkMind, 2011. P. 1–6.
+58	NVIDIA DRIVE Sim | NVIDIA Developer [Electronic resource]. URL: https://developer.nvidia.com/drive/simulation (accessed: 08.03.2023).
+59	51Sim-One Cloud [Electronic resource]. URL: https://simone.51aes.com/login (accessed: 08.03.2023).
+60	Apollo [Electronic resource]. URL: https://developer.apollo.auto/gamesim.html (accessed: 08.03.2023).
+61	Waymo - ROBOTS: Your Guide to the World of Robotics [Electronic resource]. URL: https://robots.ieee.org/robots/waymo/ (accessed: 08.03.2023).
+62	VTD - Enabling safety validation in autonomous driving and ADAS system simulation [Electronic resource]. URL: https://vires.mscsoftware.com/ (accessed: 08.03.2023).
+63	Foretellix - Automated driving systems testing tools for simulations [Electronic resource]. URL: https://www.foretellix.com/ (accessed: 08.03.2023).
+64	Cognata | Autonomous and ADAS Vehicles Simulation [Electronic resource]. URL: https://www.cognata.com/simulation/ (accessed: 08.03.2023).
+65	PanoSim—面向汽车自动驾驶技术与产品研发的一体化仿真与测试平台 [Electronic resource]. URL: https://www.panosim.com/ (accessed: 08.03.2023).
+66	Huawei Octopus Tools - Huawei [Electronic resource]. URL: https://support.huawei.com/enterprise/en/intelligent-automotive-solution/octopus-pid-250809323/tool (accessed: 08.03.2023).
+67	Home - dSPACE [Electronic resource]. URL: https://www.dspace.com/en/pub/home.cfm (accessed: 08.03.2023).
+68	RTMaps — Intempora [Electronic resource]. URL: https://intempora.com/products/rtmaps/ (accessed: 08.03.2023).
+69	Driving Simulation and SILAB [Electronic resource]. URL: https://wivw.de/en/silab (accessed: 08.03.2023).
+70	Mechanical Simulation [Electronic resource]. URL: https://www.carsim.com/ (accessed: 08.03.2023).
+71	Automotive Simulation • Driving Simulation • Autonomous Driving • rFpro [Electronic resource]. URL: https://rfpro.com/ (accessed: 08.03.2023).
+72	DYNA4 | Virtual Test Driving | Vector [Electronic resource]. URL: https://www.vector.com/int/en/products/products-a-z/software/dyna4/ (accessed: 08.03.2023).
+73	Simulation C-V2X [Electronic resource]. URL: https://www.iis.fraunhofer.de/en/ff/kom/mobile-kom/simulation.html (accessed: 08.03.2023).
+74	Mechatronics Simulation | Unity [Electronic resource]. URL: https://unity.com/features/unity-systemgraph (accessed: 08.03.2023).
+75	BeamNG.tech [Electronic resource]. URL: https://beamng.tech/ (accessed: 08.03.2023).
+76	PreScan Applications | TASS International [Electronic resource]. URL: https://tass.plm.automation.siemens.com/node/310 (accessed: 08.03.2023).
+77	Ansys Inc. Ansys VRXPERIENCE. 2020.
+78	ADAS & Autonomous Vehicle Simulation Software | Ansys [Electronic resource]. URL: https://www.ansys.com/products/av-simulation (accessed: 08.03.2023).
+79	AVSimulation | AVS : Automotive simulation software and solutions [Electronic resource]. URL: https://www.avsimulation.com/ (accessed: 08.03.2023).
+80	ADAS and AV simulation and development | Applied Intuition [Electronic resource]. URL: https://www.appliedintuition.com/ (accessed: 08.03.2023).
+81	Driving Simulator | VI-grade [Electronic resource]. URL: https://www.vi-grade.com/ (accessed: 08.03.2023).
+82	monoDrive: Autonomous Vehicle Simulation [Electronic resource]. URL: https://www.monodrive.io/ (accessed: 08.03.2023).
+83	Truevision.ai - Simulation For Self-Driving Cars [Electronic resource]. URL: https://www.truevision.ai/ (accessed: 08.03.2023).
+84	Robotics-Simulator – 4D-Virtualiz [Electronic resource]. URL: https://www.4d-virtualiz.com/en/robotics-simulator/ (accessed: 08.03.2023).
+85	腾讯发布新一代虚拟仿真平台TAD Sim 2.0 - 腾讯云开发者社区-腾讯云 [Electronic resource]. URL: https://cloud.tencent.com/developer/news/649103 (accessed: 08.03.2023).
+86	Virtual Systems & Sontrols Simulation Software [Electronic resource]. URL: https://www.esi-group.com/products/prosivic (accessed: 08.03.2023).
+87	A leading specialist in automotive test systems | AB Dynamics [Electronic resource]. URL: https://www.abdynamics.com/ (accessed: 08.03.2023).
+88	DYNACAR: advanced research full electric vehicle [Electronic resource]. URL: https://dynacar.es/en/tecnalia-research-innovation.php (accessed: 08.03.2023).
+96	Dosovitskiy A. et al. CARLA: An Open Urban Driving Simulator // 1st Conference on Robot Learning (CoRL 2017). Mountain View: PMLR, 2017. P. 1–16.
+97	Rong G. et al. LGSVL Simulator: A High Fidelity Simulator for Autonomous Driving // 2020 IEEE 23rd International Conference on Intelligent Transportation Systems, ITSC 2020. Rhodes: Institute of Electrical and Electronics Engineers Inc., 2020.
+98	Shah S. et al. AirSim: High-Fidelity Visual and Physical Simulation for Autonomous Vehicles // Springer Proceedings in Advanced Robotics. Springer Science and Business Media B.V., 2018. Vol. 5. P. 621–635.
+99	Koenig N., Howard A. Design and use paradigms for Gazebo, an open-source multi-robot simulator // 2004 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). Sendai: IEEE, 2004. Vol. 3. P. 2149–2154.
+100	Michel O. Webots: Symbiosis between virtual and real mobile robots // Lecture Notes in Computer Science (including subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics). Springer Verlag, 1998. Vol. 1434. P. 254–263.
+101	Mazhar H. et al. CHRONO: A parallel multi-physics library for rigid-body, flexible-body, and fluid dynamics // Mech. Sci. Copernicus GmbH, 2013. Vol. 4, № 1. P. 49–64.
+102	Xu R. et al. OpenCDA: An Open Cooperative Driving Automation Framework Integrated with Co-Simulation // IEEE Conference on Intelligent Transportation Systems, Proceedings, ITSC. Indianapolis: IEEE, 2021. Vol. 2021-September. P. 1155–1162.
+103	Cai P. et al. SUMMIT: a simulator for urban driving in massive mixed traffic // Proceedings - IEEE International Conference on Robotics and Automation. Institute of Electrical and Electronics Engineers Inc., 2019. P. 4023–4029.
+104	Osinski B. et al. Simulation-based reinforcement learning for real-world autonomous driving // Proceedings - IEEE International Conference on Robotics and Automation. Paris: Institute of Electrical and Electronics Engineers Inc., 2020. P. 6411–6418.
+105	Pilz C. et al. Development of a scenario simulation platform to support autonomous driving verification // 2019 8th IEEE International Conference on Connected Vehicles and Expo, ICCVE 2019 - Proceedings. Graz: Institute of Electrical and Electronics Engineers Inc., 2019. P. 1–7.
+154	Ur Rehman Khan A., Bilal S.M., Othman M. A performance comparison of open source network simulators for wireless networks // Proceedings - 2012 IEEE International Conference on Control System, Computing and Engineering, ICCSCE 2012. Penang: IEEE Computer Society, 2012. P. 34–38.
+155	Sommer C. et al. Veins: The open source vehicular network simulation framework // EAI/Springer Innovations in Communication and Computing. Springer Science and Business Media Deutschland GmbH, 2019. P. 215–252.
+156	Mészáros L., Varga A., Kirsche M. INET framework // EAI/Springer Innovations in Communication and Computing. Springer Science and Business Media Deutschland GmbH, 2019. P. 55–106.
+157	Virdis A., Stea G., Nardini G. SimuLTE - A modular system-level simulator for LTE/LTE-A networks based on OMNeT+ // SIMULTECH 2014 - Proceedings of the 4th International Conference on Simulation and Modeling Methodologies, Technologies and Applications. Vienna: SciTePress, 2014. Vol. 2014-January.
+158	Nardini G. et al. SiMu5G–An OMNeT++ library for end-to-end performance evaluation of 5G networks // IEEE Access. Institute of Electrical and Electronics Engineers Inc., 2020. Vol. 8. P. 181176–181191.
+159	Segata M. et al. Plexe: a platooning extension for Veins // IEEE Vehicular Networking Conference, VNC. Paderborn: IEEE Computer Society, 2015. Vol. 2015-January, № January. P. 53–60.
+160	Segata M. et al. Multi-technology cooperative driving: an analysis based on PLEXE // IEEE Trans. Mob. Comput. Institute of Electrical and Electronics Engineers (IEEE), 2022. P. 15.
+161	Riebl R. et al. Artery: Extending Veins for VANET applications // 2015 International Conference on Models and Technologies for Intelligent Transportation Systems (MT-ITS). Budapest: IEEE, 2015. P. 450–456.
+162	McCarthy B., O’Driscoll A. OpenCV2X mode 4: a simulation extension for cellular vehicular communication networks // IEEE International Workshop on Computer Aided Modeling and Design of Communication Links and Networks, CAMAD. Limassol: Institute of Electrical and Electronics Engineers Inc., 2019. Vol. 2019-September. P. 1–6.
+163	Mccarthy B. et al. OpenCV2X: modelling of the V2X cellular sidelink and performance evaluation for aperiodic traffic // (unpublished). 2021. P. 1–18.
+164	Hegde A., Festag A. Artery-C: an OMNeT++ based discrete event simulation framework for cellular V2X // MSWiM 2020 - Proceedings of the 23rd International ACM Conference on Modeling, Analysis and Simulation of Wireless and Mobile Systems. Association for Computing Machinery, Inc, 2020. P. 47–51.
+165	Malinverno M. et al. A multi-stack simulation framework for vehicular applications testing // DIVANet 2020 - Proceedings of the 10th ACM Symposium on Design and Analysis of Intelligent Vehicular Networks and Applications. Association for Computing Machinery, Inc, 2020. P. 17–24.
+174	Fugen T. et al. Capability of 3-D Ray Tracing for Defining Parameter Sets for the Specification of Future Mobile Communications Systems // IEEE Trans. Antennas Propag. 2006. Vol. 54, № 11. P. 3125–3137.
+175	Iskander M.F., Yun Z. Propagation prediction models for wireless communication systems // IEEE Trans. Microw. Theory Tech. 2002. Vol. 50, № 3. P. 662–673.
+176	McNamara D.A., Pistorius C.W.I., Malherbe J.A.G. Introduction to the Uniform Geometrical Theory of Diffraction // undefined. Artech House, 1990.
+177	Radio Coverage Planning with Altair WinProp [Electronic resource]. URL: https://web.altair.com/winprop-telecom (accessed: 11.05.2021).
+178	Electromagnetic Simulation Software & EM Modeling - Remcom [Electronic resource]. URL: https://www.remcom.com/ (accessed: 11.05.2021).
+179	Stepanyants V., Romanov A. An object-oriented approach to a structured description of machine perception and traffic participant interactions in traffic scenarios // 2022 IEEE 7th International Conference on Intelligent Transportation Engineering (ICITE). Beijing: IEEE, 2022. P. 7.
+180	Boban M., Barros J., Tonguz O.K. Geometry-based vehicle-to-vehicle channel modeling for large-scale simulation // IEEE Trans. Veh. Technol. Institute of Electrical and Electronics Engineers Inc., 2014. Vol. 63, № 9. P. 4146–4164.
+181	Hameed Mir Z., Filali F. Large-scale simulations and performance evaluation of connected cars - a V2V communication perspective // Simul. Model. Pract. Theory. Elsevier, 2017. Vol. 73. P. 55–71.
+182	Aygun B. et al. Geometry-based propagation modeling and simulation of vehicle-to-infrastructure links // IEEE Vehicular Technology Conference. Nanjing: Institute of Electrical and Electronics Engineers Inc., 2016. Vol. 2016-July. P. 1–5.
+183	Maurer J. et al. A new inter-vehicle communications (IVC) channel model // IEEE Veh. Technol. Conf. 2004. Vol. 60, № 1. P. 9–13.
+184	Maurer J., Schäfer T.M., Wiesbeck W. A realistic description of the environment for inter-vehicle wave propagation modelling // IEEE Vehicular Technology Conference. Atlantic City: IEEE, 2001. Vol. 3, № 54ND. P. 1437–1441.
+185	Reichardt L. et al. Virtual Drive: A Complete V2X Communication and Radar System Simulator for Optimization of Multiple Antenna Systems // Proc. IEEE. Institute of Electrical and Electronics Engineers Inc., 2011. Vol. 99, № 7. P. 1295–1310.
+186	Kornek D. et al. Effects of Antenna Characteristics and Placements on a Vehicle-to-Vehicle Channel Scenario // 2010 IEEE International Conference on Communications Workshops, ICC 2010. Cape Town: IEEE, 2010.
+187	Schumacher H., Schack M., Kürner T. Coupling of simulators for the investigation of car-to-X communication aspects // 2009 IEEE Asia-Pacific Services Computing Conference, APSCC 2009. Singapore: IEEE, 2009. P. 58–63.
+188	Acosta-Marum G., Ingram M.A. Six time- and frequency- selective empirical channel models for vehicular wireless LANs // IEEE Veh. Technol. Mag. IEEE, 2007. Vol. 2, № 4. P. 4–11.
+189	Jakes W.C. Microwave mobile communications // Microwave Mobile Communications. Wiley-IEEE Press, 1994.
+190	Paier A. et al. Characterization of Vehicle-to-Vehicle Radio Channels from Measurements at 5.2 GHz // Wirel. Pers. Commun. Springer, 2009. Vol. 50. P. 19–32.

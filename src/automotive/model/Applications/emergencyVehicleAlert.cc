@@ -28,6 +28,7 @@
 #include "ns3/gn-utils.h"
 #include <algorithm>
 #include <cctype>
+#include <cmath>
 #include <limits>
 #include <sstream>
 #include <vector>
@@ -42,6 +43,7 @@ namespace ns3
   NS_OBJECT_ENSURE_REGISTERED(emergencyVehicleAlert);
   constexpr uint16_t CAM_PORT = 2001;
   constexpr uint16_t CPM_PORT = 2009;
+  std::vector<emergencyVehicleAlert*> emergencyVehicleAlert::s_active_instances;
 
   namespace
   {
@@ -88,6 +90,35 @@ namespace ns3
               return false;
             }
           valueOut = parsed;
+          return true;
+        }
+      catch (const std::exception&)
+        {
+          return false;
+        }
+    }
+
+    bool
+    TryParseStationIdToken (const std::string& token, int64_t& stationIdOut)
+    {
+      std::string normalized = TrimCopy (token);
+      if (normalized.empty ())
+        {
+          return false;
+        }
+      if (normalized.rfind ("veh", 0) == 0 && normalized.size () > 3)
+        {
+          normalized = normalized.substr (3);
+        }
+      try
+        {
+          size_t consumed = 0;
+          const long parsed = std::stol (normalized, &consumed);
+          if (consumed != normalized.size () || parsed < 0)
+            {
+              return false;
+            }
+          stationIdOut = static_cast<int64_t> (parsed);
           return true;
         }
       catch (const std::exception&)
@@ -234,6 +265,31 @@ namespace ns3
            StringValue (std::string ()),
            MakeStringAccessor (&emergencyVehicleAlert::m_per_vehicle_prr_profile),
            MakeStringChecker ())
+        .AddAttribute ("CamSilenceDropInferenceEnable",
+           "Infer CAM loss events from sequence/time gaps instead of synthetic RxDropProbPhy",
+           BooleanValue (false),
+           MakeBooleanAccessor (&emergencyVehicleAlert::m_cam_silence_drop_inference_enable),
+           MakeBooleanChecker ())
+        .AddAttribute ("CamSilenceFocusTxId",
+           "StationId whose CAM stream is used for silence-based PHY loss inference",
+           IntegerValue (2),
+           MakeIntegerAccessor (&emergencyVehicleAlert::m_cam_silence_focus_tx_id),
+           MakeIntegerChecker<int64_t> ())
+        .AddAttribute ("CamSilenceExpectedPeriodMs",
+           "Expected CAM period [ms] for silence-based loss inference",
+           DoubleValue (600.0),
+           MakeDoubleAccessor (&emergencyVehicleAlert::m_cam_silence_expected_period_ms),
+           MakeDoubleChecker<double> (1.0))
+        .AddAttribute ("CamSilenceTimeoutS",
+           "No-CAM timeout [s] after which a loss event is inferred",
+           DoubleValue (0.95),
+           MakeDoubleAccessor (&emergencyVehicleAlert::m_cam_silence_timeout_s),
+           MakeDoubleChecker<double> (0.01))
+        .AddAttribute ("CamSilenceBootstrapTimeS",
+           "Start evaluating silence-based loss inference only after this simulation time [s]",
+           DoubleValue (2.2),
+           MakeDoubleAccessor (&emergencyVehicleAlert::m_cam_silence_bootstrap_time_s),
+           MakeDoubleChecker<double> (0.0))
         .AddAttribute ("ReactionDistanceThreshold",
            "Distance threshold [m] to trigger CAM-based evasive action",
            DoubleValue (75.0),
@@ -274,6 +330,36 @@ namespace ns3
            DoubleValue (3.0),
            MakeDoubleAccessor (&emergencyVehicleAlert::m_cpm_ttc_threshold_s),
            MakeDoubleChecker<double> (0.0))
+        .AddAttribute ("SensorReactionEnable",
+           "Enable local sensor-based evasive control from locally detected POs",
+           BooleanValue (false),
+           MakeBooleanAccessor (&emergencyVehicleAlert::m_sensor_reaction_enable),
+           MakeBooleanChecker ())
+        .AddAttribute ("SensorReactionDistanceThresholdM",
+           "Distance threshold [m] to consider local sensor detections for evasive control",
+           DoubleValue (20.0),
+           MakeDoubleAccessor (&emergencyVehicleAlert::m_sensor_reaction_distance_threshold_m),
+           MakeDoubleChecker<double> (0.0))
+        .AddAttribute ("SensorReactionTtcThresholdS",
+           "TTC threshold [s] to trigger local sensor-based evasive control",
+           DoubleValue (1.5),
+           MakeDoubleAccessor (&emergencyVehicleAlert::m_sensor_reaction_ttc_threshold_s),
+           MakeDoubleChecker<double> (0.0))
+        .AddAttribute ("SensorReactionPeriodMs",
+           "Polling period [ms] for evaluating local sensor hazards",
+           DoubleValue (100.0),
+           MakeDoubleAccessor (&emergencyVehicleAlert::m_sensor_reaction_period_ms),
+           MakeDoubleChecker<double> (1.0))
+        .AddAttribute ("SensorRangeM",
+           "Local SUMO sensor range [m]",
+           DoubleValue (50.0),
+           MakeDoubleAccessor (&emergencyVehicleAlert::m_sensor_range_m),
+           MakeDoubleChecker<double> (1.0))
+        .AddAttribute ("SensorReactionFocusVehicleId",
+           "Optional vehicle id filter for local sensor reaction (e.g., veh2). Empty = any detected object",
+           StringValue (std::string ()),
+           MakeStringAccessor (&emergencyVehicleAlert::m_sensor_reaction_focus_vehicle_id),
+           MakeStringChecker ())
         .AddAttribute ("ReactionActionCooldownS",
            "Minimum interval [s] between consecutive evasive control actions",
            DoubleValue (0.5),
@@ -352,6 +438,17 @@ namespace ns3
     m_per_vehicle_prr_profile_applied = false;
     m_profile_equiv_tx_power_dbm = std::numeric_limits<double>::quiet_NaN ();
     m_profile_target_prr = std::numeric_limits<double>::quiet_NaN ();
+    m_cam_silence_drop_inference_enable = false;
+    m_cam_silence_focus_tx_id = 2;
+    m_cam_silence_expected_period_ms = 600.0;
+    m_cam_silence_timeout_s = 0.95;
+    m_cam_silence_bootstrap_time_s = 2.2;
+    m_cam_silence_seen_any = false;
+    m_cam_silence_last_msg_seq = -1;
+    m_cam_silence_next_msg_seq = -1;
+    m_cam_silence_last_emitted_seq = -1;
+    m_cam_silence_last_rx_time_s = -1.0;
+    m_cam_silence_last_inferred_time_s = -1.0;
     m_drop_rv = CreateObject<UniformRandomVariable> ();
     m_drop_rv->SetAttribute ("Min", DoubleValue (0.0));
     m_drop_rv->SetAttribute ("Max", DoubleValue (1.0));
@@ -364,6 +461,13 @@ namespace ns3
     m_reaction_action_duration_s = 3.0;
     m_cpm_distance_threshold = 60.0;
     m_cpm_ttc_threshold_s = 3.0;
+    m_sensor_reaction_enable = false;
+    m_sensor_reaction_distance_threshold_m = 20.0;
+    m_sensor_reaction_ttc_threshold_s = 1.5;
+    m_sensor_reaction_period_ms = 100.0;
+    m_sensor_range_m = 50.0;
+    m_sensor_reaction_focus_vehicle_id.clear ();
+    m_sensor_reaction_focus_station_id = -1;
     m_control_action_cooldown_s = 0.5;
     m_reaction_force_lane_change_enable = false;
     m_last_control_action_s = -1e9;
@@ -478,6 +582,10 @@ namespace ns3
     m_id = m_client->GetVehicleId (this->GetNode ());
     m_type = m_client->TraCIAPI::vehicle.getVehicleClass (m_id);
     m_max_speed = m_client->TraCIAPI::vehicle.getMaxSpeed (m_id);
+    if (std::find (s_active_instances.begin (), s_active_instances.end (), this) == s_active_instances.end ())
+      {
+        s_active_instances.push_back (this);
+      }
     if (m_drop_rv != nullptr && m_id.size () > 3)
       {
         m_drop_rv->SetStream (std::stol (m_id.substr (3)));
@@ -529,6 +637,21 @@ namespace ns3
         std::cout << std::endl;
       }
 
+    m_cam_silence_seen_any = false;
+    m_cam_silence_last_msg_seq = -1;
+    m_cam_silence_next_msg_seq = -1;
+    m_cam_silence_last_emitted_seq = -1;
+    m_cam_silence_last_rx_time_s = -1.0;
+    m_cam_silence_last_inferred_time_s = -1.0;
+    m_pending_cam_tx_time_s.clear ();
+    Simulator::Cancel (m_cam_silence_watchdog_ev);
+    if (m_cam_silence_drop_inference_enable && m_type != "emergency")
+      {
+        const double periodS = std::max (0.01, m_cam_silence_expected_period_ms / 1000.0);
+        m_cam_silence_watchdog_ev =
+          Simulator::Schedule (Seconds (periodS), &emergencyVehicleAlert::CamSilenceWatchdogTick, this);
+      }
+
     VDP* traci_vdp = new VDPTraCI(m_client,m_id);
 
     //Create LDM and sensor object
@@ -542,6 +665,30 @@ namespace ns3
     m_sensor->setTraCIclient(m_client);
     m_sensor->setVDP(traci_vdp);
     m_sensor->setLDM (m_LDM);
+    m_sensor->setSensorRange (std::max (1.0, m_sensor_range_m));
+
+    m_sensor_reaction_focus_station_id = -1;
+    if (!m_sensor_reaction_focus_vehicle_id.empty ())
+      {
+        int64_t parsedStationId = -1;
+        if (TryParseStationIdToken (m_sensor_reaction_focus_vehicle_id, parsedStationId))
+          {
+            m_sensor_reaction_focus_station_id = parsedStationId;
+          }
+        else
+          {
+            NS_LOG_WARN ("Invalid SensorReactionFocusVehicleId '" << m_sensor_reaction_focus_vehicle_id
+                                                                  << "' for " << m_id
+                                                                  << ", ignoring local focus filter.");
+          }
+      }
+    Simulator::Cancel (m_sensor_watchdog_ev);
+    if (m_sensor_reaction_enable && m_type != "emergency")
+      {
+        const double periodS = std::max (0.01, m_sensor_reaction_period_ms / 1000.0);
+        m_sensor_watchdog_ev =
+          Simulator::Schedule (Seconds (periodS), &emergencyVehicleAlert::SensorWatchdogTick, this);
+      }
 
     // Create new BTP and GeoNet objects and set them in DENBasicService and CABasicService
     m_btp = CreateObject <btp>();
@@ -754,7 +901,14 @@ namespace ns3
   emergencyVehicleAlert::StopApplication ()
   {
     NS_LOG_FUNCTION(this);
+    auto it = std::find (s_active_instances.begin (), s_active_instances.end (), this);
+    if (it != s_active_instances.end ())
+      {
+        s_active_instances.erase (it);
+      }
     Simulator::Cancel(m_speed_ev);
+    Simulator::Cancel(m_cam_silence_watchdog_ev);
+    Simulator::Cancel(m_sensor_watchdog_ev);
     Simulator::Cancel(m_crash_mode_restore_ev);
     Simulator::Cancel(m_send_cam_ev);
     Simulator::Cancel(m_update_denm_ev);
@@ -811,17 +965,55 @@ namespace ns3
   }
 
   void
-  emergencyVehicleAlert::logCamTx (asn1cpp::Seq<CAM> cam)
+  emergencyVehicleAlert::PublishCamTxEvent (long txId, long msgSeq, double txTimeS)
   {
-    if (m_csv_name.empty () || !m_csv_ofstream_msg.is_open ())
+    for (auto* app : s_active_instances)
+      {
+        if (app != nullptr)
+          {
+            app->OnGlobalCamTxEvent (txId, msgSeq, txTimeS);
+          }
+      }
+  }
+
+  void
+  emergencyVehicleAlert::OnGlobalCamTxEvent (long txId, long msgSeq, double txTimeS)
+  {
+    if (!m_cam_silence_drop_inference_enable || !m_crash_mode_enable || m_type == "emergency")
       {
         return;
       }
+    if (txTimeS < std::max (0.0, m_cam_silence_bootstrap_time_s))
+      {
+        return;
+      }
+    if (m_cam_silence_focus_tx_id >= 0 && txId != m_cam_silence_focus_tx_id)
+      {
+        return;
+      }
+    if (m_id.size () > 3)
+      {
+        const long selfStationId = std::stol (m_id.substr (3));
+        if (selfStationId == txId)
+          {
+            return;
+          }
+      }
+    m_pending_cam_tx_time_s[{txId, msgSeq}] = txTimeS;
+  }
+
+  void
+  emergencyVehicleAlert::logCamTx (asn1cpp::Seq<CAM> cam)
+  {
     long cam_gdt_ms = asn1cpp::getField(cam->cam.generationDeltaTime,long);
     long tx_id = asn1cpp::getField(cam->header.stationId,long);
     double now_s = Simulator::Now ().GetSeconds ();
-    m_csv_ofstream_msg << m_id << "," << cam_gdt_ms << "," << now_s
-                       << ",," << 0 << ",CAM," << tx_id << ",," << cam_gdt_ms << "," << -1 << std::endl;
+    if (!m_csv_name.empty () && m_csv_ofstream_msg.is_open ())
+      {
+        m_csv_ofstream_msg << m_id << "," << cam_gdt_ms << "," << now_s
+                           << ",," << 0 << ",CAM," << tx_id << ",," << cam_gdt_ms << "," << -1 << std::endl;
+      }
+    PublishCamTxEvent (tx_id, cam_gdt_ms, now_s);
   }
 
   void
@@ -1079,6 +1271,215 @@ namespace ns3
     return true;
   }
 
+  uint64_t
+  emergencyVehicleAlert::BuildSyntheticPktUid (long txId, long msgSeq) const
+  {
+    const uint64_t tx = (txId >= 0) ? (static_cast<uint64_t> (txId) & 0xffffffffULL) : 0ULL;
+    const uint64_t seq = (msgSeq >= 0) ? (static_cast<uint64_t> (msgSeq) & 0xffffffffULL) : 0ULL;
+    // High bit marks IDs inferred from CAM silence (not ns-3 packet UIDs).
+    return (1ULL << 63) | (tx << 32) | seq;
+  }
+
+  void
+  emergencyVehicleAlert::EmitInferredCamDropNoAction (long txId, long msgSeq, const std::string& dropType)
+  {
+    if (m_cam_silence_last_emitted_seq >= 0 &&
+        msgSeq <= static_cast<long> (m_cam_silence_last_emitted_seq))
+      {
+        return;
+      }
+    m_cam_silence_last_emitted_seq = msgSeq;
+
+    const uint64_t pktUid = BuildSyntheticPktUid (txId, msgSeq);
+    long rx_id = 0;
+    if (m_id.size () > 3)
+      {
+        rx_id = std::stol (m_id.substr (3));
+      }
+
+    if (!m_csv_name.empty () && m_csv_ofstream_msg.is_open ())
+      {
+        m_csv_ofstream_msg << m_id << "," << msgSeq << ",,"
+                           << Simulator::Now ().GetSeconds ()
+                           << "," << 0 << "," << dropType << ","
+                           << txId << "," << rx_id << "," << msgSeq
+                           << "," << pktUid << std::endl;
+      }
+
+    LogControlEvent ("drop_decision_no_action",
+                     txId,
+                     msgSeq,
+                     pktUid,
+                     -1.0,
+                     -1.0,
+                     -1,
+                     -1,
+                     -1.0);
+    MaybeTriggerCrashModeOnNoActionDrop (txId, msgSeq, pktUid);
+  }
+
+  void
+  emergencyVehicleAlert::EvaluateCamSilenceInference (long txId, long msgSeq)
+  {
+    if (!m_cam_silence_drop_inference_enable || !m_crash_mode_enable || m_type == "emergency")
+      {
+        return;
+      }
+    if (m_cam_silence_focus_tx_id >= 0 && txId != m_cam_silence_focus_tx_id)
+      {
+        return;
+      }
+
+    const double nowS = Simulator::Now ().GetSeconds ();
+    const auto key = std::make_pair (txId, msgSeq);
+    m_pending_cam_tx_time_s.erase (key);
+    m_cam_silence_seen_any = true;
+    m_cam_silence_last_msg_seq = static_cast<int64_t> (msgSeq);
+    m_cam_silence_last_rx_time_s = nowS;
+  }
+
+  void
+  emergencyVehicleAlert::CamSilenceWatchdogTick ()
+  {
+    if (!m_cam_silence_drop_inference_enable || !m_crash_mode_enable || m_type == "emergency")
+      {
+        return;
+      }
+
+    const double nowS = Simulator::Now ().GetSeconds ();
+    const double periodS = std::max (0.01, m_cam_silence_expected_period_ms / 1000.0);
+    const double timeoutS = std::max (periodS, m_cam_silence_timeout_s);
+    if (m_cam_silence_timeout_s > 0.0 && nowS >= std::max (0.0, m_cam_silence_bootstrap_time_s))
+      {
+        std::vector<std::pair<long, long>> expired;
+        expired.reserve (m_pending_cam_tx_time_s.size ());
+        for (const auto& it : m_pending_cam_tx_time_s)
+          {
+            if ((nowS - it.second) >= timeoutS)
+              {
+                expired.push_back (it.first);
+              }
+          }
+        for (const auto& key : expired)
+          {
+            EmitInferredCamDropNoAction (key.first, key.second, "CAM_DROP_PHY_INFERRED");
+            m_pending_cam_tx_time_s.erase (key);
+          }
+      }
+
+    m_cam_silence_watchdog_ev =
+      Simulator::Schedule (Seconds (periodS), &emergencyVehicleAlert::CamSilenceWatchdogTick, this);
+  }
+
+  void
+  emergencyVehicleAlert::SensorWatchdogTick ()
+  {
+    const double periodS = std::max (0.01, m_sensor_reaction_period_ms / 1000.0);
+    if (!m_sensor_reaction_enable || m_type == "emergency" || m_LDM == nullptr || m_client == nullptr)
+      {
+        return;
+      }
+
+    std::vector<LDM::returnedVehicleData_t> localDetections;
+    const bool hasDetections = m_LDM->getAllPOs (localDetections);
+
+    bool hazardDetected = false;
+    double minHazardDistance = std::numeric_limits<double>::infinity ();
+    double minHazardTtc = std::numeric_limits<double>::infinity ();
+    long hazardSourceId = -1;
+    long hazardMsgSeq = -1;
+    if (hasDetections)
+      {
+        const double egoHeadingDeg = m_client->TraCIAPI::vehicle.getAngle (m_id);
+        const double egoSpeed = m_client->TraCIAPI::vehicle.getSpeed (m_id);
+        const double distanceThreshold = std::max (0.0, m_sensor_reaction_distance_threshold_m);
+        const double ttcThreshold = std::max (0.0, m_sensor_reaction_ttc_threshold_s);
+        const double egoHeadingRad = DEG_2_RAD (egoHeadingDeg);
+        const double egoVelX = egoSpeed * std::cos (egoHeadingRad);
+        const double egoVelY = egoSpeed * std::sin (egoHeadingRad);
+
+        for (auto& detection : localDetections)
+          {
+            auto& object = detection.vehData;
+            if (!object.detected)
+              {
+                continue;
+              }
+            if (m_sensor_reaction_focus_station_id >= 0 &&
+                static_cast<int64_t> (object.stationID) != m_sensor_reaction_focus_station_id)
+              {
+                continue;
+              }
+
+            double relPosX = 0.0;
+            double relPosY = 0.0;
+            if (object.xDistAbs.isAvailable () && object.yDistAbs.isAvailable ())
+              {
+                relPosX = static_cast<double> (object.xDistAbs.getData ()) / CENTI;
+                relPosY = static_cast<double> (object.yDistAbs.getData ()) / CENTI;
+              }
+            else
+              {
+                libsumo::TraCIPosition egoPos = m_client->TraCIAPI::vehicle.getPosition (m_id);
+                libsumo::TraCIPosition objectPos = m_client->TraCIAPI::vehicle.getPosition (object.ID);
+                relPosX = objectPos.x - egoPos.x;
+                relPosY = objectPos.y - egoPos.y;
+              }
+
+            const double distance = std::hypot (relPosX, relPosY);
+            if (distance > distanceThreshold)
+              {
+                continue;
+              }
+
+            double objectVelX = 0.0;
+            double objectVelY = 0.0;
+            if (object.xSpeedAbs.isAvailable () && object.ySpeedAbs.isAvailable ())
+              {
+                objectVelX = static_cast<double> (object.xSpeedAbs.getData ()) / CENTI;
+                objectVelY = static_cast<double> (object.ySpeedAbs.getData ()) / CENTI;
+              }
+            else
+              {
+                const double objectHeadingRad = DEG_2_RAD (object.heading);
+                objectVelX = object.speed_ms * std::cos (objectHeadingRad);
+                objectVelY = object.speed_ms * std::sin (objectHeadingRad);
+              }
+
+            const double relVelX = objectVelX - egoVelX;
+            const double relVelY = objectVelY - egoVelY;
+            const double rangeRate = ((relPosX * relVelX) + (relPosY * relVelY)) / distance;
+            const double closingSpeed = -rangeRate;
+            if (closingSpeed <= 1e-3)
+              {
+                continue;
+              }
+            const double ttc = distance / closingSpeed;
+            if (ttc <= ttcThreshold && ttc < minHazardTtc)
+              {
+                hazardDetected = true;
+                minHazardDistance = distance;
+                minHazardTtc = ttc;
+                hazardSourceId = static_cast<long> (object.stationID);
+                hazardMsgSeq = static_cast<long> (object.camTimestamp / 1000);
+              }
+          }
+      }
+
+    if (hazardDetected)
+      {
+        ApplyEvasiveControl ("sensor_reaction",
+                            hazardSourceId,
+                            hazardMsgSeq,
+                            static_cast<uint64_t> (-1),
+                            minHazardDistance,
+                            -1.0);
+      }
+
+    m_sensor_watchdog_ev =
+      Simulator::Schedule (Seconds (periodS), &emergencyVehicleAlert::SensorWatchdogTick, this);
+  }
+
   void
   emergencyVehicleAlert::receiveCAM (asn1cpp::Seq<CAM> cam, Address from)
   {
@@ -1105,6 +1506,7 @@ namespace ns3
        return;
      }
    m_cam_received++;
+   EvaluateCamSilenceInference (tx_id, cam_gdt_ms);
 
    /* If the CAM is received from an emergency vehicle, and the host vehicle is a "passenger" car, then process the CAM */
    if (asn1cpp::getField(cam->cam.camParameters.basicContainer.stationType,StationType_t)==StationType_specialVehicle && m_type!="emergency")

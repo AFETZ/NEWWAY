@@ -20,7 +20,10 @@
 #include "ns3/LDM.h"
 #include "ns3/traci-client.h"
 #include <fstream>
+#include <cstdint>
 #include <limits>
+#include <map>
+#include <vector>
 namespace ns3 {
 
 class emergencyVehicleAlert : public Application
@@ -120,6 +123,13 @@ class emergencyVehicleAlert : public Application
                           int laneAfter,
                           double speedTarget);
     void LogPhyDropEvent (const GeoNet::RxPhyDropInfo& dropInfo);
+    static void PublishCamTxEvent (long txId, long msgSeq, double txTimeS);
+    void OnGlobalCamTxEvent (long txId, long msgSeq, double txTimeS);
+    void EvaluateCamSilenceInference (long txId, long msgSeq);
+    void EmitInferredCamDropNoAction (long txId, long msgSeq, const std::string& dropType);
+    void CamSilenceWatchdogTick ();
+    void SensorWatchdogTick ();
+    uint64_t BuildSyntheticPktUid (long txId, long msgSeq) const;
     void MaybeTriggerCrashModeOnNoActionDrop (long txId, long msgSeq, uint64_t packetUid);
     bool ApplyEvasiveControl (const std::string& eventType,
                               long txId,
@@ -160,6 +170,13 @@ class emergencyVehicleAlert : public Application
     double m_reaction_action_duration_s;
     double m_cpm_distance_threshold;
     double m_cpm_ttc_threshold_s;
+    bool m_sensor_reaction_enable;
+    double m_sensor_reaction_distance_threshold_m;
+    double m_sensor_reaction_ttc_threshold_s;
+    double m_sensor_reaction_period_ms;
+    double m_sensor_range_m;
+    std::string m_sensor_reaction_focus_vehicle_id;
+    int64_t m_sensor_reaction_focus_station_id;
     double m_control_action_cooldown_s;
     bool m_reaction_force_lane_change_enable;
     double m_last_control_action_s;
@@ -212,6 +229,21 @@ class emergencyVehicleAlert : public Application
     bool m_per_vehicle_prr_profile_applied;
     double m_profile_equiv_tx_power_dbm;
     double m_profile_target_prr;
+    bool m_cam_silence_drop_inference_enable;
+    int64_t m_cam_silence_focus_tx_id;
+    double m_cam_silence_expected_period_ms;
+    double m_cam_silence_timeout_s;
+    double m_cam_silence_bootstrap_time_s;
+    bool m_cam_silence_seen_any;
+    int64_t m_cam_silence_last_msg_seq;
+    int64_t m_cam_silence_next_msg_seq;
+    int64_t m_cam_silence_last_emitted_seq;
+    double m_cam_silence_last_rx_time_s;
+    double m_cam_silence_last_inferred_time_s;
+    std::map<std::pair<long, long>, double> m_pending_cam_tx_time_s;
+    EventId m_cam_silence_watchdog_ev;
+    EventId m_sensor_watchdog_ev;
+    static std::vector<emergencyVehicleAlert*> s_active_instances;
     Ptr<UniformRandomVariable> m_drop_rv;
     bool m_crash_mode_enable;
     std::string m_crash_mode_vehicle_id;

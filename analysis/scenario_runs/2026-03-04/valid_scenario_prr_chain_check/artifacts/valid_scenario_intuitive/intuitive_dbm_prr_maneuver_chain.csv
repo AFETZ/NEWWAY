@@ -1,0 +1,4 @@
+vehicle_id,equiv_tx_power_dbm,target_prr,observed_prr,prr_error_observed_minus_target,configured_rx_drop_prob_phy_cam,first_decision_event,first_decision_time_s,first_lane_change_s,in_collision_xml
+veh3,23.0000,0.9500,1.0000,0.0500,0.000000,cam_reaction,7.14358,7.14358,0
+veh4,-20.0000,0.0770,0.0893,0.0123,0.918947,drop_decision_no_action,2.04358,9.13433,1
+veh5,0.0000,0.6930,0.7857,0.0927,0.270526,drop_decision_no_action,2.07408,10.13410,0
