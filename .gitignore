@@ -4,6 +4,7 @@
 # Misc files
 /DlRlcStats.txt
 /UlRlcStats.txt
+*_extracted.txt
 /sumo-errors-or-collisions.xml
 
 /ms-van3t.cflags
