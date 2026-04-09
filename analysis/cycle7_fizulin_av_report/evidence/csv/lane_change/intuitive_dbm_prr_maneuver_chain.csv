@@ -1,0 +1,4 @@
+vehicle_id,equiv_tx_power_dbm,target_prr,observed_prr,prr_error_observed_minus_target,configured_rx_drop_prob_phy_cam,first_decision_event,first_decision_time_s,first_lane_change_s,decision_outcome,in_collision_xml
+veh3,23.0000,0.9500,0.9444,-0.0056,0.050000,drop_decision_no_action,6.75683,7.14358,maneuver_before_collision,0
+veh4,-20.0000,0.0770,0.2222,0.1452,0.923000,drop_decision_no_action,6.06683,8.13733,no_maneuver_before_collision,1
+veh5,0.0000,0.6930,0.7500,0.0570,0.307000,drop_decision_no_action,6.18033,,no_maneuver,0

@@ -1,0 +1,5 @@
+event,time_s
+incident_time,6.00000
+veh3_first_lane_change,7.14358
+veh4_first_lane_change,8.13733
+collision_time,7.95000

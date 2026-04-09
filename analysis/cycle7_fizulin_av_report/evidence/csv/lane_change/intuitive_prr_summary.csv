@@ -1,0 +1,4 @@
+vehicle_id,cam_total_from_truck,cam_received,cam_dropped,final_prr,profile_source,equiv_tx_power_dbm,target_prr,configured_rx_drop_prob_phy_cam,first_cam_event_s,first_decision_event,first_decision_time_s,first_lane_change_s,decision_outcome,in_collision_xml
+veh3,36,34,2,0.9444,per_vehicle_prr_profile,23.0000,0.9500,0.050000,2.13683,drop_decision_no_action,6.75683,7.14358,maneuver_before_collision,0
+veh4,36,8,28,0.2222,per_vehicle_prr_profile,-20.0000,0.0770,0.923000,2.13683,drop_decision_no_action,6.06683,8.13733,no_maneuver_before_collision,1
+veh5,36,27,9,0.7500,per_vehicle_prr_profile,0.0000,0.6930,0.307000,2.13683,drop_decision_no_action,6.18033,,no_maneuver,0

@@ -1,0 +1,2 @@
+run_dir,focus_vehicle,tx_id,target_prr,configured_rx_drop_prob_phy_cam,cam_total_from_tx,cam_received_from_tx,observed_prr_from_tx,first_cam_reaction_s,first_drop_decision_no_action_s,first_crash_mode_forced_speed_s,collision_focus_with_veh2,first_collision_time_s
+/root/NEWWAY_runs/2026-03-05/intersection_conflict_crash_eqm25,veh3,2,0.050000,0.000000,38,3,0.078947,5.344580,3.800000,4.400000,1,5.230000
