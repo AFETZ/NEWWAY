@@ -1,264 +1,631 @@
-# Отчет по наработкам в репозитории NEWWAY за цикл 7
+# Цикл 7 - developer report по V2X-наработкам Физулина А.В.
 
-## 1. Назначение отчета и краткий итог цикла
+## 1. Назначение документа
 
-Этот отчет подготовлен как подробная фиксация выполненных наработок в
-репозитории `NEWWAY` по линии воспроизводимых V2X-сценариев, доказательной
-аналитики и оформленных артефактов экспериментов.
+Этот документ оформляет выполненную работу за цикл 7 как самостоятельный
+developer report. Его можно читать без предварительного знания репозитория:
+сначала объясняется исследовательская задача, затем архитектура экспериментов,
+после этого - порядок запуска, структура артефактов, доказательные результаты,
+ограничения и план следующего шага.
 
-Ключевая цель отчета — собрать в одном месте:
+Главная цель отчета - показать, что была проделана не разовая серия запусков,
+а собран воспроизводимый исследовательский контур:
 
-- как устроен репозиторий и какие сценарии в нем есть;
-- как поднимать проект и запускать основные кейсы;
-- какие артефакты формируются на выходе;
-- какие результаты уже подтверждены конкретными `CSV/PNG/summary` файлами;
-- какие блоки готовы к дальнейшему расширению в следующем цикле и в ВКР.
+`условия связи -> сетевые метрики -> решение автомобиля -> поведение -> исход`
 
-Итог цикла по факту выполненных работ:
+В таком виде работа полезна сразу для трех аудиторий. Для руководителя она
+показывает, какой результат уже можно демонстрировать и защищать. Для команды
+она объясняет, где находятся сценарии, как их запускать и как читать выходные
+данные. Для дальнейшей ВКР/исследовательской работы она фиксирует, какие
+артефакты являются доказательными, а какие остаются вспомогательными.
 
-- систематизирована карта сценариев и команд запуска;
-- выделены базовые, валидированные и пользовательские сценарии;
-- собран набор доказательных артефактов для кейсов `lane-change` и `intersection crash`;
-- зафиксирован аналитический контур `связь -> решение -> поведение/исход`;
-- подготовлен пакет локальных материалов для переноса на страницу в `Notion`.
+## 2. Краткий итог цикла
 
-## 2. Источники, внешние гайды и используемая среда
+За цикл 7 наработки по V2X-сценариям были приведены к состоянию оформленного
+экспериментального блока. Смысл результата не в том, что появились отдельные
+CSV или картинки, а в том, что теперь есть понятная цепочка от постановки
+эксперимента до интерпретации результата.
 
-### 2.1. Основные источники внутри репозитория
+Итоговые deliverables:
 
-- `README.md`
-- `DEVELOPMENT.md`
-- `scenarios/README.md`
-- `my_scenarios/README.md`
-- `raw_experiments/README.md`
-- `docs/results_schema.md`
-- `analysis/scenario_runs/README.md`
-- `cycle7_fizulin_av/README.md`
-- `cycle7_fizulin_av/chapter2_razrabotka.md`
-- `cycle7_fizulin_av/chapter3_experiment.md`
-- `1/README.md`
-- `1/chapter2_razrabotka.md`
-- `1/chapter3_experiment.md`
-- `1/materials_manifest.md`
-- `1/source_digest.md`
+| Блок | Что подготовлено | Статус |
+|---|---|---|
+| Воспроизводимые сценарии | базовые launchers, валидированные кейсы, пользовательские wrappers | готово |
+| Доказательные кейсы | lane-change и intersection crash | готово |
+| EVA-серия | 6 прогонов с разными режимами канала и penetration rate | готово |
+| Evidence-пакет | summary CSV, causal CSV, PNG, GIF, raw dataset inventory | готово |
+| Low-level данные | SQLite inventory и sample CSV по `5G-LENA` | готово |
+| Web UI | локальный Scenario Manager для запуска и просмотра результатов | оформлено отдельным блоком |
+| Отчетность | задача цикла, карточка, часы, Notion-страница | готово |
 
-### 2.2. Дополнительные внешние и встроенные источники
+Самый важный результат цикла - выделены два центральных кейса, где можно
+показать не только деградацию связи на уровне `PRR/latency`, но и наблюдаемое
+изменение поведения транспортных средств.
 
-- документация `ms-van3t / NEWWAY` через ссылку из `README.md`
-- документация `ns-3`
-- документация `SUMO`
-- материалы по `Sionna`, используемые через интеграцию, описанную в `README.md`
+## 3. Исследовательская задача
 
-### 2.3. Используемая среда
+В обычном сетевом моделировании часто достаточно показать, что один режим дает
+выше `throughput`, ниже `latency` или лучше `PRR`. Для connected and automated
+vehicles этого недостаточно. В CAV/V2X-контексте сетевой сбой важен не сам по
+себе, а потому что он может изменить поведение автомобиля:
 
-Практическая работа в проекте опирается на следующие компоненты:
+- предупреждение приходит поздно;
+- сообщение теряется;
+- контроллер не получает достаточной информации;
+- решение принимается с задержкой;
+- маневр выполняется поздно или не выполняется;
+- возникает опасный конфликт или столкновение.
 
-- overlay-репозиторий `NEWWAY`, который разворачивается поверх `ns-3-dev`
-- транспортный симулятор `SUMO`
-- стек `ns-3` с подсистемами `automotive`, `nr`, `traci`, `sionna`
-- сценарные launchers `run.sh`, которые в ряде случаев умеют автоматически
-  поднимать локальное дерево `ns-3-dev`
+Поэтому центральный вопрос цикла был таким:
 
-Критичные замечания по среде, зафиксированные в репозитории:
+**как ухудшение V2X-связи проявляется не только в сетевых метриках, но и в
+поведенческом исходе сценария?**
 
-- `Ubuntu 24.04` явно помечена как официально не поддерживаемая в главном `README.md`
-- новые версии `SUMO` потенциально могут ломать интеграцию
-- `sandbox_builder.sh` действует разрушительно и требует аккуратного использования
-- часть сценариев, особенно `Sionna`-связанных, чувствительна к наличию GPU,
-  корректной Python-среды и доступного локального/удаленного сервера
+В отчете это раскрывается через два типа доказательств. Первый тип - локальные
+детерминированные сценарии, где можно проследить конкретную цепочку событий.
+Второй тип - sweep/серии прогонов, где видно, как метрики меняются при
+изменении параметров канала.
 
-## 3. Как поднять проект и подготовить рабочее окружение
+## 4. Объем выполненной работы
 
-### 3.1. Базовый workflow установки
+Работа была не одной задачей, а набором связанных инженерных и аналитических
+шагов.
 
-Согласно `README.md` и `DEVELOPMENT.md`, базовый путь выглядит так:
+| Направление | Что сделано | Почему это важно |
+|---|---|---|
+| Сценарии | собраны основные точки запуска и выделены runnable-кейсы | сценарии можно воспроизводить, а не только описывать |
+| Валидированные кейсы | оформлены lane-change и intersection crash | есть два понятных демонстрационных proof-case |
+| Post-processing | собраны story plots, timelines, summaries, causal reports | результат можно объяснить и проверить |
+| Evidence-пакет | компактные CSV/PNG/GIF вынесены в отдельную папку | отчет не зависит от больших run-директорий |
+| EVA-серия | добавлен чувствительный эксперимент из 6 режимов | видна не только точечная история, но и тенденция деградации |
+| Raw dataset | добавлен low-level inventory по SQLite-таблицам | есть задел для связи high-level KPI с PHY/MAC-трассами |
+| Web UI | оформлен Streamlit Scenario Manager | запуск и просмотр результатов стали доступнее |
 
-1. Клонировать `NEWWAY`.
-2. Выполнить bootstrap:
-   - `printf '\n' | ./sandbox_builder.sh`
-   - либо `printf '\n' | ./sandbox_builder.sh install-dependencies`
-3. Перейти в созданный `ns-3-dev`.
-4. Сконфигурировать сборку:
+Такой формат важен для защиты результата: если оставить только графики, это
+выглядит как визуализация. Если оставить только команды запуска, это выглядит
+как инженерный черновик. Здесь собраны оба слоя: воспроизводимость и
+интерпретация.
+
+## 5. Архитектура исследовательского контура
+
+Система состоит из пяти логических слоев. Их удобно читать сверху вниз, от
+дорожной ситуации к итоговой аналитике.
+
+| Слой | Роль | Что дает в результате |
+|---|---|---|
+| Транспортная среда | движение автомобилей, дороги, маршруты, столкновения | speed/lane/netstate/collision |
+| Сетевой слой | V2X-обмен, потери, задержки, PHY/MAC-события | PRR, latency, drops, raw traces |
+| Прикладная логика | реакция автомобиля на сообщения и потери | decision, control action, no_action |
+| Аналитика | преобразование логов в summaries и plots | CSV, dashboards, causal chains |
+| Интерфейсный слой | запуск и просмотр результатов через Web UI | управляемость и демонстрация |
+
+Практически это работает так:
+
+1. SUMO задает дорожную геометрию, маршруты и движение автомобилей.
+2. ns-3/NR-V2X моделирует обмен сообщениями между участниками.
+3. В сценариях фиксируются доставленные и потерянные сообщения.
+4. Прикладная логика принимает решения по событиям связи.
+5. Post-processing собирает `drop -> decision -> behavior -> outcome`.
+6. Итоговые CSV и графики становятся evidence-слоем отчета.
+
+Главная инженерная идея здесь - не анализировать сеть отдельно от транспорта.
+Сетевой слой имеет смысл только вместе с тем, как автомобиль использует или не
+использует полученную информацию.
+
+## 6. Минимальный словарь
+
+| Термин | Простое объяснение | Как используется в отчете |
+|---|---|---|
+| `V2X` | обмен между автомобилями, инфраструктурой и другими участниками | общий контекст работы |
+| `CAM` | периодическое сообщение о состоянии автомобиля | основной поток awareness-сообщений |
+| `DENM` | сообщение об опасном событии | используется в emergency/incident логике |
+| `PRR` | packet reception ratio, доля успешно принятых пакетов | базовая метрика качества связи |
+| `Latency` | задержка доставки сообщения | показывает своевременность связи |
+| `DROP_PHY` | потеря сообщения на PHY/канальном уровне | вход causal chain |
+| `drop_decision_no_action` | решение ничего не делать после потери | важный признак поведенческого сбоя |
+| `Collision` | столкновение в SUMO | финальный транспортный исход |
+| `Causal chain` | связка `loss -> decision -> behavior -> outcome` | центральная доказательная идея |
+| `Sionna` | внешний channel backend для более физически богатого канала | опциональный режим для части сценариев |
+| `5G-LENA` | ns-3/NR модель 5G | источник NR-V2X и low-level traces |
+
+## 7. Как поднять и запустить проект
+
+Этот раздел нужен как developer entry point. Он не заменяет README проекта, но
+фиксирует рабочую модель запуска, которая использовалась для оформления
+результатов.
+
+### 7.1. Базовый принцип запуска
+
+Сценарии запускаются из корня репозитория через shell-launchers. Если уже есть
+подготовленное дерево `ns-3-dev`, его можно указать явно:
 
 ```bash
-./ns3 configure --build-profile=optimized --enable-examples --enable-tests --disable-python --disable-werror
+export NS3_DIR=/path/to/ns-3-dev
 ```
 
-5. Собрать нужные таргеты:
+Если дерево не указано, launchers умеют искать стандартные расположения и при
+необходимости использовать auto-bootstrap. Это снижает риск ситуации, когда
+сценарий “есть”, но новый пользователь не может быстро поднять окружение.
+
+### 7.2. Основные команды
+
+Быстрый запуск базовых сценариев:
 
 ```bash
-./ns3 build -j 2
+scenarios/cttc-nr-v2x-demo-simple/run.sh
+scenarios/nr-v2x-west-to-east-highway/run.sh
+scenarios/v2v-cam-exchange-sionna-nrv2x/run.sh
+scenarios/v2v-coexistence-80211p-nrv2x/run.sh
+scenarios/v2v-emergencyVehicleAlert-nrv2x/run.sh
 ```
 
-или минимальный таргет:
+Запуск валидированных proof-case:
 
 ```bash
-./ns3 build -j 2 v2v-simple-cam-exchange-80211p
+valid_scenario/run.sh
+valid_intersection_scenario/run.sh
 ```
 
-### 3.2. Отличие обычной установки от сценарных launchers
+Запуск пользовательских wrappers:
 
-Практически важный момент: в `scenarios/README.md` зафиксировано, что многие
-`run.sh` теперь умеют:
+```bash
+my_scenarios/truck_lane_change_scenario/run.sh
+my_scenarios/intersection_crash_scenario/run.sh
+my_scenarios/compare_tech/run.sh
+my_scenarios/cpm_perception_scenario/run.sh
+my_scenarios/intersection_radar_comm_scenario/run.sh
+```
 
-- автоматически искать уже существующее дерево `ns-3-dev`;
-- при необходимости поднимать bootstrap-дерево в `.bootstrap-ns3`;
-- выполнять `./ns3 configure`, если это нужно для целевого сценария;
-- работать даже из `root-shell` через `NS3_USER_OVERRIDE`.
+### 7.3. Важные переменные окружения
 
-Это снижает порог воспроизводимости: для ряда сценариев не требуется отдельно
-вручную проходить весь путь подготовки, если launcher уже может сделать это сам.
+| Переменная | Назначение | Когда менять |
+|---|---|---|
+| `NS3_DIR` | путь к рабочему дереву `ns-3-dev` | если ns-3 уже подготовлен вручную |
+| `OUT_DIR` | выходная директория одиночного запуска | для фиксированных proof-case |
+| `OUT_BASE` | корень выходов для sweep-сценариев | для серий прогонов |
+| `PLOT` | строить ли графики после запуска | если нужно ускорить run |
+| `SUMO_GUI` | включить визуальный SUMO GUI | для демонстрации и отладки |
+| `USE_SIONNA` | включить Sionna backend | если поднят Sionna server |
+| `EXPORT_RESULTS` | делать export-бандл | для передачи результатов в отчет |
+| `AUTO_BOOTSTRAP_NS3` | включить auto-bootstrap ns-3 | если окружение не собрано |
 
-### 3.3. Ключевые управляющие переменные
+### 7.4. Где искать результаты
 
-В ходе работы с launchers используются, в том числе, следующие переменные:
+Основной pattern такой:
 
-- `NS3_DIR`
-- `OUT_DIR`
-- `PLOT`
-- `RUN_ARGS`
-- `USE_SIONNA`
-- `EXPORT_RESULTS`
-- `NS3_CONFIGURE_ARGS`
-- `NS3_REQUIRE_OPTIMIZED`
-- `AUTO_BOOTSTRAP_NS3`
+```text
+analysis/scenario_runs/<YYYY-MM-DD>/<run-name>/
+```
 
-## 4. Карта репозитория и логика организации сценариев
+Внутри обычно появляются:
 
-### 4.1. Общая структура
-
-| Каталог | Роль |
+| Путь внутри run | Что там находится |
 |---|---|
-| `scenarios/` | основной набор operational launchers для ключевых сценариев |
-| `valid_scenario/` | валидированный lane-change кейс для доказательной части |
-| `valid_intersection_scenario/` | валидированный junction crash кейс |
-| `valid_cpm_perception_scenario/` | сравнение sensor-only и CPM |
-| `valid_intersection_radar_comm_scenario/` | intersection кейс с radar/V2X режимами |
-| `my_scenarios/` | упакованные пользовательские сценарии и wrapper-слой поверх валидированных кейсов |
-| `raw_experiments/` | raw-only прогоны без полной постобработки |
-| `analysis/scenario_runs/` | накопленные прогоны, figures, reports, exports, audit |
-| `tools/results_pipeline/` | CSV-first pipeline нормализации и агрегирования |
-| `analysis/mode2_loss/` | смежные исследовательские наработки |
-| `analysis/vkr/` | материалы для дальнейшего использования в ВКР |
+| `*.log` | stdout/stderr запуска |
+| `artifacts/` | CSV, XML, SQLite и производные файлы |
+| `figures/` или `visualizations/` | автоматически построенные графики |
+| `run_summary.csv` | агрегированная сводка по запуску |
+| `REPORT.md` | текстовая интерпретация, если была сформирована |
 
-### 4.2. Логика слоев
+Для компактной передачи в отчет используется отдельный evidence-пакет:
 
-По смыслу репозиторий в части сценариев делится на несколько уровней:
+```text
+analysis/cycle7_fizulin_av_report/evidence/
+```
 
-1. **Базовые сценарии** — находятся в `scenarios/` и дают стандартный способ
-   запуска ключевых кейсов и получения артефактов.
-2. **Валидированные сценарии** — находятся в `valid_*` и фиксируют уже
-   отработанные доказательные кейсы.
-3. **Пользовательские wrapper-сценарии** — находятся в `my_scenarios/` и дают
-   компактный, оформленный слой для повторного запуска и дальнейшего
-   использования в отчетности.
-4. **Raw-режим** — находится в `raw_experiments/` и нужен, когда требуется
-   сохранить минимально обработанные исходные файлы симуляции.
+Он нужен, чтобы не копировать большие run-директории целиком, но сохранить
+ключевые таблицы, графики и GIF.
 
-## 5. Основные сценарии и команды запуска
+## 8. Карта сценариев и степень готовности
 
-### 5.1. Таблица сценариев
+Сейчас сценарии удобно делить не по папкам, а по назначению.
 
-| Сценарий | Назначение | Команда запуска | Ключевые артефакты |
+| Блок | Смысл | Команда | Статус |
 |---|---|---|---|
-| `cttc-nr-v2x-demo-simple` | минимальный NR sidelink кейс | `scenarios/cttc-nr-v2x-demo-simple/run.sh` | `.db`, log, figures |
-| `nr-v2x-west-to-east-highway` | highway-сценарий с KPI в SQLite | `scenarios/nr-v2x-west-to-east-highway/run.sh` | `.db`, log, figures |
-| `v2v-cam-exchange-sionna-nrv2x` | обмен CAM, optional Sionna | `scenarios/v2v-cam-exchange-sionna-nrv2x/run.sh` | `phy_with_sionna_nrv2x.csv`, `prr_with_sionna_nrv2x.csv`, figures |
-| `v2v-coexistence-80211p-nrv2x` | coexistence двух технологий | `scenarios/v2v-coexistence-80211p-nrv2x/run.sh` | per-tech KPI CSV, `sinr_ni.csv`, figures |
-| `v2v-emergencyVehicleAlert-nrv2x` | основной `loss -> decision -> behavior` кейс | `scenarios/v2v-emergencyVehicleAlert-nrv2x/run.sh` | `*-CAM.csv`, `*-MSG.csv`, `*-CTRL.csv`, `collision_risk/*`, `drop_decision_timeline/*` |
-| `valid_scenario` | зафиксированный lane-change кейс | `valid_scenario/run.sh` | story/intuitive artifacts, collision, timeline |
-| `valid_intersection_scenario` | зафиксированный priority junction crash кейс | `valid_intersection_scenario/run.sh` | `intersection_summary.csv`, collision, timeline |
-| `valid_cpm_perception_scenario` | сравнение sensor-only и CPM | `valid_cpm_perception_scenario/run.sh` | `cpm_perception_mode_summary.csv` при наличии полного прогона |
-| `valid_intersection_radar_comm_scenario` | radar + V2X intersection | `valid_intersection_radar_comm_scenario/run.sh` | `intersection_radar_comm_mode_summary.csv` при наличии полного прогона |
-| `my_scenarios/truck_lane_change_scenario` | компактный пользовательский lane-change кейс | `my_scenarios/truck_lane_change_scenario/run.sh` | compact CSV outputs, `source_run.txt` |
-| `my_scenarios/intersection_crash_scenario` | компактный junction crash кейс | `my_scenarios/intersection_crash_scenario/run.sh` | compact CSV outputs, `source_run.txt` |
-| `my_scenarios/compare_tech` | пакет сравнения технологий | `my_scenarios/compare_tech/run.sh` | `compare_tech_summary.csv` при наличии полного прогона |
-| `raw_experiments/truck_lane_change_5glena_raw` | raw-only 5G-LENA кейс | `raw_experiments/truck_lane_change_5glena_raw/run.sh` | raw log, netstate, collision, `.db` |
-| `scenarios/5g-phy-metrics` | self-contained PHY metrics experiment | `scenarios/5g-phy-metrics/run.sh` | `phy-metrics-*.csv`, summary, plots |
+| Минимальный NR-V2X | проверить базовый стек NR sidelink | `scenarios/cttc-nr-v2x-demo-simple/run.sh` | runnable |
+| Highway | посмотреть поведение на highway-топологии | `scenarios/nr-v2x-west-to-east-highway/run.sh` | runnable |
+| CAM + Sionna | сравнивать CAM delivery с optional Sionna | `scenarios/v2v-cam-exchange-sionna-nrv2x/run.sh` | runnable |
+| Coexistence | сравнение 802.11p и NR-V2X | `scenarios/v2v-coexistence-80211p-nrv2x/run.sh` | runnable |
+| EVA | emergency vehicle alert, loss/decision/behavior | `scenarios/v2v-emergencyVehicleAlert-nrv2x/run.sh` | основной operational блок |
+| Lane-change proof | грузовик, lossy vehicle, перестроение, collision | `valid_scenario/run.sh` | доказательный кейс |
+| Intersection proof | priority junction, low PRR, crash chain | `valid_intersection_scenario/run.sh` | доказательный кейс |
+| Compare-tech | матричный прогон по технологиям | `my_scenarios/compare_tech/run.sh` | контур подготовлен |
+| CPM perception | sensor-only vs CPM modes | `my_scenarios/cpm_perception_scenario/run.sh` | контур подготовлен |
+| Radar + comm | radar-only/good-link/bad-link intersection | `my_scenarios/intersection_radar_comm_scenario/run.sh` | контур подготовлен |
+| Web UI | запуск и просмотр сценариев из браузера | `tools/scenario_manager/launch.sh` | отдельный инструмент готов |
 
-### 5.2. Практически важные замечания по запуску
+Практическая логика выбора такая. Если нужно быстро проверить, что стек
+собирается, лучше начинать с базовых launchers. Если нужно показать
+доказательную связь между сетью и поведением, нужно брать `valid_scenario` или
+`valid_intersection_scenario`. Если нужно показать управляемость проекта и
+возможность запуска без запоминания команд, используется Web UI.
 
-- Сценарии с `Sionna` требуют отдельного сервера и корректной Python-среды.
-- `valid_cpm_perception_scenario` и `valid_intersection_radar_comm_scenario`
-  прямо зависят от поднятого `Sionna` listener.
-- `v2v-coexistence-80211p-nrv2x` использует специальный interference mode.
-- `raw_experiments` важны как отдельный режим, когда нужно сохранить исходные
-  артефакты без производных CSV/PNG.
+## 9. Политика доказательности
 
-## 6. Валидированные пользовательские сценарии
+Чтобы отчет не выглядел как набор красивых, но пустых графиков, материалы
+разделены на три уровня.
 
-### 6.1. `truck_lane_change_scenario`
+| Уровень | Что относится | Как использовать |
+|---|---|---|
+| Основное доказательство | summary CSV, collision time, causal CSV, strict-match metrics | на этом строятся выводы |
+| Поддерживающая визуализация | dashboards, speed/lane plots, event timelines, packet raster | помогает объяснить вывод |
+| Иллюстрация | GIF, 3D-визуализация, screenshots | полезно для восприятия, но не является proof |
 
-Это упакованный пользовательский сценарий, который делегирует запуск в
-`valid_scenario/run.sh` и предоставляет компактный набор output-файлов.
+Для ключевых выводов используются именно `CSV` и causal-таблицы. График может
+быть встроен рядом, но он не должен быть единственным основанием для вывода.
 
-Что подтверждено в репозитории:
+## 10. Доказательный кейс 1: lane-change
 
-- сценарий оформлен через `my_scenarios/truck_lane_change_scenario/README.md`
-- присутствует `output/` с компактными CSV
-- есть `source_run.txt`, указывающий на исходный run:
+### 10.1. Смысл сценария
 
-```text
-source_run=/root/NEWWAY_runs/2026-03-05/valid_scenario_smoke_lowprr_safeflow_sionna_002111
-scenario=valid_scenario/run.sh
+Lane-change кейс моделирует ситуацию с грузовиком/инцидентом и несколькими
+автомобилями, которые находятся в разных условиях связи. Цель - показать, что
+одно и то же дорожное окружение может привести к разным исходам в зависимости
+от качества V2X-информации.
+
+Логика сценария:
+
+1. `veh3` получает достаточно сообщений и успевает выполнить безопасный маневр.
+2. `veh4` находится в сильно деградированном профиле связи.
+3. Потери сообщений у `veh4` приводят к серии `drop_decision_no_action`.
+4. Маневр `veh4` происходит слишком поздно относительно collision time.
+5. `veh5` показывает промежуточный случай: деградация есть, но collision не
+   фиксируется.
+
+### 10.2. Как запустить
+
+Базовый запуск:
+
+```bash
+valid_scenario/run.sh
 ```
 
-### 6.2. `intersection_crash_scenario`
+С визуализацией SUMO:
 
-Это компактный пользовательский wrapper для `valid_intersection_scenario/run.sh`.
-
-Что подтверждено:
-
-- оформлен отдельный `README.md`
-- присутствует `output/` с summary-файлами
-- есть `source_run.txt`, указывающий на исходный run:
-
-```text
-source_run=/root/NEWWAY_runs/2026-03-05/intersection_conflict_crash_eqm25
-scenario=valid_intersection_scenario/run.sh
+```bash
+SUMO_GUI=1 valid_scenario/run.sh
 ```
 
-### 6.3. Другие подготовленные контуры
+Fallback без Sionna:
 
-В репозитории также подготовлены, но не все завершены количественно в виде
-итоговых summary-файлов внутри самого репо:
+```bash
+USE_SIONNA=0 valid_scenario/run.sh
+```
 
-- `my_scenarios/compare_tech`
-- `my_scenarios/cpm_perception_scenario`
-- `my_scenarios/intersection_radar_comm_scenario`
+Через пользовательский wrapper:
 
-Их корректно трактовать как **подготовленные и runnable контуры экспериментов**,
-а не как полностью закрытые количественные результаты текущего цикла.
+```bash
+my_scenarios/truck_lane_change_scenario/run.sh
+```
 
-## 7. Структура выходных артефактов
+### 10.3. Управляемые параметры
 
-### 7.1. Базовые типы файлов
+| Параметр | Значение в proof-case | Смысл |
+|---|---|---|
+| `veh3` profile | `23 dBm`, target `PRR=0.95` | хороший прием, безопасный маневр |
+| `veh4` profile | `-20 dBm`, target `PRR=0.077` | сильная деградация, collision chain |
+| `veh5` profile | `0 dBm`, target `PRR=0.693` | промежуточный уровень |
+| `drop-triggered-reaction` | disabled | drop не вызывает скрытый полезный маневр |
+| `CRASH_MODE_ENABLE` | auto | crash-mode включается только для low-PRR случая |
+| `COLLISION_ACTION` | warn | столкнувшиеся авто остаются в сцене |
 
-| Тип | Назначение |
+### 10.4. Какие артефакты ожидать
+
+| Артефакт | Назначение |
 |---|---|
-| `*-MSG.csv` | события передачи, приема и потерь сообщений |
-| `*-CTRL.csv` | управляющие решения и действия |
-| `*-PROFILE.csv` | профиль связи и конфигурация для конкретного ТС |
-| `*-CAM.csv` | данные по CAM для отдельного ТС |
-| `*-PHY.csv` | PHY-level данные там, где сценарий их пишет |
-| `eva-netstate.xml` | состояние трафика из `SUMO` |
-| `eva-collision.xml` | факты столкновений |
-| `.db` | SQLite-артефакты ряда сценариев |
+| `eva-collision.xml` | факт collision в SUMO |
+| `drop_decision_timeline/*` | ID-aware связка `DROP_PHY -> DECISION` |
+| `collision_causality.csv` | окно событий перед collision |
+| `eva-veh*-PROFILE.csv` | профиль dBm/target PRR/drop probability |
+| `valid_scenario_story/*` | story-графики по времени |
+| `valid_scenario_intuitive/*` | CSV-only графики и summary для отчета |
 
-### 7.2. Папки аналитики
+### 10.5. Подтвержденные результаты
 
-| Каталог | Назначение |
+| Транспортное средство | Итоговый PRR | Смысловой исход |
+|---|---|---|
+| `veh3` | 0.9444 | безопасный маневр до collision |
+| `veh4` | 0.2222 | маневр не успевает завершиться, collision подтвержден |
+| `veh5` | 0.7500 | деградация есть, но collision не возникает |
+
+Ключевые времена:
+
+- начало инцидента: `6.0 s`
+- первое перестроение `veh3`: `7.14358 s`
+- первое перестроение `veh4`: `8.13733 s`
+- подтвержденное столкновение: `7.95 s`
+
+Дополнительное causal-доказательство:
+
+- `strict match ratio = 1.0`
+- число проанализированных drop-events: `787`
+- в окне `8 s` перед collision у `veh4` зафиксировано `179` drop-events
+- в том же окне зафиксировано `179` событий `drop_decision_no_action`
+- последнее релевантное drop-событие: `7.94933 s`, практически вплотную к collision
+
+Это сильный proof-case, потому что совпадают три слоя: низкий PRR,
+последовательность no-action decisions и фактический collision.
+
+### 10.6. Как читать графики
+
+![Lane-change: скорости и полосы](evidence/img/lane_change/speed_lane_timeseries.png)
+
+На этом графике важно смотреть не просто на линии скорости, а на порядок
+событий: когда участники меняют полосу, кто успевает отреагировать до collision,
+и кто остается в конфликтной зоне.
+
+![Lane-change: dBm -> PRR -> решение -> исход](evidence/img/lane_change/intuitive_dbm_prr_maneuver_chain.png)
+
+Это главный explanatory-график для внешнего показа. Он связывает профиль канала,
+наблюдаемый PRR и итоговый исход по конкретным автомобилям.
+
+![Lane-change: шкала ключевых событий](evidence/img/lane_change/event_chain_timeline.png)
+
+Timeline нужен для проверки причинного порядка. Если collision был бы раньше
+потерь или решений, causal chain была бы слабой. Здесь порядок событий
+согласован с выводом.
+
+## 11. Доказательный кейс 2: intersection crash
+
+### 11.1. Смысл сценария
+
+Intersection кейс моделирует конфликт на приоритетном перекрестке. В нем есть
+emergency/priority stream и автомобиль с minor stream, который должен уступить.
+При высоком качестве связи сценарий должен идти безопасно. При низком качестве
+связи у конфликтующего участника появляется цепочка:
+
+`DROP_PHY -> drop_decision_no_action -> crash_mode_forced_speed -> collision`
+
+Сценарий важен тем, что он показывает не lane-change на дороге, а другую
+геометрию конфликта: junction, priority, collision на пересечении траекторий.
+
+### 11.2. Как запустить
+
+Базовый crash-профиль:
+
+```bash
+valid_intersection_scenario/run.sh
+```
+
+Safe A/B режим:
+
+```bash
+USE_SIONNA=1 SUMO_GUI=1 \
+PHY_ONLY=1 ALLOW_MANUAL_RX_DROP=0 \
+VEH3_EQ_DBM=23 VEH3_TARGET_PRR=0.95 \
+valid_intersection_scenario/run.sh
+```
+
+Crash A/B режим:
+
+```bash
+USE_SIONNA=1 SUMO_GUI=1 \
+PHY_ONLY=1 ALLOW_MANUAL_RX_DROP=0 \
+VEH3_EQ_DBM=-30 VEH3_TARGET_PRR=0.02 \
+valid_intersection_scenario/run.sh
+```
+
+Через пользовательский wrapper:
+
+```bash
+my_scenarios/intersection_crash_scenario/run.sh
+```
+
+### 11.3. Что фиксируется
+
+| Объект | Роль |
 |---|---|
-| `collision_risk/` | safety-прокси: `min gap`, `min TTC`, timeseries и summary |
-| `drop_decision_timeline/` | строгая связка `DROP_PHY -> DECISION` |
-| `valid_scenario_story/` | дипломные story-графики по lane-change кейсу |
-| `valid_scenario_intuitive/` | более наглядные графики и агрегаты для lane-change кейса |
-| `chatgpt_exports/` | компактные export-бандлы после прогонов |
+| `veh2` | emergency/priority participant |
+| `veh3` | конфликтующий участник с minor stream |
+| `veh4` | connected safe stream, проходит после конфликта |
+| `VEH3_TARGET_PRR` | управляет качеством связи у ключевого участника |
+| `PHY_ONLY=1` | отключает ручной rx-drop и оставляет PHY/Sionna-логику |
+| `collision_causality` | фиксирует окно событий перед collision |
 
-### 7.3. Results pipeline
+### 11.4. Подтвержденные результаты
 
-Согласно `docs/results_schema.md` и `tools/results_pipeline/cli.py`,
-pipeline в текущем виде дает:
+| Показатель | Значение |
+|---|---|
+| наблюдаемый `PRR` от передачи к приему | 0.078947 |
+| первое решение “ничего не делать” после drop | 3.8 s |
+| первый переход в crash-like forced mode | 4.4 s |
+| первое подтвержденное столкновение | 5.23 s |
+
+Дополнительное causal-доказательство:
+
+- `strict match ratio = 1.0`
+- число проанализированных drop-events: `30`
+- в окне `8 s` перед collision зафиксировано `6` drop-events
+- в том же окне зафиксировано `6` событий `drop_decision_no_action`
+- последнее релевантное drop-событие: `5.0 s`, незадолго до collision
+
+Важная честная оговорка: для этого run-а `collision_risk_summary.csv` содержит
+пустые поля `min_gap_m` и `min_ttc_s`, поэтому основной вывод по intersection
+не строится на этих полях. Главная доказательная связка здесь:
+
+`intersection_summary + drop_decision_summary + collision_causality`
+
+### 11.5. Как читать графики
+
+![Intersection: behavioral dashboard](evidence/img/intersection/behavioral_dashboard.png)
+
+Dashboard показывает поведенческий слой: когда появляются control/decision
+события и как они распределены между участниками.
+
+![Intersection: cross-layer causal chain](evidence/img/intersection/cross_layer_causal_chain.png)
+
+Это explanatory-схема для связи между PHY/network/application/transport layers.
+Она полезна для объяснения, но численный вывод надо проверять по CSV.
+
+![Intersection: network KPI dashboard](evidence/img/intersection/network_kpi_dashboard.png)
+
+Network KPI dashboard показывает, что проблема видна уже на уровне доставки
+сообщений. Его нужно читать вместе с collision-causality, иначе он будет просто
+сетевой картинкой без поведенческого смысла.
+
+## 12. EVA-серия из 6 прогонов
+
+### 12.1. Зачем нужна серия
+
+Два proof-case выше показывают конкретные causal chains. EVA-серия дополняет
+их sweep-логикой: она показывает, что ухудшение канала системно влияет на
+информационную свежесть и доступность сообщений.
+
+В серии варьировались:
+
+- мощность передачи;
+- MCS;
+- число передач/ретрансляций;
+- bandwidth;
+- shadowing;
+- penetration rate.
+
+### 12.2. Сводная таблица
+
+| Режим | PRR | Latency, ms | Среднее число CAM от emergency vehicle | Max inter-CAM gap, ms |
+|---|---|---|---|---|
+| `good` | 0.991558 | 11.4318 | 185 | 2400 |
+| `medium` | 0.975313 | 17.7809 | 171 | 4000 |
+| `bad` | 0.899322 | 29.1045 | 132 | 7936 |
+| `vbad` | 0.486843 | 33.0547 | 51 | 28500 |
+| `noretx` | 0.991948 | 12.4486 | 182 | 2400 |
+| `lowpen` | 0.986401 | 12.1475 | 0 | 0 |
+
+### 12.3. Выводы
+
+При переходе от `good` к `vbad`:
+
+- `PRR` падает с `0.991558` до `0.486843`;
+- средняя задержка растет с `11.4318 ms` до `33.0547 ms`;
+- среднее число CAM от emergency vehicle падает с `185` до `51`;
+- максимальный inter-CAM gap растет с `2400 ms` до `28500 ms`.
+
+Это важно, потому что `inter-CAM gap` показывает не просто среднее качество
+канала, а “дыры” в awareness. Для поведения автомобиля такие провалы могут быть
+важнее среднего PRR.
+
+### 12.4. Визуальное чтение серии
+
+![EVA: PRR and latency](evidence/img/eva_series/eva_prr_latency_summary.png)
+
+Этот график показывает, что ухудшение режима одновременно бьет по двум
+направлениям: уменьшается доля доставленных пакетов и растет задержка.
+
+![EVA: CAM and inter-CAM gap](evidence/img/eva_series/eva_cam_gap_summary.png)
+
+Этот график важен для поведенческой интерпретации: автомобиль не просто
+получает меньше сообщений, он дольше остается без обновления состояния
+emergency vehicle.
+
+## 13. Low-level блок по 5G-LENA
+
+### 13.1. Зачем он нужен
+
+High-level summaries удобны для отчета, но для инженерной проверки иногда
+нужно спуститься ниже: к таблицам передачи, приема, PHY/MAC и ошибкам. Поэтому
+в работу добавлен raw dataset-блок по стоковому `5G-LENA` примеру.
+
+Он нужен для трех задач:
+
+1. показать, что в проекте есть доступ к первичным trace-таблицам;
+2. подготовить основу для унификации результатов;
+3. связать будущие high-level выводы с PHY/MAC evidence.
+
+### 13.2. Что подтверждено
+
+По двум raw `.db` подтверждено наличие таблиц:
+
+- `pktTxRx`
+- `pscchRxUePhy`
+- `pscchTxUeMac`
+- `psschRxUePhy`
+- `psschTxUeMac`
+
+То есть есть не только итоговые таблицы “для отчета”, но и низкоуровневый след:
+кто передавал, кто принимал, какие были PHY-события, где можно смотреть SINR,
+TBLER и corrupt-флаги.
+
+### 13.3. Как использовать дальше
+
+Следующий логичный шаг - сделать адаптер, который будет читать SQLite-таблицы и
+приводить их к той же CSV-first схеме, что используется в results pipeline. Это
+позволит сравнивать high-level сценарии и low-level 5G-LENA traces в одном
+downstream-анализе.
+
+## 14. Web UI для запуска сценариев
+
+В цикле также оформлен отдельный инструментальный результат: локальный Web UI
+`NEWWAY Scenario Manager`.
+
+Его задача - снизить порог входа. Вместо того чтобы помнить все команды,
+переменные окружения и output-пути, пользователь открывает локальный интерфейс,
+выбирает сценарий, читает его описание, задает параметры и запускает run.
+
+### 14.1. Как запустить
+
+```bash
+tools/scenario_manager/launch.sh
+```
+
+Другой порт:
+
+```bash
+PORT=8502 tools/scenario_manager/launch.sh
+```
+
+### 14.2. Что умеет UI
+
+| Возможность | Смысл |
+|---|---|
+| описание сценария | объясняет цель и гипотезу |
+| форма параметров | дает менять run без ручной сборки команды |
+| запуск | вызывает реальный `run.sh` |
+| потоковый лог | показывает ход выполнения |
+| summary view | открывает итоговые CSV |
+| static plots | показывает PNG из результата |
+| browse past runs | позволяет возвращаться к старым прогонам |
+
+### 14.3. Какие сценарии заведены
+
+| Scenario ID | Назначение |
+|---|---|
+| `burst_vs_random_loss` | loss pattern sweep |
+| `density_scaling` | влияние плотности |
+| `latency_vs_loss_tradeoff` | loss vs delay |
+| `truck_lane_change` | фиксированный lane-change proof-case |
+| `intersection_crash` | фиксированный intersection proof-case |
+
+Отдельная Notion-страница по UI:
+
+https://www.notion.so/33dd56dc3dd6812c9e32d95e9c6c4883
+
+## 15. Results pipeline и аналитические скрипты
+
+### 15.1. Зачем нужен pipeline
+
+Сценарий сам по себе дает много файлов, но без post-processing эти файлы трудно
+объяснить. Поэтому важная часть работы - scripts, которые переводят run output
+в читаемый evidence.
+
+Основной принцип:
+
+`raw artifacts -> normalized/summary CSV -> plots -> interpretation`
+
+### 15.2. Основные скрипты
+
+| Скрипт | Что делает |
+|---|---|
+| `build_drop_decision_timeline.py` | строит ID-aware timeline `DROP_PHY -> DECISION` |
+| `build_collision_causality_report.py` | выделяет окно событий перед collision |
+| `build_valid_scenario_story_plots.py` | строит story-графики SUMO + ns-3 |
+| `build_valid_scenario_intuitive_plots.py` | строит CSV-only графики для понятного отчета |
+| `analyze_netstate_collision_risk.py` | считает safety proxy из SUMO netstate |
+| `export_results_bundle.py` | собирает компактный export-бандл |
+| `analyze_all_logs.py` | делает аудит логов по run-директориям |
+
+### 15.3. Results schema MVP
+
+Для дальнейшей унификации уже зафиксирована CSV-first схема. В ней ожидаются:
 
 - `normalized_events.csv`
 - `aggregates_overall.csv`
@@ -270,7 +637,6 @@ pipeline в текущем виде дает:
 
 - `run_id`
 - `scenario`
-- `source_kind`
 - `event_type`
 - `ts_us`
 - `src_id`
@@ -280,439 +646,80 @@ pipeline в текущем виде дает:
 - `rssi_dbm`
 - `sinr_db`
 - `bler`
-- `prr_value`
-- `pdr_value`
 - `success`
 - `drop_reason`
 
-Текущий статус pipeline:
+Это пока MVP, но он уже задает направление: разные источники результатов должны
+попадать в общий downstream-анализ без переписывания всей логики под каждый
+сценарий отдельно.
 
-- это **MVP CSV-first pipeline**
-- он уже покрыт smoke-тестами в `tests/smoke_results_pipeline/*`
-- он не является центральным доказательным блоком для всех сценариев, но уже
-  задает основу для дальнейшей унификации результатов
+## 16. Ограничения и риски
 
-## 8. Пайплайн аналитики и post-processing
-
-### 8.1. Основные аналитические скрипты
-
-| Скрипт | Назначение | Выход |
+| Область | Ограничение | Как с этим работать |
 |---|---|---|
-| `analysis/scenario_runs/analyze_netstate_collision_risk.py` | safety-прокси по `SUMO netstate` | `collision_risk_summary.csv`, timeseries, PNG |
-| `analysis/scenario_runs/build_drop_decision_timeline.py` | strict `DROP_PHY -> DECISION` | `event_timeline.csv`, `summary.csv`, PNG |
-| `analysis/scenario_runs/build_collision_causality_report.py` | causal audit перед collision | `collision_causality.csv`, `.md` |
-| `analysis/scenario_runs/build_valid_scenario_story_plots.py` | story-графики lane-change кейса | набор PNG + CSV |
-| `analysis/scenario_runs/build_valid_scenario_intuitive_plots.py` | наглядные CSV-only figures | набор PNG + CSV |
-| `analysis/analyze_phy_safety.py` | PHY vs safety анализ | набор PHY-графиков |
-| `analysis/plot_5g_phy_metrics.py` | PHY metrics plotting | набор PNG по PHY experiment |
-| `analysis/scenario_runs/export_results_bundle.py` | compact export | export bundle + manifest |
-
-### 8.2. Что это дает на практике
-
-Важный результат текущего слоя аналитики состоит в том, что проект уже умеет
-не только запускать сценарии, но и переводить результаты в:
-
-- доказательные summary-файлы;
-- временные графики;
-- causal chain между drop-событием и decision-событием;
-- связку network KPI с поведенческим исходом.
-
-Именно этот слой является центральным отличием между просто runnable
-сценарием и оформленным доказательным сценарием, пригодным для отчетности.
-
-## 9. Подтвержденные результаты по фактическим артефактам
-
-### 9.1. Lane-change кейс: подтвержденные числа
-
-Источник:
-
-- `evidence/csv/lane_change/intuitive_prr_summary.csv`
-- `evidence/csv/lane_change/intuitive_dbm_prr_maneuver_chain.csv`
-- `evidence/csv/lane_change/intuitive_key_events.csv`
-- `evidence/csv/lane_change/drop_decision_summary.csv`
-
-Итоговая таблица:
-
-| ТС | final PRR | equiv dBm | target PRR | first lane change, s | decision outcome | collision |
-|---|---:|---:|---:|---:|---|---:|
-| `veh3` | 0.9444 | 23.0 | 0.9500 | 7.14358 | `maneuver_before_collision` | 0 |
-| `veh4` | 0.2222 | -20.0 | 0.0770 | 8.13733 | `no_maneuver_before_collision` | 1 |
-| `veh5` | 0.7500 | 0.0 | 0.6930 | — | `no_maneuver` | 0 |
-
-Ключевые подтвержденные выводы:
-
-- `veh3 final_prr = 0.9444`, и это соответствует безопасному маневру.
-- `veh4 final_prr = 0.2222`, collision подтвержден.
-- `veh5 final_prr = 0.7500`.
-- В `intuitive_key_events.csv` зафиксировано:
-  - `incident_time = 6.0 s`
-  - `veh3_first_lane_change = 7.14358 s`
-  - `veh4_first_lane_change = 8.13733 s`
-  - `collision_time = 7.95 s`
-- В `drop_decision_summary.csv` зафиксирован strict match ratio `1.0` по
-  `787` drop-events.
-
-### 9.2. Lane-change кейс: графики
-
-![Lane-change: speed/lane timeseries](evidence/img/lane_change/speed_lane_timeseries.png)
-
-![Lane-change: dBm -> PRR -> decision](evidence/img/lane_change/intuitive_dbm_prr_maneuver_chain.png)
-
-![Lane-change: packet raster](evidence/img/lane_change/intuitive_packet_raster.png)
-
-![Lane-change: event chain timeline](evidence/img/lane_change/event_chain_timeline.png)
-
-### 9.3. Intersection crash кейс: подтвержденные числа
-
-Источник:
-
-- `evidence/csv/intersection/intersection_summary.csv`
-- `evidence/csv/intersection/drop_decision_summary.csv`
-
-Итоговая таблица:
-
-| Показатель | Значение |
-|---|---:|
-| `target_prr` | 0.050000 |
-| `observed_prr_from_tx` | 0.078947 |
-| `first_cam_reaction_s` | 5.344580 |
-| `first_drop_decision_no_action_s` | 3.800000 |
-| `first_crash_mode_forced_speed_s` | 4.400000 |
-| `first_collision_time_s` | 5.230000 |
-| `collision_focus_with_veh2` | 1 |
-
-Подтвержденные выводы:
-
-- `veh3 observed_prr_from_tx = 0.078947`
-- `first_drop_decision_no_action = 3.8 s`
-- `first_crash_mode_forced_speed = 4.4 s`
-- `collision_time = 5.23 s`
-- strict match ratio `1.0` по `30` drop-events
-
-### 9.4. Intersection crash кейс: графики
-
-![Intersection: behavioral dashboard](evidence/img/intersection/behavioral_dashboard.png)
-
-![Intersection: cross-layer causal chain](evidence/img/intersection/cross_layer_causal_chain.png)
-
-![Intersection: network KPI dashboard](evidence/img/intersection/network_kpi_dashboard.png)
-
-![Intersection: transport safety dashboard](evidence/img/intersection/transport_safety_dashboard.png)
-
-### 9.5. RSSI / safety sweep
-
-Источник:
-
-- `evidence/csv/sweeps/rssi_safety_summary.csv`
-
-Подтвержденные строки:
-
-| tx power, dBm | cam_avg_prr | eva_avg_prr | eva_avg_latency_ms | cam_mean_snr_db |
-|---|---:|---:|---:|---:|
-| 23.0 | 0.948478 | 0.971916 | 11.9522 | 29.4868 |
-| 5.0 | 0.901136 | 0.931646 | 16.5808 | 14.3707 |
-
-Вывод:
-
-- при `23 dBm` выше `cam_avg_prr` и ниже `eva_avg_latency_ms`, чем при `5 dBm`
-- это подтверждает работоспособность связки `RSSI/SNR/PRR -> latency` хотя в
-  данном конкретном sweep значения safety-метрик `min_ttc_s` и `min_gap_m`
-  совпадают
-
-### 9.6. Sionna incident summary
-
-Источники:
-
-- `evidence/csv/sweeps/sionna_incident_summary_success.csv`
-- `evidence/csv/sweeps/sionna_incident_summary_zero_attempt.csv`
-
-Успешный sweep с ненулевыми KPI:
-
-| tx power, dBm | backend | avg_prr | avg_latency_ms | control_actions |
-|---|---|---:|---:|---:|
-| 5.0 | sionna | 0.889197 | 18.9614 | 205 |
-| 11.0 | sionna | 0.931000 | 15.2001 | 207 |
-| 17.0 | sionna | 0.943776 | 14.1921 | 207 |
-| 23.0 | sionna | 0.944698 | 13.0044 | 207 |
-
-Что это показывает:
-
-- использовать нужно только удачные summary-файлы с ненулевыми KPI
-- при росте мощности от `5` к `23 dBm` наблюдается рост `avg_prr` и снижение
-  `avg_latency_ms`
-
-Отдельно важно зафиксировать, что существуют и промежуточные/неудачные попытки,
-где summary заполнен нулями. Их корректно трактовать как часть рабочего цикла
-отладки, а не как финальный результат.
-
-### 9.7. Дополнительный EVA-блок из `cycle7_fizulin_av`
-
-Отдельно от уже описанных lane-change и intersection кейсов в репозитории
-оказался подготовлен еще один полезный пакет: `cycle7_fizulin_av/`.
-
-Его сильная сторона состоит в том, что он фиксирует самостоятельную серию из
-6 прогонов по `v2v-emergencyVehicleAlert-nrv2x` и содержит компактные derived
-CSV, удобные для последующей публикации и построения графиков.
-
-Источники:
-
-- `evidence/csv/eva_series/summary-all-runs.csv`
-- `evidence/csv/eva_series/per-vehicle-cam-from-ev.csv`
-- `evidence/csv/eva_series/inter-cam-gaps.csv`
-- `evidence/csv/eva_series/eva-good-speed-timeseries.csv`
-- `evidence/csv/eva_series/eva-bad-speed-timeseries.csv`
-- `evidence/csv/eva_series/eva-vbad-speed-timeseries.csv`
-- `evidence/csv/eva_series/eva-lowpen-speed-timeseries.csv`
-
-Сводная таблица по 6 прогонам:
-
-| Label | TxPower, dBm | MCS | Retx | BW, MHz | Shadowing | PenRate | PRR | Latency, ms | Avg CAM from EV | Median gap, ms | Max gap, ms |
-|---|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|
-| `good` | 23 | 14 | 5 | 400 | OFF | 1.0 | 0.991558 | 11.4318 | 185 | 200 | 2400 |
-| `medium` | 10 | 14 | 5 | 400 | ON | 1.0 | 0.975313 | 17.7809 | 171 | 400 | 4000 |
-| `bad` | 5 | 20 | 5 | 400 | ON | 1.0 | 0.899322 | 29.1045 | 132 | 564 | 7936 |
-| `vbad` | 0 | 20 | 1 | 10 | ON | 1.0 | 0.486843 | 33.0547 | 51 | 600 | 28500 |
-| `noretx` | 23 | 14 | 1 | 400 | ON | 1.0 | 0.991948 | 12.4486 | 182 | 200 | 2400 |
-| `lowpen` | 23 | 14 | 5 | 400 | OFF | 0.3 | 0.986401 | 12.1475 | 0 | 0 | 0 |
-
-Что в этом блоке особенно интересно:
-
-- `PRR` падает с `0.991558` до `0.486843`, то есть на `50.47` процентных пункта
-  между `good` и `vbad`.
-- `Latency` возрастает с `11.4318 ms` до `33.0547 ms`, то есть примерно в
-  `2.89` раза.
-- Среднее число CAM от emergency vehicle падает с `185` до `51`, то есть
-  остается только `27.6%` от baseline.
-- Максимальный `inter-CAM gap` вырастает с `2400 ms` до `28500 ms`.
-- Конфигурация `noretx` при хорошем канале почти не отличается от baseline по
-  `PRR`, что хорошо подчеркивает роль ретрансмиссий именно в ослабленном канале.
-
-Поведенческий аспект по exported speed timeseries:
-
-- сравнение `veh8` между `good` и `lowpen` показывает максимальную разницу
-  скорости `13.2 m/s` и `28` временных точек с несовпадением полосы;
-- для `good` vs `bad` максимальная разница скорости у `veh8` всего `0.48 m/s`,
-  а для `good` vs `vbad` — `0.65 m/s` при одном несовпадении полосы.
-
-Это полезно для интерпретации:
-
-- умеренная деградация канала и даже очень плохой PHY-режим не всегда сразу
-  приводит к сильному расхождению speed/lane profile в конкретном exported
-  наблюдении;
-- зато низкий penetration rate дает наиболее прямой и заметный поведенческий
-  сдвиг, потому что часть автомобилей вообще не попадает в кооперативный контур.
-
-Отдельная важная оговорка по этому пакету:
-
-- его тексты содержат упоминание отдельного collision-сценария
-  `v2v-degradation-collision-nrv2x`;
-- в текущем проверенном дереве `src/automotive/examples/CMakeLists.txt`
-  подтверждается target `v2v-emergencyVehicleAlert-nrv2x`, но target с именем
-  `v2v-degradation-collision-nrv2x` в текущей конфигурации не найден;
-- поэтому этот collision-блок корректно трактовать как полезную рабочую заметку
-  из предыдущего пакета, но не как подтвержденный runnable target текущего
-  отчета.
-
-### 9.8. Low-level raw dataset по `5G-LENA / cttc-nr-v2x-demo-simple`
-
-Отдельно в каталоге `1/` найден и оформлен полезный низкоуровневый набор
-артефактов по стоковому примеру `cttc-nr-v2x-demo-simple`.
-
-Источники:
-
-- `evidence/csv/lena_db_dataset_inventory.csv`
-- `evidence/csv/lena_pktTxRx_ide.csv`
-- `evidence/csv/lena_psschRxUePhy_ide.csv`
-
-Этот блок важен не как еще один high-level сценарий с готовой causal-chain,
-а как мост к исходным raw данным `5G-LENA`, из которых можно строить более
-низкоуровневую аналитику по `MAC/PHY`.
-
-Сводный инвентарь двух найденных SQLite-баз:
-
-| DB | Таблица | Строк | Временной диапазон |
-|---|---|---:|---|
-| `ide-test-nr-v2x-simple-demo.db` | `pktTxRx` | 38 | `2.11 .. 3.91958214 s` |
-| `ide-test-nr-v2x-simple-demo.db` | `pscchRxUePhy` | 38 | `2111.517856 .. 3921.767856 ms` |
-| `ide-test-nr-v2x-simple-demo.db` | `pscchTxUeMac` | 38 | `2111.5 .. 3921.75 ms` |
-| `ide-test-nr-v2x-simple-demo.db` | `psschRxUePhy` | 19 | `2111.73214 .. 3919.48214 ms` |
-| `ide-test-nr-v2x-simple-demo.db` | `psschTxUeMac` | 95 | `2111.5 .. 3924.25 ms` |
-| `wsltest-nr-v2x-simple-demo.db` | `pktTxRx` | 98 | `2.11 .. 6.94208214 s` |
-| `wsltest-nr-v2x-simple-demo.db` | `pscchRxUePhy` | 98 | `2111.517856 .. 6946.517856 ms` |
-| `wsltest-nr-v2x-simple-demo.db` | `pscchTxUeMac` | 98 | `2111.5 .. 6946.5 ms` |
-| `wsltest-nr-v2x-simple-demo.db` | `psschRxUePhy` | 49 | `2111.73214 .. 6941.98214 ms` |
-| `wsltest-nr-v2x-simple-demo.db` | `psschTxUeMac` | 245 | `2111.5 .. 6946.75 ms` |
-
-Что практически дает этот набор:
-
-- таблица `pktTxRx` фиксирует прикладные `tx/rx` события и последовательности
-  пакетов;
-- таблицы `pscchTxUeMac` и `pscchRxUePhy` дают трассировку control-plane на
-  уровне `MAC/PHY`;
-- таблицы `psschTxUeMac` и `psschRxUePhy` позволяют анализировать transport
-  channel, `SINR`, `TBLER` и факт `corrupt`;
-- наличие CSV-экспортов облегчает быстрый просмотр и дальнейшее подключение к
-  unified pipeline без обязательной ручной работы с SQLite.
-
-Этот блок усиливает отчет в двух смыслах:
-
-1. показывает, что в репозитории уже есть не только high-level summary, но и
-   low-level сырые трассы стокового `5G-LENA` примера;
-2. дает основу для следующего цикла, где можно формально связать `.db`-таблицы
-   с `results_pipeline` и общей схемой унификации данных.
-
-## 10. Дополнительные исследовательские материалы в репозитории
-
-### 10.1. Блок `1/`
-
-Каталог `1/` полезен как дополнительный packaging-layer поверх уже найденных
-артефактов. В нем одновременно присутствуют:
-
-- собственный `notion_report.md`;
-- более академично оформленные главы `chapter2_razrabotka.md` и
-  `chapter3_experiment.md`;
-- `materials_manifest.md` и `source_digest.md`;
-- подпакет `lena_db_dataset/` с raw `.db`, CSV-экспортами и inventory.
-
-Именно из этого блока в текущий пакет был дополнительно встроен raw dataset по
-`cttc-nr-v2x-demo-simple`, который делает отчет сильнее на уровне
-доказательной базы и воспроизводимости.
-
-### 10.2. Блок `cycle7_fizulin_av`
-
-Помимо текущего собранного пакета, в репозитории был найден еще один
-сфокусированный deliverable-блок:
-
-- `cycle7_fizulin_av/README.md`
-- `cycle7_fizulin_av/notion_report.md`
-- `cycle7_fizulin_av/chapter2_razrabotka.md`
-- `cycle7_fizulin_av/chapter3_experiment.md`
-- `cycle7_fizulin_av/source_digest.md`
-
-Его полезно рассматривать как дополнительный EVA-centered пакет:
-
-- с собственной методической частью;
-- со сводной серией из 6 прогонов;
-- с derived CSV для построения публикационных графиков.
-
-В текущий пакет этот блок встроен частично:
-
-- подтвержденные CSV добавлены в `evidence/csv/eva_series/`
-- ключевые выводы включены в раздел `9.7`
-- спорные части по collision target оставлены только как оговорка, без
-  включения в перечень подтвержденных runnable targets
-
-### 10.3. Блок `analysis/mode2_loss`
-
-Этот каталог оформлен как отдельный исследовательский workflow:
-
-- live visualization
-- processed metrics
-- figures
-- proof report
-
-Его корректно включать в отчет как **смежные исследовательские наработки**, но
-не смешивать с основным доказательным пакетом текущего цикла.
-
-### 10.4. Блок `analysis/vkr`
-
-В репозитории уже существует существенный задел для дальнейшего использования
-в ВКР:
-
-- `analysis/vkr/PLAN.md` — план структуры ВКР
-- `analysis/vkr/VKR_inventory.md` — inventory рисунков и таблиц
-- `analysis/vkr/VKR_chapter2_tool_development.md` — draft главы по
-  инструментальной среде
-
-Это важно, потому что текущая работа по сценариям и артефактам уже напрямую
-перетекает в материал для последующего академического оформления.
-
-### 10.5. Дополнительные визуальные приложения
-
-В проекте есть и визуализационные материалы, которые можно использовать как
-дополнительные иллюстрации:
-
-- `evidence/img/extras/circle_v2v_animation.gif`
-- `evidence/img/extras/intersection_v2i_animation.gif`
-
-Использовать их стоит как приложение, а не как основной источник доказательства.
-
-## 11. Ограничения, риски и проблемные места
-
-| Область | Ограничение / риск | Комментарий |
-|---|---|---|
-| Окружение | `Ubuntu 24.04` не помечена как официально поддерживаемая | риск несовместимости сохраняется |
-| `SUMO` | новые версии могут ломать интеграцию | требуется аккуратный выбор версии |
-| Bootstrap | `sandbox_builder.sh` разрушителен | нужен disposable workflow |
-| `Sionna` | требуется корректный listener и Python/GPU-окружение | часть сценариев без этого не стартует |
-| Sweep-артефакты | часть summary-файлов содержит нули | это нужно показывать как промежуточные попытки |
-| Старый EVA-пакет | часть его текстов ссылается на collision target, который не подтверждается текущим `CMakeLists.txt` | использовать как рабочую заметку, а не как полностью верифицированный target |
-| `compare_tech` / `cpm` / `radar_comm` | не все блоки имеют зафиксированные итоговые summary в репо | описываются как подготовленные контуры, а не как полностью закрытые результаты |
-| Источники lane-change output | compact output ссылается на `/root/NEWWAY_runs/...` | в пакете сохранены summary CSV, но не весь внешний run-dir |
-
-## 12. Что готово для следующего цикла
-
-По итогам текущего состояния репозитория к следующему циклу уже подготовлена
-хорошая база:
-
-- воспроизводимые launchers для ключевых сценариев;
-- оформленные пользовательские wrapper-сценарии;
-- доказательные lane-change и intersection кейсы;
-- дополнительная EVA-серия из 6 прогонов с готовыми derived CSV;
-- аналитические scripts и export-пакеты;
-- заготовка для унификации результатов через `results_pipeline`;
-- материалы, которые уже можно напрямую использовать в `Notion` и в ВКР.
-
-Практически логичное продолжение работ:
-
-1. Дозакрыть количественные summary для `compare_tech`,
-   `cpm_perception_scenario`, `intersection_radar_comm_scenario`.
-2. Расширить results pipeline с охватом большего числа источников данных.
-3. Подготовить более формализованную карту `сценарий -> KPI -> behavioral outcome`.
-4. Перенести финальный пакет в рабочую страницу `Notion`.
-
-## 13. Приложения
-
-### 13.1. Таблица ключевых подтвержденных результатов
-
-| Блок | Подтвержденный результат |
-|---|---|
-| Lane-change | `veh3 final_prr = 0.9444`, безопасный маневр |
-| Lane-change | `veh4 final_prr = 0.2222`, collision подтвержден |
-| Lane-change | `veh5 final_prr = 0.7500` |
-| Lane-change | `collision_time = 7.95 s` |
-| Lane-change | strict match ratio `1.0` по `787` drop-events |
-| Intersection | `observed_prr_from_tx = 0.078947` |
-| Intersection | `first_drop_decision_no_action = 3.8 s` |
-| Intersection | `first_crash_mode_forced_speed = 4.4 s` |
-| Intersection | `collision_time = 5.23 s` |
-| Intersection | strict match ratio `1.0` по `30` drop-events |
-| Sweep | при `23 dBm` выше PRR и ниже latency, чем при `5 dBm` |
-| Sionna sweep | успешные summary подтверждают рост PRR и снижение latency при росте мощности |
-| EVA 6-run block | `PRR`: `0.991558 -> 0.486843`, `latency`: `11.43 -> 33.05 ms`, `max gap`: `2400 -> 28500 ms` |
-| EVA 6-run block | `lowpen` дает наиболее выраженный speed/lane сдвиг у `veh8` относительно baseline |
-| 5G-LENA raw dataset | по двум `.db` подтвержден набор таблиц `pktTxRx`, `pscch*`, `pssch*` с доступными временными диапазонами и sample CSV-экспортами |
-
-### 13.2. Таблица оценки затраченных часов
+| Окружение | часть сценариев чувствительна к версиям SUMO, Python, ns-3 | фиксировать команды запуска и env vars |
+| Sionna | требует поднятого server и корректной сетевой связности | иметь fallback `USE_SIONNA=0` там, где это допустимо |
+| Intersection safety summary | `min_gap_m/min_ttc_s` в одном run-е пустые | не использовать этот файл как главный proof |
+| Расширенные сценарии | compare-tech/CPM/radar не все закрыты финальными summary | описывать как подготовленные контуры, не как завершенные результаты |
+| Web UI | локальный research-интерфейс, не production | использовать для запуска и демонстрации, не как deployed service |
+| Raw 5G-LENA | есть inventory/sample, но не полный адаптер | следующий шаг - SQLite -> normalized CSV |
+
+Эти ограничения не обнуляют результат. Наоборот, они делают отчет честнее:
+понятно, где уже есть proof, а где есть подготовленный, но не полностью закрытый
+контур.
+
+## 17. Задача цикла и оценка часов
+
+**Физулин А.В.**
+
+**Зона ответственности:** воспроизводимые V2X-сценарии, доказательная
+аналитика, артефакты экспериментов, Web UI и отчетность.
+
+Содержательно задача цикла состояла в том, чтобы:
+
+1. систематизировать основные сценарии и способы их запуска;
+2. оформить воспроизводимые пользовательские и валидированные кейсы;
+3. собрать доказательные артефакты экспериментов;
+4. показать контур `связь -> решение -> поведение/исход`;
+5. подготовить подробный отчет и отдельный Web UI блок.
+
+Результат на выходе:
+
+- целостный developer report;
+- карта сценариев и команд запуска;
+- подтвержденные CSV/PNG/GIF-артефакты;
+- оформленные lane-change и intersection proof-case;
+- EVA-серия из 6 прогонов;
+- low-level 5G-LENA dataset-блок;
+- отдельный Web UI Scenario Manager report.
+
+Оценка по основному V2X/report блоку:
 
 | Блок работ | Часы |
-|---|---:|
-| Изучение и систематизация структуры репозитория и сценариев | 8 |
-| Подготовка и оформление воспроизводимых сценариев и launchers | 10 |
-| Работа с валидированными кейсами и доказательными артефактами | 14 |
-| Аналитика, export, results pipeline и сводные артефакты | 8 |
-| Документация, оформление итогового отчета и карточки | 8 |
+|---|---|
+| Изучение и систематизация структуры сценариев и среды | 8 |
+| Подготовка и оформление воспроизводимых сценариев | 10 |
+| Работа с доказательными кейсами и артефактами | 14 |
+| Аналитика, export и сводные результаты | 8 |
+| Документация и сборка итогового отчета | 8 |
 | **Итого** | **48** |
 
-### 13.3. Список приложенных локальных evidence-файлов
+Отдельный Web UI блок оценен в `18 ч` и оформлен отдельной задачей/страницей.
 
-- `evidence/csv/lane_change/*`
-- `evidence/csv/intersection/*`
-- `evidence/csv/sweeps/*`
-- `evidence/csv/eva_series/*`
-- `evidence/csv/lena_db_dataset_inventory.csv`
-- `evidence/csv/lena_pktTxRx_ide.csv`
-- `evidence/csv/lena_psschRxUePhy_ide.csv`
-- `evidence/img/lane_change/*`
-- `evidence/img/intersection/*`
-- `evidence/img/extras/*`
+## 18. Что готово для следующего цикла
+
+Следующий цикл логично строить не с нуля, а поверх уже оформленного контура.
+
+Приоритетные шаги:
+
+1. Дозакрыть quantitative summary для `compare_tech`, `CPM` и `radar+comm`.
+2. Расширить results pipeline на больше источников, включая SQLite/5G-LENA.
+3. Связать low-level PHY/MAC traces с high-level KPI.
+4. Добавить в Web UI сравнение нескольких запусков.
+5. Подготовить boss-facing demo flow: открыть UI, запустить proof-case, показать
+   summary, открыть Notion report.
+6. Использовать текущий отчет как основу для ВКР/академического текста.
+
+Фактически за цикл уже подготовлена база, на которой можно строить следующий
+этап: не “у нас есть папка с экспериментами”, а “у нас есть воспроизводимый
+контур сценариев, результатов, доказательств и документации”.

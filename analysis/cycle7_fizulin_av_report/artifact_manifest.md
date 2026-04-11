@@ -40,13 +40,22 @@
 | `my_scenarios/truck_lane_change_scenario/output/intuitive_dbm_prr_maneuver_chain.csv` | `evidence/csv/lane_change/intuitive_dbm_prr_maneuver_chain.csv` | цепочка `dBm -> PRR -> решение -> исход` |
 | `my_scenarios/truck_lane_change_scenario/output/intuitive_key_events.csv` | `evidence/csv/lane_change/intuitive_key_events.csv` | ключевые времена инцидента, lane change и collision |
 | `my_scenarios/truck_lane_change_scenario/output/drop_decision_summary.csv` | `evidence/csv/lane_change/drop_decision_summary.csv` | strict match по `DROP_PHY -> DECISION` |
+| `my_scenarios/truck_lane_change_scenario/output/collision_causality.csv` | `evidence/csv/lane_change/collision_causality.csv` | strongest causal window `loss -> no_action -> collision` для lane-change кейса |
 | `my_scenarios/truck_lane_change_scenario/output/collision_risk_summary.csv` | `evidence/csv/lane_change/collision_risk_summary.csv` | safety summary для lane-change кейса |
 | `my_scenarios/intersection_crash_scenario/output/intersection_summary.csv` | `evidence/csv/intersection/intersection_summary.csv` | компактная сводка junction кейса |
 | `my_scenarios/intersection_crash_scenario/output/drop_decision_summary.csv` | `evidence/csv/intersection/drop_decision_summary.csv` | strict match по junction кейсу |
-| `my_scenarios/intersection_crash_scenario/output/collision_risk_summary.csv` | `evidence/csv/intersection/collision_risk_summary.csv` | safety summary для junction кейса |
+| `my_scenarios/intersection_crash_scenario/output/collision_causality.csv` | `evidence/csv/intersection/collision_causality.csv` | strongest causal window `loss -> no_action -> collision` для junction кейса |
+| `my_scenarios/intersection_crash_scenario/output/collision_risk_summary.csv` | `evidence/csv/intersection/collision_risk_summary.csv` | вспомогательный safety summary для junction кейса; `min_gap/min_ttc` в данном run-е заполнены не полностью |
 | `analysis/scenario_runs/chatgpt_exports/2026-02-19/rssi-safety-tx23-vs-5-181716/rssi_safety_summary.csv` | `evidence/csv/sweeps/rssi_safety_summary.csv` | RSSI/SNR/PRR/latency sweep |
 | `analysis/scenario_runs/chatgpt_exports/2026-02-20/eva-short-sionna-gpu-only-tx23-223837/sionna_incident_summary.csv` | `evidence/csv/sweeps/sionna_incident_summary_success.csv` | успешный Sionna incident sweep |
 | `analysis/scenario_runs/chatgpt_exports/2026-02-20/eva-non-sionna-then-sionna-gpu-184930/sionna_incident_summary.csv` | `evidence/csv/sweeps/sionna_incident_summary_zero_attempt.csv` | пример промежуточной/неудачной попытки |
+
+Практически важная оговорка по силе доказательства:
+
+- для `lane-change` и `intersection` strongest evidence — это связка
+  `summary + drop_decision_summary + collision_causality`;
+- `collision_risk_summary` полезен как дополняющий слой, но для junction-кейса
+  не должен использоваться как единственная опора для количественного вывода.
 
 ## 3a. Дополнительный EVA-блок из `cycle7_fizulin_av`
 
@@ -135,6 +144,16 @@
 | `analysis/scenario_runs/2026-03-20/intersection_crash-111609/artifacts/drop_decision_timeline/decision_type_counts.png` | `evidence/img/intersection/intersection_decision_type_counts.png` |
 | `analysis/intersection_3d_animation/circle_v2v/animation.gif` | `evidence/img/extras/circle_v2v_animation.gif` |
 | `analysis/intersection_3d_animation/intersection_v2i/animation.gif` | `evidence/img/extras/intersection_v2i_animation.gif` |
+
+## 5a. Графики, сгенерированные для EVA-серии
+
+| Основа | Локальная фигура | Назначение |
+|---|---|---|
+| `evidence/csv/eva_series/summary-all-runs.csv` | `evidence/img/eva_series/eva_prr_latency_summary.png` | сравнение `PRR` и `latency` по режимам |
+| `evidence/csv/eva_series/summary-all-runs.csv` | `evidence/img/eva_series/eva_cam_gap_summary.png` | сравнение CAM from EV и max inter-CAM gap |
+| `evidence/csv/eva_series/eva-good-speed-timeseries.csv` | `evidence/img/eva_series/eva_good_speed_timeline.png` | baseline speed timeline |
+| `evidence/csv/eva_series/eva-vbad-speed-timeseries.csv` | `evidence/img/eva_series/eva_vbad_speed_timeline.png` | very-bad speed timeline |
+| `evidence/csv/eva_series/eva-lowpen-speed-timeseries.csv` | `evidence/img/eva_series/eva_lowpen_speed_timeline.png` | low-penetration speed timeline |
 
 ## 6. Дополнительные исследовательские материалы
 

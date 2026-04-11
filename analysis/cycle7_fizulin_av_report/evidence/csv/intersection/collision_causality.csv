@@ -1,0 +1,2 @@
+collision_index,collision_time_s,collider,victim,lane,pos_m,type,window_s,drop_events_window,no_action_events_window,drop_reaction_events_window,missing_decision_events_window,last_drop_time_s,last_drop_pkt_uid,last_drop_msg_seq,last_drop_tx_id,last_decision_event_type,causal_evidence
+1,5.23,veh3,veh2,:w_3_0,7.66,junction,8.0,6,6,0,0,5.0,9223372045444714223,3823.0,2.0,drop_decision_no_action,strong_no_action_only

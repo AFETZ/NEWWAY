@@ -1,0 +1,10 @@
+test_runner_invokes_callback_on_caller_thread (tests.test_scenario_manager.RunnerContractTest.test_runner_invokes_callback_on_caller_thread) ... ok
+test_runner_uses_out_base_for_sweep_scenarios (tests.test_scenario_manager.RunnerContractTest.test_runner_uses_out_base_for_sweep_scenarios) ... ok
+test_runner_uses_out_dir_for_fixed_scenarios (tests.test_scenario_manager.RunnerContractTest.test_runner_uses_out_dir_for_fixed_scenarios) ... ok
+test_all_registered_run_scripts_exist (tests.test_scenario_manager.ScenarioRegistryTest.test_all_registered_run_scripts_exist) ... ok
+test_registry_contains_expected_five_scenarios (tests.test_scenario_manager.ScenarioRegistryTest.test_registry_contains_expected_five_scenarios) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.001s
+
+OK

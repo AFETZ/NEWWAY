@@ -23,11 +23,16 @@
 | 12 | `evidence/img/intersection/behavioral_dashboard.png` | сводка поведенческого слоя | раздел intersection кейса |
 | 13 | `evidence/img/intersection/cross_layer_causal_chain.png` | сквозная causal chain | раздел `связь -> решение -> исход` |
 | 14 | `evidence/img/intersection/network_kpi_dashboard.png` | network KPI | раздел intersection кейса |
-| 15 | `evidence/img/intersection/transport_safety_dashboard.png` | транспортная безопасность | раздел safety |
-| 16 | `evidence/img/intersection/vehicle_profiles.png` | профили автомобилей | раздел intersection кейса |
-| 17 | `evidence/img/intersection/intersection_collision_risk_timeseries.png` | временной профиль риска | раздел safety |
-| 18 | `evidence/img/intersection/intersection_decision_delay_scatter.png` | задержка decision | раздел `связь -> решение` |
-| 19 | `evidence/img/intersection/intersection_decision_type_counts.png` | типы решений | раздел `связь -> решение` |
+| 15 | `evidence/img/intersection/vehicle_profiles.png` | профили автомобилей | раздел intersection кейса |
+| 16 | `evidence/img/intersection/intersection_decision_delay_scatter.png` | задержка decision | раздел `связь -> решение` |
+| 17 | `evidence/img/intersection/intersection_decision_type_counts.png` | типы решений | раздел `связь -> решение` |
+
+Отдельная важная оговорка:
+
+- `transport_safety_dashboard.png` и `intersection_collision_risk_timeseries.png`
+  полезны как supporting-visualization, но для этого run-а их не стоит делать
+  центральным доказательством, потому что в исходном `collision_risk_summary.csv`
+  поля `min_gap_m` и `min_ttc_s` заполнены не полностью.
 
 ## 3. Дополнительные визуальные приложения
 
@@ -35,6 +40,16 @@
 |---|---|---|
 | 20 | `evidence/img/extras/circle_v2v_animation.gif` | 3D/визуализационное приложение для V2V кейса |
 | 21 | `evidence/img/extras/intersection_v2i_animation.gif` | 3D/визуализационное приложение для intersection кейса |
+
+## 3a. Фигуры EVA-серии
+
+| № | Файл в пакете | Назначение |
+|---|---|---|
+| 22 | `evidence/img/eva_series/eva_prr_latency_summary.png` | сравнение `PRR` и `latency` по режимам EVA-серии |
+| 23 | `evidence/img/eva_series/eva_cam_gap_summary.png` | сравнение числа CAM от emergency vehicle и максимального inter-CAM gap |
+| 24 | `evidence/img/eva_series/eva_good_speed_timeline.png` | speed timeline для baseline good-режима |
+| 25 | `evidence/img/eva_series/eva_vbad_speed_timeline.png` | speed timeline для very-bad режима |
+| 26 | `evidence/img/eva_series/eva_lowpen_speed_timeline.png` | speed timeline для low-penetration режима |
 
 ## 4. Обязательные таблицы внутри отчета
 
@@ -58,8 +73,10 @@
 | `evidence/csv/lane_change/intuitive_dbm_prr_maneuver_chain.csv` | причинная цепочка качества связи |
 | `evidence/csv/lane_change/intuitive_key_events.csv` | ключевые времена |
 | `evidence/csv/lane_change/drop_decision_summary.csv` | strict match по decision timeline |
+| `evidence/csv/lane_change/collision_causality.csv` | strongest causal window для lane-change |
 | `evidence/csv/intersection/intersection_summary.csv` | основные результаты intersection |
 | `evidence/csv/intersection/drop_decision_summary.csv` | strict match в junction кейсе |
+| `evidence/csv/intersection/collision_causality.csv` | strongest causal window для junction кейса |
 | `evidence/csv/sweeps/rssi_safety_summary.csv` | RSSI/safety sweep |
 | `evidence/csv/sweeps/sionna_incident_summary_success.csv` | успешный Sionna incident sweep |
 | `evidence/csv/sweeps/sionna_incident_summary_zero_attempt.csv` | промежуточный неудачный запуск как ограничение |
