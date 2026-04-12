@@ -1,0 +1,6 @@
+﻿run,module,name,type,value,vectime,vecvalue,unit,entity_id
+run-001,Network.ue[0].app[0],throughput,scalar,1250000,,,bps,ue[0]
+run-001,Network.ue[1].app[0],delay,scalar,0.015,,,s,ue[1]
+run-001,Network.ue[0].phy,sinr,vector,,0.1,12.5,dB,ue[0]
+run-001,Network.ue[0].phy,sinr,vector,,0.2,13.0,dB,ue[0]
+run-001,Network.ue[0].mac,packetLoss,scalar,0.05,,,ratio,ue[0]

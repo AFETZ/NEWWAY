@@ -4,8 +4,14 @@ from pathlib import Path
 from .aggregate import build_aggregates
 from .diagnostics import build_diagnostics
 from .metadata import build_metadata
+from .metrics_projection import project_van3twin_events_to_metrics, trim_metric_rows
 from .readers.van3twin_csv import read_artifacts
-from .schema import AGGREGATE_FIELDS, DIAGNOSTIC_FIELDS, NORMALIZED_EVENT_FIELDS
+from .schema import (
+    AGGREGATE_FIELDS,
+    DIAGNOSTIC_FIELDS,
+    NORMALIZED_EVENT_FIELDS,
+    NORMALIZED_METRIC_FIELDS,
+)
 from .writers import write_csv, write_json, write_yaml
 
 
@@ -36,11 +42,17 @@ def build_pipeline(input_dir, output_dir, scenario, run_id=None):
 
     diagnostics = build_diagnostics(events, reader_diagnostics)
     metadata = build_metadata(run_id, scenario, input_files)
+    metric_rows = trim_metric_rows(project_van3twin_events_to_metrics(events))
 
     write_csv(
         output_dir / "normalized_events.csv",
         [event.to_dict() for event in events],
         NORMALIZED_EVENT_FIELDS,
+    )
+    write_csv(
+        output_dir / "normalized_metrics.csv",
+        metric_rows,
+        NORMALIZED_METRIC_FIELDS,
     )
     write_csv(
         output_dir / "aggregates_overall.csv",
@@ -57,6 +69,7 @@ def build_pipeline(input_dir, output_dir, scenario, run_id=None):
 
     return {
         "normalized_events": str(output_dir / "normalized_events.csv"),
+        "normalized_metrics": str(output_dir / "normalized_metrics.csv"),
         "aggregates_overall": str(output_dir / "aggregates_overall.csv"),
         "diagnostics": str(output_dir / "diagnostics.csv"),
         "run_metadata_json": str(output_dir / "run_metadata.json"),
