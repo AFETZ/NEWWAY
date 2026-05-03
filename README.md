@@ -1,9 +1,12 @@
-# NEWWAY — NR-V2X Co-Simulation Platform
+# 1548-CAVISE2026\_5GNR
 
-> Исследовательский overlay поверх [ms-van3t](https://github.com/ms-van3t-devs/ms-van3t) / [VaN3Twin](https://github.com/DriveX-devs/NEWWAY) для изучения влияния потерь сообщений NR-V2X Mode 2 на поведение подключённых автомобилей (CAV).
+### Выпускная квалификационная работа · НИТУ МИСИС · 2026
+
+> **«Влияние потерь сообщений 5G NR-V2X Mode 2 на безопасность подключённых автономных транспортных средств»**
 >
-> **Автор overlay и ВКР:** Физулин А.В. (2025–2026) · НИТУ МИСИС  
-> **Научный руководитель:** —  
+> Исследовательский overlay поверх [ms-van3t](https://github.com/ms-van3t-devs/ms-van3t) / [VaN3Twin](https://github.com/DriveX-devs/NEWWAY): co-simulation ns-3 + SUMO + NVIDIA Sionna для изучения причинно-следственной цепочки потеря CAM → деградация решений → дорожный инцидент.
+>
+> **Автор:** Физулин Андрей Владимирович · гр. 1548  
 > **Лицензия:** GPL-2.0 (наследует от ms-van3t)
 
 ---
@@ -68,7 +71,7 @@ sudo add-apt-repository ppa:sumo/stable
 sudo apt update && sudo apt install sumo sumo-tools sumo-doc
 
 # Клонировать и собрать ns-3-dev с overlay
-git clone https://github.com/AFETZ/NEWWAY.git
+git clone https://github.com/AFETZ/1548-CAVISE2026_5GNR.git
 cd NEWWAY
 ./sandbox_builder.sh install-dependencies   # первый раз
 # или ./sandbox_builder.sh                  # если ns-3 уже установлен
