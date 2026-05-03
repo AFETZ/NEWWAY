@@ -276,7 +276,7 @@ python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt
 
 ```bibtex
 @misc{pegurri2025newway,
-    title         = {NEWWAY: the Multi-Technology V2X Digital Twin with Ray-Tracing in the Loop},
+    title         = {Van3tTwin the Multi-Technology V2X Digital Twin with Ray-Tracing in the Loop},
     author        = {Roberto Pegurri and Diego Gasco and Francesco Linsalata and Marco Rapelli and Eugenio Moro and Francesco Raviglione and Claudio Casetti},
     year          = {2025},
     eprint        = {2505.14184},
