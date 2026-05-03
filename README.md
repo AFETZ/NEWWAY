@@ -6,7 +6,7 @@
 >
 > Исследовательский overlay поверх [ms-van3t](https://github.com/ms-van3t-devs/ms-van3t) / [VaN3Twin](https://github.com/DriveX-devs/NEWWAY): co-simulation ns-3 + SUMO + NVIDIA Sionna для изучения причинно-следственной цепочки потеря CAM → деградация решений → дорожный инцидент.
 >
-> **Автор:** Физулин Андрей Владимирович · гр. 1548  
+> **Автор:** Физулин Андрей Владимирович · HSE, JSC AVTOVAZ
 > **Лицензия:** GPL-2.0 (наследует от ms-van3t)
 
 ---
