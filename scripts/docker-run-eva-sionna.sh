@@ -45,4 +45,4 @@ if [[ $# -gt 0 ]]; then
 fi
 
 docker_cmd compose -f "$COMPOSE_FILE" run --rm "$SERVICE" \
-  bash -lc "SIONNA_GPU=\${SIONNA_GPU:-1} COMPARE_NON_SIONNA=\${COMPARE_NON_SIONNA:-1} scenarios/v2v-emergencyVehicleAlert-nrv2x/run_sionna_incident_sweep.sh"
+  bash -lc "SIONNA_GPU=\${SIONNA_GPU:-1} COMPARE_NON_SIONNA=\${COMPARE_NON_SIONNA:-1} experiments/operational/v2v-emergencyVehicleAlert-nrv2x/run_sionna_incident_sweep.sh"

@@ -6,7 +6,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 NS3_DIR="${NS3_DIR:-}"
-OUT_BASE="${OUT_BASE:-$ROOT/analysis/scenario_runs/$(date +%F)/density-scaling-$(date +%H%M%S)}"
+OUT_BASE="${OUT_BASE:-$ROOT/runs/$(date +%F)/density-scaling-$(date +%H%M%S)}"
 DENSITIES="${DENSITIES:-3 5 8}"
 SIM_TIME="${SIM_TIME:-40}"
 TX_POWER="${TX_POWER:-23}"
@@ -63,7 +63,7 @@ for n in $DENSITIES; do
   EXPORT_RESULTS=0 \
   ENABLE_COLLISION_OUTPUT=1 \
   COLLISION_ACTION=warn \
-    "$ROOT/scenarios/v2v-emergencyVehicleAlert-nrv2x/run.sh"
+    "$ROOT/experiments/operational/v2v-emergencyVehicleAlert-nrv2x/run.sh"
 
   echo "$case_id,$density_level,$density_label,$sumo_config,$run_dir" >> "$CASES_CSV"
 done

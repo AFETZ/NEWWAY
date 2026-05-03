@@ -320,7 +320,7 @@ TRUCK_LANE_CHANGE = Scenario(
         "При фиксированном PRR-профиле целевое lossy-авто пропустит "
         "своевременный манёвр, тогда как остальные участники отреагируют согласованно."
     ),
-    run_script="my_scenarios/truck_lane_change_scenario/run.sh",
+    run_script="experiments/truck_lane_change/scripts/run.sh",
     params=[
         ScenarioParam(
             "SIM_TIME",
@@ -362,8 +362,8 @@ TRUCK_LANE_CHANGE = Scenario(
         "artifacts/*-CTRL.csv",
         "artifacts/*-PROFILE.csv",
         "artifacts/collision_risk/*.csv",
-        "artifacts/valid_scenario_story/*.png",
-        "artifacts/valid_scenario_intuitive/*.png",
+        "artifacts/truck_lane_change_story/*.png",
+        "artifacts/truck_lane_change_intuitive/*.png",
     ],
     tags=["thesis", "lane-change", "truck", "fixed"],
     output_env_var="OUT_DIR",
@@ -401,7 +401,7 @@ INTERSECTION_CRASH = Scenario(
         "Деградированный конфликтующий участник получит недостаточно полезной "
         "информации, чтобы избежать столкновения, если качество канала не улучшить."
     ),
-    run_script="my_scenarios/intersection_crash_scenario/run.sh",
+    run_script="experiments/intersection_crash/scripts/run.sh",
     params=[
         ScenarioParam(
             "SIM_TIME",

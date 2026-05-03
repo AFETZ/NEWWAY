@@ -1,0 +1,9 @@
+run_id,txPower_dBm,exit_code,duration_s,run_log,metadata,prr,reaction_delay_median,reaction_delay_p90,reaction_received_frac,latency_p95_s
+txPower_23,23.0,0,93.49031567573547,analysis/mode2_loss/data/sweep/txPower_23/run.log,analysis/mode2_loss/data/sweep/txPower_23/metadata.json,0.9379352367688022,2.17933,3.98383,1.0,0.0197000000000002
+txPower_18,18.0,0,85.84254384040833,analysis/mode2_loss/data/sweep/txPower_18/run.log,analysis/mode2_loss/data/sweep/txPower_18/metadata.json,0.9319289693593314,2.17933,3.98383,1.0,0.0198
+txPower_14,14.0,0,86.84660363197327,analysis/mode2_loss/data/sweep/txPower_14/run.log,analysis/mode2_loss/data/sweep/txPower_14/metadata.json,0.9213962395543176,2.17933,3.98383,1.0,0.0218999999999987
+txPower_10,10.0,0,96.1090657711029,analysis/mode2_loss/data/sweep/txPower_10/run.log,analysis/mode2_loss/data/sweep/txPower_10/metadata.json,0.8936281337047354,2.17933,3.98383,0.9375,0.0277999999999991
+txPower_6,6.0,0,80.2987961769104,analysis/mode2_loss/data/sweep/txPower_6/run.log,analysis/mode2_loss/data/sweep/txPower_6/metadata.json,0.8400069637883009,2.17933,3.98383,0.9375,0.0304999999999999
+txPower_0,0.0,0,74.84240674972534,analysis/mode2_loss/data/sweep/txPower_0/run.log,analysis/mode2_loss/data/sweep/txPower_0/metadata.json,0.692592270194986,2.19058,7.468779999999999,0.9375,0.0344000000000015
+txPower_-10,-10.0,0,69.00590991973877,analysis/mode2_loss/data/sweep/txPower_-10/run.log,analysis/mode2_loss/data/sweep/txPower_-10/metadata.json,0.2858820459290188,2.74058,12.482910000000002,0.875,0.1093999999999986
+txPower_-20,-20.0,0,85.32505989074707,analysis/mode2_loss/data/sweep/txPower_-20/run.log,analysis/mode2_loss/data/sweep/txPower_-20/metadata.json,0.077189417033608,13.0826,18.0943,0.6470588235294118,0.0751499999999998

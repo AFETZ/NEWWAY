@@ -6,7 +6,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 NS3_DIR="${NS3_DIR:-}"
-OUT_BASE="${OUT_BASE:-$ROOT/analysis/scenario_runs/$(date +%F)/latency-vs-loss-$(date +%H%M%S)}"
+OUT_BASE="${OUT_BASE:-$ROOT/runs/$(date +%F)/latency-vs-loss-$(date +%H%M%S)}"
 LOSS_PROBS="${LOSS_PROBS:-0.0 0.2 0.4}"
 T1_DELAYS="${T1_DELAYS:-${EXTRA_DELAYS_MS:-2 8 16}}"
 SIM_TIME="${SIM_TIME:-40}"
@@ -39,7 +39,7 @@ for prob in $LOSS_PROBS; do
   EXPORT_RESULTS=0 \
   ENABLE_COLLISION_OUTPUT=1 \
   COLLISION_ACTION=warn \
-    "$ROOT/scenarios/v2v-emergencyVehicleAlert-nrv2x/run.sh"
+    "$ROOT/experiments/operational/v2v-emergencyVehicleAlert-nrv2x/run.sh"
 
   echo "$case_id,loss,$prob,0,$run_dir" >> "$CASES_CSV"
 done
@@ -62,7 +62,7 @@ for t1 in $T1_DELAYS; do
   EXPORT_RESULTS=0 \
   ENABLE_COLLISION_OUTPUT=1 \
   COLLISION_ACTION=warn \
-    "$ROOT/scenarios/v2v-emergencyVehicleAlert-nrv2x/run.sh"
+    "$ROOT/experiments/operational/v2v-emergencyVehicleAlert-nrv2x/run.sh"
 
   echo "$case_id,delay,0,$t1,$run_dir" >> "$CASES_CSV"
 done
