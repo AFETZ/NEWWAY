@@ -37,8 +37,8 @@ pip install sionna   # v0.19.0 или v1.0
 В отдельном терминале (или на GPU-машине):
 
 ```bash
-./.venv_sionna/bin/python sionna_v1_server_script.py \
-  --file_name src/sionna/scenarios/SionnaCircleScenario/scene.xml \
+./.venv_sionna/bin/python src/sionna/sionna_v1_server_script.py \
+  --path-to-xml-scenario src/sionna/scenarios/SionnaCircleScenario/scene.xml \
   --local-machine --verbose
 ```
 
