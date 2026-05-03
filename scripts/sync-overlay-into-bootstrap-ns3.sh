@@ -68,7 +68,10 @@ if [[ ! -d "$ROOT/src" ]] || [[ ! -d "$NS3_DIR/src" ]]; then
 fi
 
 echo "[sync-overlay] syncing overlay sources into bootstrap ns-3 tree (non-destructive)..." >&2
-rsync -a "$ROOT/src/" "$NS3_DIR/src/"
+# Avoid preserving owner/group metadata inside disposable bootstrap trees:
+# this commonly fails on WSL / mixed-permission workspaces and aborts UI runs
+# before the simulator even starts.
+rsync -a --no-owner --no-group "$ROOT/src/" "$NS3_DIR/src/"
 
 for top_file in switch_ms-van3t-interference.sh switch_ms-van3t-CARLA.sh enable_v2x_emulator.sh; do
   if [[ -f "$ROOT/$top_file" ]]; then

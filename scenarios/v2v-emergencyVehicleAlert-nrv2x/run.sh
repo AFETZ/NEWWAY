@@ -96,7 +96,7 @@ run_ns3 build -j "$JOBS" v2v-emergencyVehicleAlert-nrv2x
 
 rm -f "$NETSTATE_FILE"
 rm -f "$COLLISION_OUTPUT_FILE"
-rm -f "${CSV_PREFIX}"-veh*-CAM.csv "${CSV_PREFIX}"-veh*-MSG.csv "${CSV_PREFIX}"-veh*-CTRL.csv "${CSV_PREFIX}"-veh*-PROFILE.csv 2>/dev/null || true
+rm -f "${CSV_PREFIX}"-veh*-CAM.csv "${CSV_PREFIX}"-veh*-MSG.csv "${CSV_PREFIX}"-veh*-CTRL.csv "${CSV_PREFIX}"-veh*-PROFILE.csv "${CSV_PREFIX}"-veh*-PHY.csv 2>/dev/null || true
 
 sumo_collision_args=""
 if [[ -n "$COLLISION_ACTION" ]]; then
@@ -189,6 +189,17 @@ if [[ "$PLOT" == "1" ]]; then
     --run-dir "$OUT_DIR" \
     --scenario "v2v-emergencyVehicleAlert-nrv2x"; then
     echo "Warning: plot generation failed for v2v-emergencyVehicleAlert-nrv2x"
+  fi
+fi
+
+# ── PHY-Safety correlation analysis ──
+PHY_ANALYSIS="${PHY_ANALYSIS:-1}"
+if [[ "$PHY_ANALYSIS" == "1" ]]; then
+  PHY_ANALYSIS_DIR="$OUT_DIR/artifacts/phy_analysis"
+  if ! "$PY_BIN" "$ROOT/analysis/analyze_phy_safety.py" \
+    --run-dir "$OUT_DIR" \
+    --out-dir "$PHY_ANALYSIS_DIR"; then
+    echo "Warning: PHY-safety analysis failed (PHY CSVs may not be present)"
   fi
 fi
 

@@ -1,0 +1,35 @@
+{
+  "scenario_id": "strict_intersection",
+  "mode": "radar_bad",
+  "description": "Intersection with radar fallback and degraded native sidelink profile.",
+  "sumo_config": "strict_sionna_vkr/scenarios/intersection/sumo/map_intersection_strict.sumo.cfg",
+  "sumo_folder": "strict_sionna_vkr/scenarios/intersection/sumo/",
+  "mob_trace": "cars_intersection_strict.rou.xml",
+  "sionna_scene": "strict_sionna_vkr/sionna_scenes/strict_intersection/scene.xml",
+  "run": {
+    "sim_time_s": 22
+  },
+  "radio": {
+    "txPower": 11,
+    "slThresPsschRsrp": -118
+  },
+  "behavior": {
+    "cam-reaction-distance-m": 95,
+    "cam-reaction-heading-deg": 140,
+    "cam-reaction-target-lane": 0,
+    "cam-reaction-speed-factor-target-lane": 0.2,
+    "cam-reaction-speed-factor-other-lane": 0.8,
+    "cam-reaction-action-duration-s": 2.5,
+    "sensor-reaction-enable": 1,
+    "sensor-reaction-distance-m": 14,
+    "sensor-reaction-ttc-s": 1.0,
+    "sensor-reaction-period-ms": 100,
+    "sensor-range-m": 30,
+    "sensor-reaction-focus-vehicle-id": "veh2"
+  },
+  "analysis": {
+    "focus_vehicle": "veh3",
+    "focus_tx_station_id": "2",
+    "collision_pair": ["veh2", "veh3"]
+  }
+}

@@ -1,0 +1,56 @@
+<routes>
+  <route id="r_main" edges="nw_to_sw sw_to_se se_to_ne ne_to_nw"/>
+
+  <vType id="EmergencyLead"
+         vClass="emergency"
+         guiShape="truck"
+         accel="4.0"
+         decel="7.0"
+         emergencyDecel="9.0"
+         sigma="0.30"
+         tau="0.9"
+         minGap="1.2"
+         maxSpeed="24.0"
+         speedDev="0.03"/>
+
+  <vType id="FollowerFlow"
+         accel="3.2"
+         decel="4.8"
+         emergencyDecel="7.0"
+         sigma="0.35"
+         tau="1.0"
+         minGap="1.2"
+         maxSpeed="22.0"
+         speedDev="0.07"
+         lcStrategic="0.7"
+         lcCooperative="0.6"
+         lcSpeedGain="0.8"
+         lcKeepRight="0.2"/>
+
+  <vType id="BackgroundFlow"
+         accel="2.8"
+         decel="5.0"
+         emergencyDecel="7.2"
+         sigma="0.40"
+         tau="1.1"
+         minGap="1.8"
+         maxSpeed="18.0"
+         speedDev="0.10"
+         lcStrategic="0.8"
+         lcCooperative="0.8"
+         lcSpeedGain="0.7"
+         lcKeepRight="0.4"/>
+
+  <vehicle id="veh2" type="EmergencyLead" route="r_main" depart="0.2" departLane="0" departPos="120" departSpeed="21"/>
+  <vehicle id="veh3" type="FollowerFlow" route="r_main" depart="0.2" departLane="0" departPos="101" departSpeed="20"/>
+  <vehicle id="veh4" type="FollowerFlow" route="r_main" depart="0.2" departLane="0" departPos="86" departSpeed="20"/>
+  <vehicle id="veh5" type="FollowerFlow" route="r_main" depart="0.2" departLane="0" departPos="70" departSpeed="19"/>
+
+  <vehicle id="veh6" type="BackgroundFlow" route="r_main" depart="0.2" departLane="1" departPos="34" departSpeed="16"/>
+  <vehicle id="veh7" type="BackgroundFlow" route="r_main" depart="0.2" departLane="1" departPos="8" departSpeed="15"/>
+  <vehicle id="veh8" type="BackgroundFlow" route="r_main" depart="2.5" departLane="1" departPos="0" departSpeed="15"/>
+  <vehicle id="veh9" type="BackgroundFlow" route="r_main" depart="5.0" departLane="1" departPos="0" departSpeed="15"/>
+  <vehicle id="veh10" type="BackgroundFlow" route="r_main" depart="7.5" departLane="1" departPos="0" departSpeed="15"/>
+  <vehicle id="veh11" type="BackgroundFlow" route="r_main" depart="10.0" departLane="1" departPos="0" departSpeed="15"/>
+  <vehicle id="veh12" type="BackgroundFlow" route="r_main" depart="12.5" departLane="1" departPos="0" departSpeed="15"/>
+</routes>

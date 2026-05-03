@@ -72,10 +72,16 @@ build_lib_example(
 build_lib_example(
     NAME v2v-emergencyVehicleAlert-nrv2x
     SOURCE_FILES v2v-emergencyVehicleAlert-nrv2x.cc
+                 ../../nr/examples/nr-v2x-examples/ue-mac-pscch-tx-output-stats.cc
+                 ../../nr/examples/nr-v2x-examples/ue-mac-pssch-tx-output-stats.cc
+                 ../../nr/examples/nr-v2x-examples/ue-phy-pscch-rx-output-stats.cc
+                 ../../nr/examples/nr-v2x-examples/ue-phy-pssch-rx-output-stats.cc
+                 ../../nr/examples/nr-v2x-examples/ue-rlc-rx-output-stats.cc
     LIBRARIES_TO_LINK
     ${libcarla}
     ${libautomotive}
     ${libnr}
+    ${libstats}
     ${libtraci}
 )
 
@@ -203,4 +209,13 @@ build_lib_example(
         SOURCE_FILES v2v-cam-exchange-sionna-ltev2x.cc
         LIBRARIES_TO_LINK
         ${libautomotive}
+)
+
+build_lib_example(
+        NAME v2v-5g-phy-metrics-experiment
+        SOURCE_FILES v2v-5g-phy-metrics-experiment.cc
+        LIBRARIES_TO_LINK
+        ${libautomotive}
+        ${libnr}
+        ${libtraci}
 )

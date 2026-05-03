@@ -1,0 +1,6 @@
+<nodes>
+  <node id="west" x="-220.0" y="0.0" type="priority"/>
+  <node id="merge" x="-40.0" y="0.0" type="priority"/>
+  <node id="east" x="220.0" y="0.0" type="priority"/>
+  <node id="ramp" x="-180.0" y="-90.0" type="priority"/>
+</nodes>

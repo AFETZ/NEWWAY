@@ -1,0 +1,34 @@
+{
+  "scenario_id": "strict_lane_obstacle",
+  "mode": "bad_link",
+  "description": "Stopped-lead lane obstacle with degraded native sidelink conditions.",
+  "sumo_config": "strict_sionna_vkr/scenarios/lane_obstacle/sumo/map_lane_obstacle_strict.sumo.cfg",
+  "sumo_folder": "strict_sionna_vkr/scenarios/lane_obstacle/sumo/",
+  "mob_trace": "cars_lane_obstacle_strict.rou.xml",
+  "sionna_scene": "strict_sionna_vkr/sionna_scenes/strict_lane_obstacle/scene.xml",
+  "run": {
+    "sim_time_s": 45
+  },
+  "radio": {
+    "txPower": 13,
+    "slThresPsschRsrp": -120
+  },
+  "behavior": {
+    "cam-reaction-distance-m": 24,
+    "cam-reaction-heading-deg": 40,
+    "cam-reaction-target-lane": 1,
+    "cam-reaction-speed-factor-target-lane": 0.55,
+    "cam-reaction-speed-factor-other-lane": 1.25,
+    "cam-reaction-action-duration-s": 3.5,
+    "incident-enable": 1,
+    "incident-vehicle-id": "veh2",
+    "incident-time-s": 6,
+    "incident-stop-duration-s": 18,
+    "incident-setstop-enable": 0
+  },
+  "analysis": {
+    "focus_vehicle": "veh4",
+    "focus_tx_station_id": "2",
+    "collision_pair": ["veh2", "veh4"]
+  }
+}

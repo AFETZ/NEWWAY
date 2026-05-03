@@ -1,0 +1,15 @@
+5G NR-V2X PHY Metrics Experiment Summary
+========================================
+MCS: 14
+Numerology: 2
+TX Power: 23 dBm
+Sensing: ON
+Sionna: ON
+Sim Time: 22 s
+Vehicles: 3
+Total CAMs received: 581
+Average PRR: 0.889831
+Average latency (ms): 12.5021
+RX packets: 581
+TX packets: 319
+Wall-clock time: 51.9054 s

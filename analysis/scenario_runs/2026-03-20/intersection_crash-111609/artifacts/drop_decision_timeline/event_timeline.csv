@@ -1,0 +1,10 @@
+pkt_uid,drop_time_s,drop_type,msg_seq,tx_id,rx_id,decision_time_s,decision_event_type,lane_before,lane_after,target_speed_mps,vehicle_id,decision_delay_s,lane_change
+9223372045444712683,3.8,CAM_DROP_PHY_INFERRED,2283,2,3.0,3.8,drop_decision_no_action,-1,-1,-1.0,veh3,0.0,False
+9223372045444712983,3.8,CAM_DROP_PHY_INFERRED,2583,2,3.0,3.8,drop_decision_no_action,-1,-1,-1.0,veh3,0.0,False
+9223372045444713283,4.4,CAM_DROP_PHY_INFERRED,2883,2,3.0,4.4,drop_decision_no_action,-1,-1,-1.0,veh3,0.0,False
+9223372045444713583,4.4,CAM_DROP_PHY_INFERRED,3183,2,3.0,4.4,drop_decision_no_action,-1,-1,-1.0,veh3,0.0,False
+9223372045444713883,5.0,CAM_DROP_PHY_INFERRED,3483,2,3.0,5.0,drop_decision_no_action,-1,-1,-1.0,veh3,0.0,False
+9223372045444714183,5.0,CAM_DROP_PHY_INFERRED,3783,2,3.0,5.0,drop_decision_no_action,-1,-1,-1.0,veh3,0.0,False
+9223372045444714483,5.6,CAM_DROP_PHY_INFERRED,4083,2,3.0,5.6,drop_decision_no_action,-1,-1,-1.0,veh3,0.0,False
+9223372045444714783,5.6,CAM_DROP_PHY_INFERRED,4383,2,3.0,5.6,drop_decision_no_action,-1,-1,-1.0,veh3,0.0,False
+9223372045444715083,6.2,CAM_DROP_PHY_INFERRED,4683,2,3.0,6.2,drop_decision_no_action,-1,-1,-1.0,veh3,0.0,False

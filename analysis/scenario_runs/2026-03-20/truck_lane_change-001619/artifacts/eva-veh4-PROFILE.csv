@@ -1,0 +1,2 @@
+vehicle_id,profile_source,rx_drop_prob_phy_cam,rx_drop_prob_phy_cpm,equiv_tx_power_dbm,target_prr,expected_prr_if_only_profile
+veh4,per_vehicle_prr_profile,0.923,0,-20,0.077,0.077

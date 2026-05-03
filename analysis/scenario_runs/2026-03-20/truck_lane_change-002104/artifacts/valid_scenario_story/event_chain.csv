@@ -1,0 +1,5 @@
+event_order,event_name,time_s,evidence
+1,incident_applied_veh2,6.0,scenario log
+2,veh3_first_lane_change,7.14358,veh3 CTRL cam_reaction
+3,veh5_first_lane_change,11.1398,veh5 CTRL cam_reaction
+4,collision_veh4_into_veh2,12.17,SUMO collision.xml

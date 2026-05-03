@@ -1,0 +1,2 @@
+timesteps,mean_vehicles,min_gap_m,min_ttc_s,risky_gap_events,risky_ttc_events
+2000,8.597,0.060,0.002,14,27

@@ -35,6 +35,11 @@
 #include "ns3/sionna-helper.h"
 #include "ns3/log.h"
 #include "ns3/antenna-module.h"
+#include "../../nr/examples/nr-v2x-examples/ue-mac-pscch-tx-output-stats.h"
+#include "../../nr/examples/nr-v2x-examples/ue-mac-pssch-tx-output-stats.h"
+#include "../../nr/examples/nr-v2x-examples/ue-phy-pscch-rx-output-stats.h"
+#include "../../nr/examples/nr-v2x-examples/ue-phy-pssch-rx-output-stats.h"
+#include "../../nr/examples/nr-v2x-examples/ue-rlc-rx-output-stats.h"
 #include <iomanip>
 #include "ns3/sumo_xml_parser.h"
 #include "ns3/vehicle-visualizer-module.h"
@@ -151,6 +156,56 @@ ParsePerVehicleEquivalentDbm (const std::string& profile)
   return out;
 }
 
+void
+NotifySlPscchScheduling (UeMacPscchTxOutputStats* pscchStats,
+                         const SlPscchUeMacStatParameters pscchStatsParams)
+{
+  pscchStats->Save (pscchStatsParams);
+}
+
+void
+NotifySlPsschScheduling (UeMacPsschTxOutputStats* psschStats,
+                         const SlPsschUeMacStatParameters psschStatsParams)
+{
+  psschStats->Save (psschStatsParams);
+}
+
+void
+NotifySlPscchRx (UePhyPscchRxOutputStats* pscchStats,
+                 const SlRxCtrlPacketTraceParams pscchStatsParams)
+{
+  pscchStats->Save (pscchStatsParams);
+}
+
+void
+NotifySlPsschRx (UePhyPsschRxOutputStats* psschStats,
+                 const SlRxDataPacketTraceParams psschStatsParams)
+{
+  psschStats->Save (psschStatsParams);
+}
+
+void
+NotifySlRlcPduRx (UeRlcRxOutputStats* stats,
+                  uint64_t imsi,
+                  uint16_t rnti,
+                  uint16_t txRnti,
+                  uint8_t lcid,
+                  uint32_t rxPduSize,
+                  double delay)
+{
+  stats->Save (imsi, rnti, txRnti, lcid, rxPduSize, delay);
+}
+
+std::string
+NormalizeOutputDir (std::string outputDir)
+{
+  if (!outputDir.empty () && outputDir.back () != '/')
+    {
+      outputDir.push_back ('/');
+    }
+  return outputDir;
+}
+
 } // namespace
 
 /**
@@ -201,9 +256,13 @@ main (int argc, char *argv[])
   bool sumo_gui = true;
   double sumo_updates = 0.01;
   uint16_t sumo_port = 3400;
+  int64_t sumo_seed = 10;
   std::string csv_name;
   std::string csv_name_cumulative;
   std::string sumo_netstate_file_name;
+  bool enable_official_sqlite = false;
+  std::string simTag = "default";
+  std::string outputDir = "./";
   bool vehicle_vis = false;
 
   int numberOfNodes;
@@ -258,6 +317,7 @@ main (int argc, char *argv[])
   double crash_mode_force_speed_mps = 32.0;
   double crash_mode_duration_s = 4.0;
   double crash_mode_min_time_s = 0.0;
+  bool v2x_awareness_junction_enable = false;
   bool incident_enable = false;
   std::string incident_vehicle_id = "veh2";
   double incident_time_s = 12.0;
@@ -312,6 +372,7 @@ main (int argc, char *argv[])
   cmd.AddValue ("sumo-gui", "Use SUMO gui or not", sumo_gui);
   cmd.AddValue ("sumo-updates", "SUMO granularity", sumo_updates);
   cmd.AddValue ("sumo-port", "TraCI TCP port for SUMO", sumo_port);
+  cmd.AddValue ("sumo-seed", "Seed passed to SUMO", sumo_seed);
   cmd.AddValue ("sumo-folder","Position of sumo config files",sumo_folder);
   cmd.AddValue ("mob-trace", "Name of the mobility trace file", mob_trace);
   cmd.AddValue ("sumo-config", "Location and name of SUMO configuration file", sumo_config);
@@ -319,6 +380,15 @@ main (int argc, char *argv[])
   cmd.AddValue ("vehicle-visualizer", "Activate the web-based vehicle visualizer for ms-van3t", vehicle_vis);
   cmd.AddValue ("csv-log-cumulative", "Name of the CSV log file for the cumulative (average) PRR and latency data", csv_name_cumulative);
   cmd.AddValue ("netstate-dump-file", "Name of the SUMO netstate-dump file containing the vehicle-related information throughout the whole simulation", sumo_netstate_file_name);
+  cmd.AddValue ("enable-official-sqlite",
+                "Write official 5G-LENA NR V2X PHY/MAC/RLC traces into a SQLite DB",
+                enable_official_sqlite);
+  cmd.AddValue ("simTag",
+                "Tag appended to the official 5G-LENA SQLite filename",
+                simTag);
+  cmd.AddValue ("outputDir",
+                "Directory where the official 5G-LENA SQLite DB will be stored",
+                outputDir);
   cmd.AddValue ("baseline", "Baseline for PRR calculation", m_baseline_prr);
   cmd.AddValue ("met-sup","Use the Metric supervisor or not",m_metric_sup);
   cmd.AddValue ("rx-drop-prob-cam", "Application-level probability to drop received CAM packets", rx_drop_prob_cam);
@@ -434,6 +504,10 @@ main (int argc, char *argv[])
   cmd.AddValue ("crash-mode-min-time-s",
                 "Do not activate crash-test mode before this simulation time [s]",
                 crash_mode_min_time_s);
+  cmd.AddValue ("v2x-awareness-junction",
+                "Vehicles start without junction yield awareness; first received emergency "
+                "CAM grants it.  Outcome depends on channel quality, not on thresholds.",
+                v2x_awareness_junction_enable);
   cmd.AddValue ("penetrationRate", "Rate of vehicles equipped with wireless communication devices", penetrationRate);
   cmd.AddValue ("send-cam", "Turn on or off CAM dissemination for this scenario", send_cam);
   cmd.AddValue ("sionna", "Enable SIONNA usage", sionna);
@@ -962,7 +1036,7 @@ main (int argc, char *argv[])
   sumoClient->SetAttribute ("PenetrationRate", DoubleValue (penetrationRate));
   sumoClient->SetAttribute ("SumoLogFile", BooleanValue (false));
   sumoClient->SetAttribute ("SumoStepLog", BooleanValue (false));
-  sumoClient->SetAttribute ("SumoSeed", IntegerValue (10));
+  sumoClient->SetAttribute ("SumoSeed", IntegerValue (sumo_seed));
 
   std::string sumo_additional_options = "--verbose false";
 
@@ -1006,6 +1080,52 @@ main (int argc, char *argv[])
     {
       metSup = &prrSupObj;
       metSup->setTraCIClient(sumoClient);
+    }
+
+  std::string officialSqlitePath;
+  std::unique_ptr<SQLiteOutput> officialDb;
+  std::unique_ptr<UeMacPscchTxOutputStats> officialPscchTxStats;
+  std::unique_ptr<UeMacPsschTxOutputStats> officialPsschTxStats;
+  std::unique_ptr<UePhyPscchRxOutputStats> officialPscchRxStats;
+  std::unique_ptr<UePhyPsschRxOutputStats> officialPsschRxStats;
+  std::unique_ptr<UeRlcRxOutputStats> officialRlcRxStats;
+  if (enable_official_sqlite)
+    {
+      officialSqlitePath =
+        NormalizeOutputDir (outputDir) + simTag + "-v2v-emergencyVehicleAlert-nrv2x.db";
+      officialDb = std::make_unique<SQLiteOutput> (officialSqlitePath);
+
+      officialPscchTxStats = std::make_unique<UeMacPscchTxOutputStats> ();
+      officialPscchTxStats->SetDb (officialDb.get (), "pscchTxUeMac");
+      Config::ConnectWithoutContext (
+        "/NodeList/*/DeviceList/*/$ns3::NrUeNetDevice/ComponentCarrierMapUe/*/NrUeMac/SlPscchScheduling",
+        MakeBoundCallback (&NotifySlPscchScheduling, officialPscchTxStats.get ()));
+
+      officialPsschTxStats = std::make_unique<UeMacPsschTxOutputStats> ();
+      officialPsschTxStats->SetDb (officialDb.get (), "psschTxUeMac");
+      Config::ConnectWithoutContext (
+        "/NodeList/*/DeviceList/*/$ns3::NrUeNetDevice/ComponentCarrierMapUe/*/NrUeMac/SlPsschScheduling",
+        MakeBoundCallback (&NotifySlPsschScheduling, officialPsschTxStats.get ()));
+
+      officialPscchRxStats = std::make_unique<UePhyPscchRxOutputStats> ();
+      officialPscchRxStats->SetDb (officialDb.get (), "pscchRxUePhy");
+      Config::ConnectWithoutContext (
+        "/NodeList/*/DeviceList/*/$ns3::NrUeNetDevice/ComponentCarrierMapUe/*/NrUePhy/NrSpectrumPhyList/*/RxPscchTraceUe",
+        MakeBoundCallback (&NotifySlPscchRx, officialPscchRxStats.get ()));
+
+      officialPsschRxStats = std::make_unique<UePhyPsschRxOutputStats> ();
+      officialPsschRxStats->SetDb (officialDb.get (), "psschRxUePhy");
+      Config::ConnectWithoutContext (
+        "/NodeList/*/DeviceList/*/$ns3::NrUeNetDevice/ComponentCarrierMapUe/*/NrUePhy/NrSpectrumPhyList/*/RxPsschTraceUe",
+        MakeBoundCallback (&NotifySlPsschRx, officialPsschRxStats.get ()));
+
+      officialRlcRxStats = std::make_unique<UeRlcRxOutputStats> ();
+      officialRlcRxStats->SetDb (officialDb.get (), "rlcRx");
+      Config::ConnectWithoutContext (
+        "/NodeList/*/DeviceList/*/$ns3::NrUeNetDevice/ComponentCarrierMapUe/*/NrUeMac/RxRlcPduWithTxRnti",
+        MakeBoundCallback (&NotifySlRlcPduRx, officialRlcRxStats.get ()));
+
+      std::cout << "OFFICIAL-5GLENA-SQLITE-ENABLED,path=" << officialSqlitePath << std::endl;
     }
 
   /*** 7. Setup interface and application for dynamic nodes ***/
@@ -1056,6 +1176,7 @@ main (int argc, char *argv[])
   EmergencyVehicleAlertHelper.SetAttribute ("CrashModeForceSpeedMps", DoubleValue (crash_mode_force_speed_mps));
   EmergencyVehicleAlertHelper.SetAttribute ("CrashModeDurationS", DoubleValue (crash_mode_duration_s));
   EmergencyVehicleAlertHelper.SetAttribute ("CrashModeMinTimeS", DoubleValue (crash_mode_min_time_s));
+  EmergencyVehicleAlertHelper.SetAttribute ("V2xAwarenessJunctionEnable", BooleanValue (v2x_awareness_junction_enable));
 
   /* callback function for node creation */
   int i=0;
@@ -1410,6 +1531,16 @@ main (int argc, char *argv[])
   Simulator::Stop (Seconds(simTime));
 
   Simulator::Run ();
+
+  if (enable_official_sqlite)
+    {
+      officialPscchTxStats->EmptyCache ();
+      officialPsschTxStats->EmptyCache ();
+      officialPscchRxStats->EmptyCache ();
+      officialPsschRxStats->EmptyCache ();
+      officialRlcRxStats->EmptyCache ();
+    }
+
   Simulator::Destroy ();
 
   if(m_metric_sup)
@@ -1435,6 +1566,11 @@ main (int argc, char *argv[])
       }
       std::cout << "Average PRR: " << metSup->getAveragePRR_overall () << std::endl;
       std::cout << "Average latency (ms): " << metSup->getAverageLatency_overall () << std::endl;
+    }
+
+  if (enable_official_sqlite)
+    {
+      std::cout << "OFFICIAL-5GLENA-SQLITE-PATH: " << officialSqlitePath << std::endl;
     }
 
 

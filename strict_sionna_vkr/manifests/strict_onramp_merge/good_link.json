@@ -1,0 +1,30 @@
+{
+  "scenario_id": "strict_onramp_merge",
+  "mode": "good_link",
+  "description": "On-ramp merge conflict with favorable native sidelink profile.",
+  "sumo_config": "strict_sionna_vkr/scenarios/onramp_merge/sumo/map_onramp_merge_strict.sumo.cfg",
+  "sumo_folder": "strict_sionna_vkr/scenarios/onramp_merge/sumo/",
+  "mob_trace": "cars_onramp_merge_strict.rou.xml",
+  "sionna_scene": "strict_sionna_vkr/sionna_scenes/strict_onramp_merge/scene.xml",
+  "run": {
+    "sim_time_s": 35
+  },
+  "radio": {
+    "txPower": 23,
+    "slThresPsschRsrp": -126
+  },
+  "behavior": {
+    "cam-reaction-distance-m": 70,
+    "cam-reaction-heading-deg": 90,
+    "cam-reaction-target-lane": 0,
+    "cam-reaction-speed-factor-target-lane": 0.35,
+    "cam-reaction-speed-factor-other-lane": 0.9,
+    "cam-reaction-action-duration-s": 3.0,
+    "sensor-reaction-enable": 0
+  },
+  "analysis": {
+    "focus_vehicle": "veh3",
+    "focus_tx_station_id": "2",
+    "collision_pair": ["veh2", "veh3"]
+  }
+}

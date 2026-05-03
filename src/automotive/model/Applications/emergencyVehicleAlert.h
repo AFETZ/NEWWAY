@@ -15,6 +15,7 @@
 #include "ns3/vdpTraci.h"
 #include "ns3/socket.h"
 #include "ns3/random-variable-stream.h"
+#include "ns3/signalInfoUtils.h"
 
 #include "ns3/sumo-sensor.h"
 #include "ns3/LDM.h"
@@ -49,8 +50,7 @@ class emergencyVehicleAlert : public Application
      *
      * \param the ASN.1 CAM structure containing the info of the packet that was received.
      */
-    // void receiveCAM (CAM_t *cam, Address from);
-    void receiveCAM (asn1cpp::Seq<CAM> cam, Address from);
+    void receiveCAM (asn1cpp::Seq<CAM> cam, Address from, StationId_t my_stationID, StationType_t my_StationType, SignalInfo phy_info);
 
     /**
      * \brief Callback to handle a DENM reception.
@@ -131,6 +131,7 @@ class emergencyVehicleAlert : public Application
     void SensorWatchdogTick ();
     uint64_t BuildSyntheticPktUid (long txId, long msgSeq) const;
     void MaybeTriggerCrashModeOnNoActionDrop (long txId, long msgSeq, uint64_t packetUid);
+    void GrantJunctionAwareness ();
     bool ApplyEvasiveControl (const std::string& eventType,
                               long txId,
                               long msgSeq,
@@ -194,6 +195,7 @@ class emergencyVehicleAlert : public Application
     std::ofstream m_csv_ofstream_msg; //!< CSV log stream (TX/RX events), created using m_csv_name
     std::ofstream m_csv_ofstream_ctrl; //!< CSV log stream (vehicle control events)
     std::ofstream m_csv_ofstream_profile; //!< CSV log stream (configured per-vehicle PHY/PRR profile)
+    std::ofstream m_csv_ofstream_phy; //!< CSV log stream (PHY-level metrics per received message)
 
     /* Counters */
     int m_cam_received;
@@ -254,6 +256,9 @@ class emergencyVehicleAlert : public Application
     uint32_t m_drop_no_action_streak;
     bool m_crash_mode_active;
     EventId m_crash_mode_restore_ev;
+
+    bool m_v2x_awareness_junction_enable;
+    bool m_v2x_junction_awareness_granted;
 
     Ptr<MetricSupervisor> m_metric_supervisor = nullptr;
 

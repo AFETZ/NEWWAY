@@ -1,0 +1,59 @@
+<routes>
+  <route id="r_major" edges="s1_to_w w_to_n1 n1_to_c1"/>
+  <route id="r_minor" edges="c1_to_w w_to_s1 s1_to_c1"/>
+  <route id="r_third" edges="n1_to_w w_to_s1 s1_to_c1"/>
+
+  <vType id="EmergencyMajor"
+         vClass="emergency"
+         guiShape="truck"
+         length="12.0"
+         width="2.6"
+         accel="3.4"
+         decel="6.0"
+         emergencyDecel="8.0"
+         sigma="0.25"
+         tau="0.9"
+         minGap="1.5"
+         maxSpeed="18.0"
+         speedDev="0.03"/>
+
+  <vType id="YieldMinor"
+         guiShape="passenger"
+         length="4.6"
+         width="1.8"
+         accel="2.8"
+         decel="5.2"
+         emergencyDecel="7.5"
+         sigma="0.35"
+         tau="1.0"
+         minGap="1.4"
+         maxSpeed="16.5"
+         speedDev="0.08"
+         jmTimegapMinor="1.1"
+         jmIgnoreFoeProb="0.05"
+         jmIgnoreFoeSpeed="6.0"/>
+
+  <vehicle id="veh2"
+           type="EmergencyMajor"
+           route="r_major"
+           depart="0.2"
+           departLane="0"
+           departPos="80"
+           departSpeed="16.4"/>
+
+  <vehicle id="veh3"
+           type="YieldMinor"
+           route="r_minor"
+           depart="0.2"
+           departLane="0"
+           departPos="42"
+           departSpeed="15.7"/>
+
+  <vehicle id="veh4"
+           type="YieldMinor"
+           route="r_third"
+           depart="0.6"
+           departLane="0"
+           departPos="35"
+           departSpeed="14.8"/>
+</routes>

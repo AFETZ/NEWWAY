@@ -1,0 +1,6 @@
+<edges>
+  <edge id="main_w_to_merge" from="west" to="merge" priority="3" numLanes="2" speed="27.78"/>
+  <edge id="main_merge_to_east" from="merge" to="east" priority="3" numLanes="2" speed="27.78"/>
+  <edge id="ramp_to_merge" from="ramp" to="merge" priority="1" numLanes="1" speed="22.22"
+        shape="-180.0,-90.0 -150.0,-72.0 -120.0,-52.0 -85.0,-28.0 -40.0,0.0"/>
+</edges>

@@ -1,0 +1,52 @@
+<routes>
+  <route id="r_mainline" edges="main_w_to_merge main_merge_to_east"/>
+  <route id="r_ramp" edges="ramp_to_merge main_merge_to_east"/>
+
+  <vType id="EmergencyMainline"
+         vClass="emergency"
+         guiShape="truck"
+         accel="3.8"
+         decel="6.0"
+         emergencyDecel="8.0"
+         sigma="0.28"
+         tau="0.9"
+         minGap="1.3"
+         maxSpeed="24.0"
+         speedDev="0.03"/>
+
+  <vType id="MergePassenger"
+         guiShape="passenger"
+         accel="2.8"
+         decel="5.0"
+         emergencyDecel="7.0"
+         sigma="0.38"
+         tau="1.0"
+         minGap="1.4"
+         maxSpeed="18.0"
+         speedDev="0.08"
+         lcStrategic="1.0"
+         lcCooperative="0.8"
+         lcSpeedGain="0.8"
+         lcKeepRight="0.2"/>
+
+  <vType id="MainlineBackground"
+         guiShape="passenger"
+         accel="2.6"
+         decel="4.8"
+         emergencyDecel="6.8"
+         sigma="0.40"
+         tau="1.1"
+         minGap="1.8"
+         maxSpeed="20.0"
+         speedDev="0.10"
+         lcStrategic="0.8"
+         lcCooperative="0.8"
+         lcSpeedGain="0.7"
+         lcKeepRight="0.4"/>
+
+  <vehicle id="veh2" type="EmergencyMainline" route="r_mainline" depart="0.2" departLane="0" departPos="95" departSpeed="21"/>
+  <vehicle id="veh4" type="MainlineBackground" route="r_mainline" depart="0.2" departLane="0" departPos="58" departSpeed="19"/>
+  <vehicle id="veh5" type="MainlineBackground" route="r_mainline" depart="0.2" departLane="1" departPos="40" departSpeed="18"/>
+  <vehicle id="veh6" type="MainlineBackground" route="r_mainline" depart="2.0" departLane="0" departPos="0" departSpeed="18"/>
+  <vehicle id="veh3" type="MergePassenger" route="r_ramp" depart="0.2" departLane="0" departPos="72" departSpeed="17"/>
+</routes>

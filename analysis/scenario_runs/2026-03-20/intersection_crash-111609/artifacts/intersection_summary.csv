@@ -1,0 +1,2 @@
+run_dir,focus_vehicle,tx_id,target_prr,configured_rx_drop_prob_phy_cam,cam_total_from_tx,cam_received_from_tx,observed_prr_from_tx,first_cam_reaction_s,first_drop_decision_no_action_s,first_crash_mode_forced_speed_s,collision_focus_with_veh2,first_collision_time_s
+/home/afetz/work/clean/NEWWAY/analysis/scenario_runs/2026-03-20/intersection_crash-111609,veh3,2,0.020000,0.000000,49,25,0.510204,4.997830,3.800000,4.400000,1,5.230000

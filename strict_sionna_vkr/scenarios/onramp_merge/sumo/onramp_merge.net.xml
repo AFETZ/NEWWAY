@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-03-25T16:26:21.286677+03:00 by Eclipse SUMO netconvert 1.26.0
+<netconvertConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <input>
+        <node-files value="strict_sionna_vkr/scenarios/onramp_merge/plain/onramp_merge.nod.xml"/>
+        <edge-files value="strict_sionna_vkr/scenarios/onramp_merge/plain/onramp_merge.edg.xml"/>
+        <connection-files value="strict_sionna_vkr/scenarios/onramp_merge/plain/onramp_merge.con.xml"/>
+    </input>
+
+    <output>
+        <output-file value="strict_sionna_vkr/scenarios/onramp_merge/sumo/onramp_merge.net.xml"/>
+    </output>
+
+</netconvertConfiguration>
+-->
+
+<net version="1.20" junctionCornerDetail="5" limitTurnSpeed="5.50" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
+
+    <location netOffset="220.00,90.00" convBoundary="0.00,0.00,440.00,90.00" origBoundary="-220.00,-90.00,220.00,0.00" projParameter="!"/>
+
+    <edge id=":merge_0" function="internal">
+        <lane id=":merge_0_0" index="0" speed="13.17" length="9.06" shape="169.29,81.45 171.49,83.02 173.03,84.20 174.69,84.94 177.27,85.20"/>
+    </edge>
+    <edge id=":merge_1" function="internal">
+        <lane id=":merge_1_0" index="0" speed="27.78" length="9.06" shape="168.21,85.20 177.27,85.20"/>
+        <lane id=":merge_1_1" index="1" speed="27.78" length="9.06" shape="168.21,88.40 177.27,88.40"/>
+    </edge>
+
+    <edge id="main_merge_to_east" from="merge" to="east" priority="3">
+        <lane id="main_merge_to_east_0" index="0" speed="27.78" length="262.73" shape="177.27,85.20 440.00,85.20"/>
+        <lane id="main_merge_to_east_1" index="1" speed="27.78" length="262.73" shape="177.27,88.40 440.00,88.40"/>
+    </edge>
+    <edge id="main_w_to_merge" from="west" to="merge" priority="3">
+        <lane id="main_w_to_merge_0" index="0" speed="27.78" length="168.21" shape="0.00,85.20 168.21,85.20"/>
+        <lane id="main_w_to_merge_1" index="1" speed="27.78" length="168.21" shape="0.00,88.40 168.21,88.40"/>
+    </edge>
+    <edge id="ramp_to_merge" from="ramp" to="merge" priority="1" shape="40.00,0.00 70.00,18.00 100.00,38.00 135.00,62.00 180.00,90.00">
+        <lane id="ramp_to_merge_0" index="0" speed="22.22" length="152.89" shape="40.82,-1.37 70.86,16.65 100.90,36.67 135.88,60.66 169.29,81.45"/>
+    </edge>
+
+    <junction id="east" type="dead_end" x="440.00" y="90.00" incLanes="main_merge_to_east_0 main_merge_to_east_1" intLanes="" shape="440.00,83.60 440.00,90.00"/>
+    <junction id="merge" type="priority" x="180.00" y="90.00" incLanes="ramp_to_merge_0 main_w_to_merge_0 main_w_to_merge_1" intLanes=":merge_0_0 :merge_1_0 :merge_1_1" shape="177.27,90.00 177.27,83.60 174.40,83.16 173.48,82.63 172.60,81.93 171.56,81.08 170.13,80.09 168.44,82.81 168.21,83.60 168.21,90.00">
+        <request index="0" response="110" foes="110" cont="0"/>
+        <request index="1" response="000" foes="001" cont="0"/>
+        <request index="2" response="000" foes="001" cont="0"/>
+    </junction>
+    <junction id="ramp" type="dead_end" x="40.00" y="0.00" incLanes="" intLanes="" shape="40.00,0.00 41.65,-2.74"/>
+    <junction id="west" type="dead_end" x="0.00" y="90.00" incLanes="" intLanes="" shape="0.00,90.00 0.00,83.60"/>
+
+    <connection from="main_w_to_merge" to="main_merge_to_east" fromLane="0" toLane="0" via=":merge_1_0" dir="s" state="M"/>
+    <connection from="main_w_to_merge" to="main_merge_to_east" fromLane="1" toLane="1" via=":merge_1_1" dir="s" state="M"/>
+    <connection from="ramp_to_merge" to="main_merge_to_east" fromLane="0" toLane="0" via=":merge_0_0" dir="s" state="m"/>
+
+    <connection from=":merge_0" to="main_merge_to_east" fromLane="0" toLane="0" dir="s" state="M"/>
+    <connection from=":merge_1" to="main_merge_to_east" fromLane="0" toLane="0" dir="s" state="M"/>
+    <connection from=":merge_1" to="main_merge_to_east" fromLane="1" toLane="1" dir="s" state="M"/>
+
+</net>

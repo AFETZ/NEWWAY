@@ -29,6 +29,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cmath>
+#include <iomanip>
 #include <limits>
 #include <sstream>
 #include <vector>
@@ -399,7 +400,15 @@ namespace ns3
            "Do not activate crash-test mode before this simulation time [s]",
            DoubleValue (0.0),
            MakeDoubleAccessor (&emergencyVehicleAlert::m_crash_mode_min_time_s),
-           MakeDoubleChecker<double> (0.0));
+           MakeDoubleChecker<double> (0.0))
+        .AddAttribute ("V2xAwarenessJunctionEnable",
+           "When enabled, non-emergency vehicles start without junction right-of-way "
+           "awareness (SUMO speedMode bit 3 = off). The first received CAM from an "
+           "emergency vehicle grants junction awareness (bit 3 = on). No CAM received "
+           "means the vehicle never yields — outcome depends entirely on channel quality.",
+           BooleanValue (false),
+           MakeBooleanAccessor (&emergencyVehicleAlert::m_v2x_awareness_junction_enable),
+           MakeBooleanChecker ());
         return tid;
   }
 
@@ -479,6 +488,8 @@ namespace ns3
     m_crash_mode_min_time_s = 0.0;
     m_drop_no_action_streak = 0;
     m_crash_mode_active = false;
+    m_v2x_awareness_junction_enable = false;
+    m_v2x_junction_awareness_granted = false;
   }
 
   emergencyVehicleAlert::~emergencyVehicleAlert ()
@@ -797,6 +808,24 @@ namespace ns3
       }
     m_client->TraCIAPI::vehicle.setColor (m_id, connected);
 
+    /* V2X-awareness junction control:
+     * Non-emergency vehicles start without junction right-of-way awareness
+     * (speedMode bit 3 off).  The vehicle does not know about approaching
+     * priority traffic until it receives a CAM.  If the channel is good,
+     * the first CAM arrives quickly and awareness is granted.  If the
+     * channel is degraded, no CAM arrives, and the vehicle enters the
+     * intersection without yielding — the outcome emerges from channel
+     * quality, not from a hardcoded threshold. */
+    m_v2x_junction_awareness_granted = false;
+    if (m_v2x_awareness_junction_enable && m_type != "emergency")
+      {
+        // 23 = default(31) minus bit 3(8): all safety except junction right-of-way
+        m_client->TraCIAPI::vehicle.setSpeedMode (m_id, 23);
+        LogControlEvent ("v2x_junction_awareness_pending",
+                         -1, -1, static_cast<uint64_t> (-1),
+                         -1.0, -1.0, -1, -1, -1.0);
+      }
+
     /* Set sockets, callback and station properties in DENBasicService */
     m_denService.setSocketTx (m_socket);
     m_denService.setSocketRx (m_socket);
@@ -808,7 +837,7 @@ namespace ns3
     m_caService.setSocketTx (m_socket);
     m_caService.setSocketRx (m_socket);
     m_caService.setStationProperties (std::stol(m_id.substr (3)), (long)stationtype);
-    m_caService.addCARxCallback (std::bind(&emergencyVehicleAlert::receiveCAM,this,std::placeholders::_1,std::placeholders::_2));
+    m_caService.addCARxCallbackExtended (std::bind(&emergencyVehicleAlert::receiveCAM,this,std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,std::placeholders::_4,std::placeholders::_5));
     m_caService.addCATxCallback (std::bind(&emergencyVehicleAlert::logCamTx,this,std::placeholders::_1));
     m_caService.setRealTime (m_real_time);
 
@@ -869,6 +898,8 @@ namespace ns3
       m_csv_ofstream_msg << "vehicle_id,msg_seq,tx_t_s,rx_t_s,rx_ok,msg_type,tx_id,rx_id,cam_gdt_ms,pkt_uid" << std::endl;
       m_csv_ofstream_ctrl.open (m_csv_name+"-"+m_id+"-CTRL.csv",std::ofstream::trunc);
       m_csv_ofstream_ctrl << "time_s,vehicle_id,event_type,source_id,msg_seq,pkt_uid,distance_m,heading_diff_deg,lane_before,lane_after,target_speed_mps" << std::endl;
+      m_csv_ofstream_phy.open (m_csv_name+"-"+m_id+"-PHY.csv",std::ofstream::trunc);
+      m_csv_ofstream_phy << "time_s,vehicle_id,msg_type,tx_id,sinr_dB,snr_dB,rssi_dBm,rsrp_dBm,pkt_size,distance_m,rx_ok" << std::endl;
       m_csv_ofstream_profile.open (m_csv_name+"-"+m_id+"-PROFILE.csv",std::ofstream::trunc);
       m_csv_ofstream_profile
         << "vehicle_id,profile_source,rx_drop_prob_phy_cam,rx_drop_prob_phy_cpm,equiv_tx_power_dbm,target_prr,expected_prr_if_only_profile"
@@ -930,6 +961,10 @@ namespace ns3
         {
           m_csv_ofstream_profile.close ();
         }
+      if (m_csv_ofstream_phy.is_open ())
+        {
+          m_csv_ofstream_phy.close ();
+        }
     }
 
     cam_sent = m_caService.terminateDissemination ();
@@ -979,7 +1014,7 @@ namespace ns3
   void
   emergencyVehicleAlert::OnGlobalCamTxEvent (long txId, long msgSeq, double txTimeS)
   {
-    if (!m_cam_silence_drop_inference_enable || !m_crash_mode_enable || m_type == "emergency")
+    if (!m_cam_silence_drop_inference_enable || (!m_crash_mode_enable && !m_v2x_awareness_junction_enable) || m_type == "emergency")
       {
         return;
       }
@@ -1214,6 +1249,31 @@ namespace ns3
       });
   }
 
+  void
+  emergencyVehicleAlert::GrantJunctionAwareness ()
+  {
+    if (!m_v2x_awareness_junction_enable || m_v2x_junction_awareness_granted)
+      {
+        return;
+      }
+    m_v2x_junction_awareness_granted = true;
+
+    // First CAM from emergency vehicle received — the vehicle now knows about
+    // the approaching priority traffic.  Restore full SUMO speed mode (bit 3 on).
+    try
+      {
+        m_client->TraCIAPI::vehicle.setSpeedMode (m_id, 31);
+      }
+    catch (const std::exception& e)
+      {
+        NS_LOG_WARN ("GrantJunctionAwareness speedMode restore failed for '"
+                     << m_id << "': " << e.what ());
+      }
+    LogControlEvent ("v2x_junction_awareness_granted",
+                     -1, -1, static_cast<uint64_t> (-1),
+                     -1.0, -1.0, -1, -1, -1.0);
+  }
+
   bool
   emergencyVehicleAlert::ApplyEvasiveControl (const std::string& eventType,
                                               long txId,
@@ -1321,7 +1381,7 @@ namespace ns3
   void
   emergencyVehicleAlert::EvaluateCamSilenceInference (long txId, long msgSeq)
   {
-    if (!m_cam_silence_drop_inference_enable || !m_crash_mode_enable || m_type == "emergency")
+    if (!m_cam_silence_drop_inference_enable || (!m_crash_mode_enable && !m_v2x_awareness_junction_enable) || m_type == "emergency")
       {
         return;
       }
@@ -1341,7 +1401,7 @@ namespace ns3
   void
   emergencyVehicleAlert::CamSilenceWatchdogTick ()
   {
-    if (!m_cam_silence_drop_inference_enable || !m_crash_mode_enable || m_type == "emergency")
+    if (!m_cam_silence_drop_inference_enable || (!m_crash_mode_enable && !m_v2x_awareness_junction_enable) || m_type == "emergency")
       {
         return;
       }
@@ -1481,10 +1541,12 @@ namespace ns3
   }
 
   void
-  emergencyVehicleAlert::receiveCAM (asn1cpp::Seq<CAM> cam, Address from)
+  emergencyVehicleAlert::receiveCAM (asn1cpp::Seq<CAM> cam, Address from, StationId_t my_stationID, StationType_t my_StationType, SignalInfo phy_info)
   {
     /* Implement CAM strategy here */
    (void) from;
+   (void) my_stationID;
+   (void) my_StationType;
    long tx_id = asn1cpp::getField (cam->header.stationId,long);
    long cam_gdt_ms = asn1cpp::getField (cam->cam.generationDeltaTime,long);
    long rx_id = 0;
@@ -1511,6 +1573,12 @@ namespace ns3
    /* If the CAM is received from an emergency vehicle, and the host vehicle is a "passenger" car, then process the CAM */
    if (asn1cpp::getField(cam->cam.camParameters.basicContainer.stationType,StationType_t)==StationType_specialVehicle && m_type!="emergency")
    {
+     /* V2X-awareness: receiving a CAM from an emergency vehicle means we now
+        know about it.  Grant junction right-of-way awareness (restores
+        speedMode bit 3) so SUMO yields properly.  This is a one-time
+        transition: once aware, always aware for this simulation. */
+     GrantJunctionAwareness ();
+
      libsumo::TraCIPosition pos=m_client->TraCIAPI::vehicle.getPosition(m_id);
      pos=m_client->TraCIAPI::simulation.convertXYtoLonLat (pos.x,pos.y);
      double emergencyLat = asn1cpp::getField(cam->cam.camParameters.basicContainer.referencePosition.latitude,double)/DOT_ONE_MICRO;
@@ -1519,8 +1587,6 @@ namespace ns3
      double headingDiff = appUtil_angDiff (m_client->TraCIAPI::vehicle.getAngle (m_id),
                                            (double)asn1cpp::getField(cam->cam.camParameters.highFrequencyContainer.choice.basicVehicleContainerHighFrequency.heading.headingValue,HeadingValue_t)/DECI);
 
-     /* If the distance between the "passenger" car and the emergency vehicle and the difference in the heading angles
-     * are below certain thresholds, then actuate the slow-down strategy */
      if (distance < m_distance_threshold && headingDiff < m_heading_threshold)
      {
        ApplyEvasiveControl ("cam_reaction", tx_id, cam_gdt_ms, static_cast<uint64_t> (-1), distance, headingDiff);
@@ -1540,6 +1606,42 @@ namespace ns3
      {
        m_csv_ofstream_msg << m_id << "," << cam_gdt_ms << ",," << Simulator::Now ().GetSeconds ()
                           << "," << 1 << ",CAM," << tx_id << "," << rx_id << "," << cam_gdt_ms << "," << -1 << std::endl;
+     }
+
+   // ── PHY-level metrics logging ──
+   if (!m_csv_name.empty () && m_csv_ofstream_phy.is_open ())
+     {
+       double sinr_db = std::isnan (phy_info.sinr) ? std::numeric_limits<double>::quiet_NaN () : phy_info.sinr;
+       double snr_db = std::isnan (phy_info.snr) ? std::numeric_limits<double>::quiet_NaN () : phy_info.snr;
+       double rssi_dbm = std::isnan (phy_info.rssi) ? std::numeric_limits<double>::quiet_NaN () : phy_info.rssi;
+       double rsrp_dbm = std::isnan (phy_info.rsrp) ? std::numeric_limits<double>::quiet_NaN () : phy_info.rsrp;
+
+       // Compute distance to sender
+       double distance_m = -1.0;
+       try
+         {
+           libsumo::TraCIPosition myPos = m_client->TraCIAPI::vehicle.getPosition (m_id);
+           myPos = m_client->TraCIAPI::simulation.convertXYtoLonLat (myPos.x, myPos.y);
+           double senderLat = asn1cpp::getField (cam->cam.camParameters.basicContainer.referencePosition.latitude, double) / DOT_ONE_MICRO;
+           double senderLon = asn1cpp::getField (cam->cam.camParameters.basicContainer.referencePosition.longitude, double) / DOT_ONE_MICRO;
+           distance_m = appUtil_haversineDist (myPos.y, myPos.x, senderLat, senderLon);
+         }
+       catch (...)
+         {
+           distance_m = -1.0;
+         }
+
+       m_csv_ofstream_phy << std::fixed << std::setprecision (4)
+                          << Simulator::Now ().GetSeconds () << ","
+                          << m_id << ",CAM,"
+                          << tx_id << ","
+                          << sinr_db << ","
+                          << snr_db << ","
+                          << rssi_dbm << ","
+                          << rsrp_dbm << ","
+                          << phy_info.size << ","
+                          << distance_m << ","
+                          << 1 << std::endl;
      }
 
   }
