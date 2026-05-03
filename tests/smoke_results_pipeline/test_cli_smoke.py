@@ -1,4 +1,5 @@
 ﻿import csv
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -8,41 +9,55 @@ from tools.results_pipeline.pipeline import build_pipeline
 
 class SmokePipelineTest(unittest.TestCase):
     def test_build_pipeline_on_small_fixture(self):
+        fixture_root = Path(__file__).resolve().parent / "data"
+
         with tempfile.TemporaryDirectory() as tmp:
-            tmp_path = Path(tmp)
-            input_dir = tmp_path / "input"
-            output_dir = tmp_path / "out"
+            input_dir = Path(tmp) / "input"
+            output_dir = Path(tmp) / "output"
             input_dir.mkdir(parents=True, exist_ok=True)
 
-            (input_dir / "mini_phy_with_sionna_nrv2x.csv").write_text(
-                "timestamp_ms,src,dst,pkt_id,latency_ms,sinr_db,rssi_dbm,success\n1.0,car1,car2,p1,10,20,-70,1\n2.0,car1,car2,p2,12,18,-72,1\n",
-                encoding="utf-8"
-            )
-            (input_dir / "mini_prr_with_sionna_nrv2x.csv").write_text(
-                "timestamp_ms,src,dst,pkt_id,prr,pdr,success\n3.0,car1,car2,p3,0.90,0.90,1\n4.0,car1,car2,p4,0.60,0.60,0\n",
-                encoding="utf-8"
-            )
+            shutil.copy2(fixture_root / "mini_phy_with_sionna_nrv2x.csv", input_dir / "mini_phy_with_sionna_nrv2x.csv")
+            shutil.copy2(fixture_root / "mini_prr_with_sionna_nrv2x.csv", input_dir / "mini_prr_with_sionna_nrv2x.csv")
 
-            build_pipeline(
+            result = build_pipeline(
                 input_dir=input_dir,
                 output_dir=output_dir,
                 scenario="v2v-cam-exchange-sionna-nrv2x",
-                run_id="smoke-001",
+                run_id="smoke-cli-001",
             )
 
             self.assertTrue((output_dir / "normalized_events.csv").exists())
+            self.assertTrue((output_dir / "normalized_metrics.csv").exists())
             self.assertTrue((output_dir / "aggregates_overall.csv").exists())
             self.assertTrue((output_dir / "diagnostics.csv").exists())
-            self.assertTrue((output_dir / "run_metadata.yaml").exists())
+            self.assertIn("normalized_metrics", result)
+
+            with (output_dir / "normalized_events.csv").open("r", newline="", encoding="utf-8") as f:
+                event_rows = list(csv.DictReader(f))
+
+            self.assertEqual(len(event_rows), 4)
+
+            with (output_dir / "normalized_metrics.csv").open("r", newline="", encoding="utf-8") as f:
+                metric_rows = list(csv.DictReader(f))
+
+            self.assertEqual(len(metric_rows), 10)
+            self.assertTrue(any(r["metric_name"] == "latency_us" and r["unit"] == "us" for r in metric_rows))
+            self.assertTrue(any(r["metric_name"] == "rssi_dbm" and r["unit"] == "dBm" for r in metric_rows))
+            self.assertTrue(any(r["metric_name"] == "sinr_db" and r["unit"] == "dB" for r in metric_rows))
+            self.assertTrue(any(r["metric_name"] == "prr_value" and r["unit"] == "ratio" for r in metric_rows))
+            self.assertTrue(any(r["metric_name"] == "pdr_value" and r["unit"] == "ratio" for r in metric_rows))
+            self.assertTrue(all(r["source_stack"] == "van3twin_ns3" for r in metric_rows))
 
             with (output_dir / "aggregates_overall.csv").open("r", newline="", encoding="utf-8") as f:
                 row = next(csv.DictReader(f))
 
+            self.assertEqual(row["run_id"], "smoke-cli-001")
             self.assertEqual(row["rows_total"], "4")
-            self.assertEqual(row["success_count"], "3")
+            self.assertEqual(row["input_files_count"], "2")
             self.assertAlmostEqual(float(row["prr_mean"]), 0.75, places=6)
             self.assertAlmostEqual(float(row["pdr_mean"]), 0.75, places=6)
             self.assertAlmostEqual(float(row["latency_mean_us"]), 11000.0, places=6)
+            self.assertAlmostEqual(float(row["sinr_mean_db"]), 19.0, places=6)
 
 
 if __name__ == "__main__":
