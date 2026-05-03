@@ -1,7 +1,0 @@
-name,label,txPower,mcs,retx,bw,shadow,pen,prr,latency,avg_cam_ev,min_cam_ev,max_cam_ev,median_gap,p95_gap,max_gap,gaps_gt500_pct,gaps_gt1000_pct
-Baseline,good,23,14,5,400,OFF,1.0,0.991558,11.4318,185,170,199,200,600,2400,45.3,0.3
-Medium loss,medium,10,14,5,400,ON,1.0,0.975313,17.7809,171,157,199,400,1000,4000,47.1,2.2
-High loss,bad,5,20,5,400,ON,1.0,0.899322,29.1045,132,94,197,564,1200,7936,54.2,7.0
-Very high loss,vbad,0,20,1,10,ON,1.0,0.486843,33.0547,51,11,189,600,2400,28500,66.0,14.2
-No retransmissions,noretx,23,14,1,400,ON,1.0,0.991948,12.4486,182,172,198,200,600,2400,45.0,0.3
-Low penetration,lowpen,23,14,5,400,OFF,0.3,0.986401,12.1475,0,0,0,0,0,0,0,0

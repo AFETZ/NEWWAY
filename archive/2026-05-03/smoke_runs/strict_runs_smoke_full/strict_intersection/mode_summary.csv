@@ -1,2 +1,0 @@
-scenario_id,mode,num_runs,collision_rate,mean_observed_prr_focus_vehicle,mean_first_useful_warning_s,mean_first_control_action_s,mean_min_gap_m,mean_min_ttc_s,mean_pscch_corrupt_rate,mean_pssch_corrupt_rate,mean_sci2_corrupt_rate,mean_pssch_overlap_pairs
-strict_intersection,radar_good,1,0.0,1.0,2.29808,2.29808,33.65,44.078,0.0034129692832764505,0.05211726384364821,0.0,5.0

@@ -1,1 +1,0 @@
-vehicle_id,pkt_uid,drop_time_s,drop_type,msg_seq,tx_id,rx_id,decision_time_s,decision_event_type,decision_delay_s,lane_before,lane_after,target_speed_mps,lane_change

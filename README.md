@@ -9,6 +9,40 @@
 > **Автор:** Физулин Андрей Владимирович · HSE, JSC AVTOVAZ
 > **Лицензия:** GPL-2.0 (наследует от ms-van3t)
 
+<p align="center">
+  <img src="img/VaN3Twin_logo_v5_blk.png" height="36" alt="VaN3Twin"/>
+  &nbsp;&nbsp;+&nbsp;&nbsp;
+  <img src="img/MS-VAN3T_logo-V2_small.png" height="36" alt="ms-van3t"/>
+</p>
+
+---
+
+## Результаты
+
+### Причинно-следственная цепочка: потеря CAM → авария
+
+![Causal chain](img/results/cross_layer_causal_chain.png)
+
+*Кросс-слоевая цепочка: деградация физического канала (SNR ↓) → рост потерь CAM (PRR ↓) → запоздалое обнаружение застрявшего лидера → столкновение. Прогон `truck_lane_change`, 2026-03-20.*
+
+### Поведение транспортных средств при разных PRR
+
+![Behavioral dashboard](img/results/behavioral_dashboard.png)
+
+*Скорости и манёвры veh3–veh5 при высоком (safe) и низком (crash) PRR. При PRR < 40% veh4 не успевает перестроиться.*
+
+### PRR: кумулятивное распределение
+
+![PRR cumulative](img/results/intuitive_prr_cumulative.png)
+
+*CDF пакетного приёма по прогонам: разрыв между safe (синий) и crash (красный) сценарием — ключевое evidence ВКР.*
+
+### Drop CAM → решение водителя
+
+![Drop vs control](img/results/emergency_drop_vs_control_actions.png)
+
+*Корреляция между потерянными пакетами и управляющими действиями: каждый drop в критическом окне увеличивает риск инцидента.*
+
 ---
 
 ## Что это такое

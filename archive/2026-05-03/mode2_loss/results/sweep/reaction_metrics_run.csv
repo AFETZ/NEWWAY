@@ -1,9 +1,0 @@
-run_id,tech,reaction_delay_median,reaction_delay_p10,reaction_delay_p90,reaction_received_frac
-txPower_-10,nrv2x,2.74058,2.17933,12.482910000000002,0.875
-txPower_-20,nrv2x,13.0826,4.08983,18.0943,0.6470588235294118
-txPower_0,nrv2x,2.19058,2.17933,7.468779999999999,0.9375
-txPower_10,nrv2x,2.17933,2.17933,3.98383,0.9375
-txPower_14,nrv2x,2.17933,2.17933,3.98383,1.0
-txPower_18,nrv2x,2.17933,2.17933,3.98383,1.0
-txPower_23,nrv2x,2.17933,2.17933,3.98383,1.0
-txPower_6,nrv2x,2.17933,2.17933,3.98383,0.9375
