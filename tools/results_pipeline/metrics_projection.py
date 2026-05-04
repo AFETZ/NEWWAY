@@ -59,12 +59,36 @@ def project_van3twin_events_to_metrics(events) -> List[dict]:
         ("sinr_db", "link", "dB"),
         ("bler", "link", "ratio"),
         ("distance_m", "link", "m"),
+        ("speed_mps", "node", "m/s"),
+        ("acceleration_mps2", "node", "m/s^2"),
         ("prr_value", "link", "ratio"),
         ("pdr_value", "link", "ratio"),
     ]
 
     for event in events:
         entity_id = _event_entity_id(event)
+
+        if getattr(event, "source_kind", None) == "cam" and getattr(event, "event_type", None) == "rx":
+            rows.append(
+                _metric_row(
+                    run_id=event.run_id,
+                    scenario=event.scenario,
+                    source_stack="van3twin_ns3",
+                    sample_kind="event",
+                    metric_name="cam_rx_count",
+                    metric_scope="link",
+                    entity_id=entity_id,
+                    src_id=event.src_id or "",
+                    dst_id=event.dst_id or "",
+                    ts_us=event.ts_us,
+                    value=1,
+                    unit="count",
+                    module_path="",
+                    stat_name="cam_rx_count",
+                    input_file=event.raw_file,
+                    raw_row_num=event.raw_row_num,
+                )
+            )
 
         for field_name, metric_scope, unit in metric_specs:
             value = getattr(event, field_name, None)

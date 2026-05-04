@@ -1,0 +1,6 @@
+run_id,scenario,source_stack,sample_kind,metric_name,metric_scope,entity_id,src_id,dst_id,ts_us,value,unit,module_path,stat_name,input_file,raw_row_num
+simu5g_vector_sample_001,simu5g_vector_sample,simu5g,vector,sinr_db,link,ue[0],,,100000,37.1,dB,Network.ue[0].nrNic.phy,measuredSinrDl:vector,tests\smoke_results_pipeline\data\simu5g_scavetool_vector_sinr_sample.csv,5
+simu5g_vector_sample_001,simu5g_vector_sample,simu5g,vector,sinr_db,link,ue[0],,,200000,38.2,dB,Network.ue[0].nrNic.phy,measuredSinrDl:vector,tests\smoke_results_pipeline\data\simu5g_scavetool_vector_sinr_sample.csv,5
+simu5g_vector_sample_001,simu5g_vector_sample,simu5g,vector,sinr_db,link,ue[0],,,300000,39.3,dB,Network.ue[0].nrNic.phy,measuredSinrDl:vector,tests\smoke_results_pipeline\data\simu5g_scavetool_vector_sinr_sample.csv,5
+simu5g_vector_sample_001,simu5g_vector_sample,simu5g,vector,sinr_db,link,ue[1],,,400000,20.0,dB,Network.ue[1].nrNic.phy,rcvdSinrUl:vector,tests\smoke_results_pipeline\data\simu5g_scavetool_vector_sinr_sample.csv,6
+simu5g_vector_sample_001,simu5g_vector_sample,simu5g,vector,sinr_db,link,ue[1],,,500000,21.0,dB,Network.ue[1].nrNic.phy,rcvdSinrUl:vector,tests\smoke_results_pipeline\data\simu5g_scavetool_vector_sinr_sample.csv,6

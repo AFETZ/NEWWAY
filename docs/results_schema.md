@@ -1,4 +1,4 @@
-﻿# Results Pipeline Overview
+# Results Pipeline Overview
 
 ## Назначение
 Документ кратко описывает текущий `results pipeline` в проекте NEWWAY и поддерживаемые источники данных.

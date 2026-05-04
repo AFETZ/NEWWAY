@@ -53,6 +53,42 @@ class Simu5GCliSmokeTest(unittest.TestCase):
             self.assertEqual(row["source_stack"], "simu5g")
             self.assertEqual(row["rows_total"], "5")
 
+    def test_cli_build_for_simu5g_rejects_directory_input(self):
+        repo_root = Path(__file__).resolve().parents[2]
+        fixture_dir = Path(__file__).resolve().parent / "data"
+
+        with tempfile.TemporaryDirectory() as tmp:
+            output_dir = Path(tmp) / "cli-simu5g-bad-out"
+
+            cmd = [
+                sys.executable,
+                "-m",
+                "tools.results_pipeline.cli",
+                "build",
+                "--source",
+                "simu5g",
+                "--input",
+                str(fixture_dir),
+                "--output",
+                str(output_dir),
+                "--scenario",
+                "bad-simu5g",
+                "--run-id",
+                "cli-simu5g-bad-001",
+            ]
+
+            result = subprocess.run(
+                cmd,
+                check=False,
+                cwd=repo_root,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("must be a CSV file", result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

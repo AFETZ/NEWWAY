@@ -1858,3 +1858,16 @@ analysis/mode2_loss/data/
 analysis/mode2_loss/figures/
 analysis/mode2_loss/logs/
 analysis/mode2_loss/results/
+tmp/
+
+
+# Local raw simulation inputs and generated working outputs
+local_inputs/
+tmp/
+runs/
+
+# Team-provided raw dumps should stay local
+local_inputs/igor_van3twin_cam_raw/
+local_inputs/artem_simu5g_raw/
+# Results pipeline local/user generated outputs
+scripts/results_pipeline/sample_outputs/

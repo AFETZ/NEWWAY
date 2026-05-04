@@ -1,0 +1,12 @@
+{
+  "run_id": "simu5g_vector_sample_001",
+  "scenario": "simu5g_vector_sample",
+  "source_stack": "simu5g",
+  "input_format": "scavetool_csv",
+  "created_at_utc": "2026-05-03T20:34:12.860167+00:00",
+  "git_branch": "feature/simu5g-adapter-v0",
+  "git_commit": "10049477f2a0842a7030c39c26109841e988d287",
+  "input_files": [
+    "tests\\smoke_results_pipeline\\data\\simu5g_scavetool_vector_sinr_sample.csv"
+  ]
+}

@@ -1,0 +1,6 @@
+run_id,scenario,source_kind,event_type,ts_us,src_id,dst_id,pkt_id,size_bytes,latency_us,rssi_dbm,sinr_db,bler,distance_m,speed_mps,acceleration_mps2,prr_value,pdr_value,success,drop_reason,raw_file,raw_row_num
+van3twin_cam_sample_001,van3twin_cam_sample,cam,rx,3125000,3,1,,,,,,,,1.11,3.4,,,,,tests\smoke_results_pipeline\data\van3twin_cam_sample\test_1_p0005-veh1-CAM.csv,2
+van3twin_cam_sample_001,van3twin_cam_sample,cam,rx,3325000,3,1,,,,,,,,1.84,3.4,,,,,tests\smoke_results_pipeline\data\van3twin_cam_sample\test_1_p0005-veh1-CAM.csv,3
+van3twin_cam_sample_001,van3twin_cam_sample,cam,rx,3341000,2,1,,,,,,,,3.38,3.8,,,,,tests\smoke_results_pipeline\data\van3twin_cam_sample\test_1_p0005-veh1-CAM.csv,4
+van3twin_cam_sample_001,van3twin_cam_sample,cam,rx,4100000,1,2,,,,,,,,2.5,2.1,,,,,tests\smoke_results_pipeline\data\van3twin_cam_sample\test_1_p0005-veh2-CAM.csv,2
+van3twin_cam_sample_001,van3twin_cam_sample,cam,rx,4300000,3,2,,,,,,,,2.75,2.2,,,,,tests\smoke_results_pipeline\data\van3twin_cam_sample\test_1_p0005-veh2-CAM.csv,3

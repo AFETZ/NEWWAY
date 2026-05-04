@@ -1,5 +1,6 @@
 ﻿import math
 from statistics import mean
+from typing import Any
 
 
 def _avg(values):
@@ -24,14 +25,16 @@ def _percentile(values, p):
     return values[f] * (c - k) + values[c] * (k - f)
 
 
-def build_aggregates(events, run_id, scenario, input_files_count):
+def build_aggregates(events, run_id, scenario, input_files_count) -> dict[str, Any]:
     latencies = [e.latency_us for e in events if e.latency_us is not None]
     sinrs = [e.sinr_db for e in events if e.sinr_db is not None]
     blers = [e.bler for e in events if e.bler is not None]
     prrs = [e.prr_value for e in events if e.prr_value is not None]
     pdrs = [e.pdr_value for e in events if e.pdr_value is not None]
 
-    success_count = sum(1 for e in events if e.success is True)
+    success_labeled_events = [e for e in events if e.success is not None]
+    success_count = sum(1 for e in success_labeled_events if e.success is True)
+
     tx_count = sum(1 for e in events if str(e.event_type).lower() == "tx")
     rx_count = sum(1 for e in events if str(e.event_type).lower() == "rx")
 
@@ -39,8 +42,9 @@ def build_aggregates(events, run_id, scenario, input_files_count):
     if tx_count > 0:
         ratio_from_counts = rx_count / tx_count
 
-    has_success_signal = any(e.success is not None for e in events)
-    success_ratio = (success_count / len(events)) if events and has_success_signal else None
+    success_ratio = None
+    if success_labeled_events:
+        success_ratio = success_count / len(success_labeled_events)
 
     prr_mean = _avg(prrs)
     if prr_mean is None:

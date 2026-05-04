@@ -6,31 +6,13 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 from statistics import mean
+from typing import Any
 
-from tools.results_pipeline.metrics_projection import project_simu5g_rows_to_metrics, trim_metric_rows
-from tools.results_pipeline.readers.simu5g_scavetool_csv import read_simu5g_scavetool_csv
-from tools.results_pipeline.schema import NORMALIZED_METRIC_FIELDS
-from tools.results_pipeline.writers import write_csv, write_json, write_yaml
+from .metrics_projection import project_simu5g_rows_to_metrics, trim_metric_rows
+from .readers.simu5g_scavetool_csv import read_simu5g_scavetool_csv
+from .schema import NORMALIZED_METRIC_FIELDS
+from .writers import write_csv, write_json, write_yaml
 
-
-SIMU5G_NORMALIZED_FIELDS = [
-    "run_id",
-    "scenario",
-    "source_stack",
-    "sample_kind",
-    "metric_name",
-    "metric_scope",
-    "entity_id",
-    "src_id",
-    "dst_id",
-    "ts_us",
-    "value",
-    "unit",
-    "module_path",
-    "stat_name",
-    "input_file",
-    "raw_row_num",
-]
 
 SIMU5G_AGGREGATE_BY_METRIC_FIELDS = [
     "run_id",
@@ -101,6 +83,15 @@ def _percentile(values, p):
         return values[int(k)]
 
     return values[f] * (c - k) + values[c] * (k - f)
+
+
+def _validate_input_csv(input_csv: Path) -> None:
+    if not input_csv.exists():
+        raise ValueError(f"Simu5G input does not exist: {input_csv}")
+    if not input_csv.is_file():
+        raise ValueError(f"Simu5G input must be a file, got: {input_csv}")
+    if input_csv.suffix.lower() != ".csv":
+        raise ValueError(f"Simu5G input must be a .csv file, got: {input_csv.name}")
 
 
 def _build_metadata(run_id, scenario, input_csv):
@@ -189,7 +180,7 @@ def _metric_values(rows, metric_name):
     return [r["value"] for r in rows if r.get("metric_name") == metric_name and r.get("value") is not None]
 
 
-def _build_aggregates_overall(rows, run_id, scenario):
+def _build_aggregates_overall(rows, run_id, scenario) -> dict[str, Any]:
     throughput_values = _metric_values(rows, "throughput_bps")
     delay_values = _metric_values(rows, "delay_us")
     sinr_values = _metric_values(rows, "sinr_db")
@@ -198,7 +189,7 @@ def _build_aggregates_overall(rows, run_id, scenario):
     entities = {r.get("entity_id") for r in rows if r.get("entity_id")}
     metrics = {r.get("metric_name") for r in rows if r.get("metric_name")}
 
-    return [{
+    return {
         "run_id": run_id,
         "scenario": scenario,
         "source_stack": "simu5g",
@@ -214,7 +205,7 @@ def _build_aggregates_overall(rows, run_id, scenario):
         "sinr_p50_db": _percentile(sinr_values, 50),
         "sinr_p95_db": _percentile(sinr_values, 95),
         "loss_ratio_mean": mean(loss_values) if loss_values else None,
-    }]
+    }
 
 
 def build_simu5g_pipeline(input_csv, output_dir, scenario, run_id=None):
@@ -222,36 +213,47 @@ def build_simu5g_pipeline(input_csv, output_dir, scenario, run_id=None):
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    _validate_input_csv(input_csv)
+
     run_id = run_id or input_csv.stem
 
-    rows = read_simu5g_scavetool_csv(
+    rows, reader_diagnostics = read_simu5g_scavetool_csv(
         path=input_csv,
         scenario=scenario,
         run_id=run_id,
+        return_diagnostics=True,
     )
 
-    diagnostics = _build_diagnostics(rows, input_csv)
+    diagnostics = reader_diagnostics + _build_diagnostics(rows, input_csv)
     aggregates_by_metric = _build_aggregates_by_metric(rows, run_id, scenario)
     aggregates_overall = _build_aggregates_overall(rows, run_id, scenario)
     metadata = _build_metadata(run_id, scenario, input_csv)
     metric_rows = trim_metric_rows(project_simu5g_rows_to_metrics(rows))
 
-    write_csv(output_dir / "normalized_events.csv", rows, SIMU5G_NORMALIZED_FIELDS)
-    write_csv(output_dir / "normalized_metrics.csv", metric_rows, NORMALIZED_METRIC_FIELDS)
-    write_csv(output_dir / "aggregates_by_metric.csv", aggregates_by_metric, SIMU5G_AGGREGATE_BY_METRIC_FIELDS)
-    write_csv(output_dir / "aggregates_overall.csv", aggregates_overall, SIMU5G_AGGREGATE_OVERALL_FIELDS)
-    write_csv(output_dir / "diagnostics.csv", diagnostics, SIMU5G_DIAGNOSTIC_FIELDS)
-    write_json(output_dir / "run_metadata.json", metadata)
-    write_yaml(output_dir / "run_metadata.yaml", metadata)
+    normalized_events_path = output_dir / "normalized_events.csv"
+    normalized_metrics_path = output_dir / "normalized_metrics.csv"
+    aggregates_by_metric_path = output_dir / "aggregates_by_metric.csv"
+    aggregates_overall_path = output_dir / "aggregates_overall.csv"
+    diagnostics_path = output_dir / "diagnostics.csv"
+    metadata_json_path = output_dir / "run_metadata.json"
+    metadata_yaml_path = output_dir / "run_metadata.yaml"
+
+    write_csv(normalized_events_path, rows, NORMALIZED_METRIC_FIELDS)
+    write_csv(normalized_metrics_path, metric_rows, NORMALIZED_METRIC_FIELDS)
+    write_csv(aggregates_by_metric_path, aggregates_by_metric, SIMU5G_AGGREGATE_BY_METRIC_FIELDS)
+    write_csv(aggregates_overall_path, [aggregates_overall], SIMU5G_AGGREGATE_OVERALL_FIELDS)
+    write_csv(diagnostics_path, diagnostics, SIMU5G_DIAGNOSTIC_FIELDS)
+    write_json(metadata_json_path, metadata)
+    write_yaml(metadata_yaml_path, metadata)
 
     return {
-        "normalized_events": str(output_dir / "normalized_events.csv"),
-        "normalized_metrics": str(output_dir / "normalized_metrics.csv"),
-        "aggregates_by_metric": str(output_dir / "aggregates_by_metric.csv"),
-        "aggregates_overall": str(output_dir / "aggregates_overall.csv"),
-        "diagnostics": str(output_dir / "diagnostics.csv"),
-        "run_metadata_json": str(output_dir / "run_metadata.json"),
-        "run_metadata_yaml": str(output_dir / "run_metadata.yaml"),
+        "normalized_events": str(normalized_events_path),
+        "normalized_metrics": str(normalized_metrics_path),
+        "aggregates_by_metric": str(aggregates_by_metric_path),
+        "aggregates_overall": str(aggregates_overall_path),
+        "diagnostics": str(diagnostics_path),
+        "run_metadata_json": str(metadata_json_path),
+        "run_metadata_yaml": str(metadata_yaml_path),
     }
 
 
@@ -263,12 +265,16 @@ def main():
     parser.add_argument("--run-id", default=None, help="Optional explicit run id")
     args = parser.parse_args()
 
-    result = build_simu5g_pipeline(
-        input_csv=args.input,
-        output_dir=args.output,
-        scenario=args.scenario,
-        run_id=args.run_id,
-    )
+    try:
+        result = build_simu5g_pipeline(
+            input_csv=args.input,
+            output_dir=args.output,
+            scenario=args.scenario,
+            run_id=args.run_id,
+        )
+    except ValueError as exc:
+        parser.error(str(exc))
+        return
 
     print(json.dumps(result, indent=2, ensure_ascii=False))
 

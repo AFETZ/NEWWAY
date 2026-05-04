@@ -1,0 +1,13 @@
+{
+  "run_id": "van3twin_cam_sample_001",
+  "scenario": "van3twin_cam_sample",
+  "source": "van3twin_csv",
+  "pipeline_version": "0.1.0",
+  "created_at_utc": "2026-05-03T20:34:11.300775+00:00",
+  "git_branch": "feature/simu5g-adapter-v0",
+  "git_commit": "10049477f2a0842a7030c39c26109841e988d287",
+  "input_files": [
+    "tests\\smoke_results_pipeline\\data\\van3twin_cam_sample\\test_1_p0005-veh1-CAM.csv",
+    "tests\\smoke_results_pipeline\\data\\van3twin_cam_sample\\test_1_p0005-veh2-CAM.csv"
+  ]
+}

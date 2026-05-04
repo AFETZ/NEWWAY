@@ -26,7 +26,7 @@ def build_diagnostics(events, reader_diagnostics):
             )
         )
 
-    missing_pkt = [e for e in events if e.source_kind not in {"phy", "prr"} and not e.pkt_id]
+    missing_pkt = [e for e in events if e.source_kind not in {"phy", "prr", "cam"} and not e.pkt_id]
     if missing_pkt:
         sample = missing_pkt[0]
         diagnostics.append(
@@ -38,7 +38,7 @@ def build_diagnostics(events, reader_diagnostics):
             )
         )
 
-    missing_ts = [e for e in events if e.source_kind not in {"phy", "prr"} and e.ts_us is None]
+    missing_ts = [e for e in events if e.source_kind not in {"phy", "prr", "cam"} and e.ts_us is None]
     if missing_ts:
         sample = missing_ts[0]
         diagnostics.append(
@@ -52,7 +52,7 @@ def build_diagnostics(events, reader_diagnostics):
 
     no_metric_or_success = [
         e for e in events
-        if e.source_kind not in {"phy", "prr"}
+        if e.source_kind not in {"phy", "prr", "cam"}
         and e.prr_value is None and e.pdr_value is None and e.success is None
     ]
     if no_metric_or_success:

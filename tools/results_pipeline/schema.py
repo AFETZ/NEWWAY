@@ -18,6 +18,8 @@ class NormalizedEvent:
     sinr_db: Optional[float] = None
     bler: Optional[float] = None
     distance_m: Optional[float] = None
+    speed_mps: Optional[float] = None
+    acceleration_mps2: Optional[float] = None
     prr_value: Optional[float] = None
     pdr_value: Optional[float] = None
     success: Optional[bool] = None

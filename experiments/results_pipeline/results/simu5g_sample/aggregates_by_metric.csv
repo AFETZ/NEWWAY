@@ -1,0 +1,2 @@
+run_id,scenario,source_stack,metric_name,sample_kind,rows_count,entity_count,value_mean,value_min,value_max,ts_min_us,ts_max_us
+simu5g_vector_sample_001,simu5g_vector_sample,simu5g,sinr_db,vector,5,2,31.12,20.0,39.3,100000,500000

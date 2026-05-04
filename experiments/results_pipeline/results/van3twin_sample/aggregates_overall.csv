@@ -1,0 +1,2 @@
+run_id,scenario,rows_total,input_files_count,success_count,tx_count,rx_count,prr_mean,pdr_mean,latency_mean_us,latency_p50_us,latency_p95_us,sinr_mean_db,bler_mean
+van3twin_cam_sample_001,van3twin_cam_sample,5,2,0,0,5,,,,,,,

@@ -1,7 +1,8 @@
 ﻿import csv
+import re
 from pathlib import Path
 
-from tools.results_pipeline.schema import NormalizedEvent
+from ..schema import NormalizedEvent
 
 
 def _to_float(raw):
@@ -47,6 +48,20 @@ def _classify_artifact(path: Path):
     # Foreign Simu5G / scavetool-style export must be ignored by van3twin reader.
     if {"run", "module", "name", "type"}.issubset(header):
         return None
+
+    # Real VaN3Twin/ns-3 CAM receiver log:
+    # messageId,camId,timestamp,latitude,longitude,heading,speed,acceleration
+    if {
+        "messageid",
+        "camid",
+        "timestamp",
+        "latitude",
+        "longitude",
+        "heading",
+        "speed",
+        "acceleration",
+    }.issubset(header):
+        return "cam_receiver_log"
 
     # Mini synthetic fixture format
     if {"timestamp_ms", "src", "dst", "pkt_id"}.issubset(header):
@@ -109,12 +124,19 @@ def _read_mini_prr(path: Path, scenario: str, run_id: str):
             ts_ms = _to_float(row.get("timestamp_ms"))
             success = _to_bool(row.get("success"))
 
+            if success is True:
+                event_type = "rx"
+            elif success is False:
+                event_type = "drop"
+            else:
+                event_type = "prr"
+
             events.append(
                 NormalizedEvent(
                     run_id=run_id,
                     scenario=scenario,
                     source_kind="prr",
-                    event_type="rx" if success is True else "drop",
+                    event_type=event_type,
                     ts_us=int(round(ts_ms * 1000.0)) if ts_ms is not None else None,
                     src_id=(row.get("src") or "").strip() or None,
                     dst_id=(row.get("dst") or "").strip() or None,
@@ -173,14 +195,59 @@ def _read_real_prr(path: Path, scenario: str, run_id: str):
     return events
 
 
+def _extract_vehicle_id_from_cam_filename(path: Path):
+    match = re.search(r"-veh(\d+)-cam\.csv$", path.name, flags=re.IGNORECASE)
+    if not match:
+        return None
+    return match.group(1)
+
+
+def _read_cam_receiver_log(path: Path, scenario: str, run_id: str):
+    events = []
+    vehicle_id = _extract_vehicle_id_from_cam_filename(path)
+
+    with path.open("r", newline="", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        for row_num, row in enumerate(reader, start=2):
+            timestamp = _to_float(row.get("timestamp"))
+            cam_id = (row.get("camId") or row.get("camid") or "").strip() or None
+
+            events.append(
+                NormalizedEvent(
+                    run_id=run_id,
+                    scenario=scenario,
+                    source_kind="cam",
+                    event_type="rx",
+                    ts_us=int(round(timestamp * 1000.0)) if timestamp is not None else None,
+                    src_id=cam_id,
+                    dst_id=vehicle_id,
+                    pkt_id=None,
+                    speed_mps=_to_float(row.get("speed")),
+                    acceleration_mps2=_to_float(row.get("acceleration")),
+                    raw_file=str(path),
+                    raw_row_num=row_num,
+                )
+            )
+
+    return events
+
+
+def _iter_candidate_csvs(input_path: Path):
+    if input_path.is_file():
+        return [input_path] if input_path.suffix.lower() == ".csv" else []
+    if input_path.is_dir():
+        return sorted(input_path.glob("*.csv"))
+    return []
+
+
 def read_artifacts(input_dir, scenario, run_id):
-    input_dir = Path(input_dir)
+    input_path = Path(input_dir)
 
     events = []
     input_files = []
     reader_diagnostics = []
 
-    for path in sorted(input_dir.glob("*.csv")):
+    for path in _iter_candidate_csvs(input_path):
         artifact_type = _classify_artifact(path)
         if artifact_type is None:
             continue
@@ -195,5 +262,7 @@ def read_artifacts(input_dir, scenario, run_id):
             events.extend(_read_real_phy(path, scenario, run_id))
         elif artifact_type == "real_prr":
             events.extend(_read_real_prr(path, scenario, run_id))
+        elif artifact_type == "cam_receiver_log":
+            events.extend(_read_cam_receiver_log(path, scenario, run_id))
 
     return events, reader_diagnostics, input_files

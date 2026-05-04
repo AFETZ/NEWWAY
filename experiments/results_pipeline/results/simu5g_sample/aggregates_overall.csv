@@ -1,0 +1,2 @@
+run_id,scenario,source_stack,rows_total,input_files_count,distinct_metric_count,entity_count,throughput_mean_bps,delay_mean_us,delay_p50_us,delay_p95_us,sinr_mean_db,sinr_p50_db,sinr_p95_db,loss_ratio_mean
+simu5g_vector_sample_001,simu5g_vector_sample,simu5g,5,1,1,2,,,,,31.12,37.1,39.08,
